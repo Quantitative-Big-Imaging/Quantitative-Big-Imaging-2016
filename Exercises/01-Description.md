@@ -10,7 +10,7 @@ KNIME is already installed so you can start it by typing ```Alt+F2``` (a Run App
 - Click the download link and download the version with Community Extensions
 
 ## Downloading the data
-1. The data for the example can be downloaded from http://tinyurl.com/knime-ws-eth
+1. The data for the example can be downloaded from https://www.dropbox.com/s/f17j3mtyh2fmudu/cropped.tif?dl=0 and https://www.dropbox.com/s/dpoy8upz5fodajz/confocal_stack.tif?dl=0
 2. Open the file in Archive Manager and extract the data to ```/scratch``` (only on D61.1 machines)
 
 ## Getting Started
