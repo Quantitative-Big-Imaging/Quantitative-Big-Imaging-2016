@@ -15,6 +15,7 @@ KNIME is already installed so you can start it by typing ```Alt+F2``` (a Run App
 
 ## Getting Started
 - Steps are shown in normal text, comments are shown in _italics_.
+- Follow the image processing update [instructions](https://github.com/kmader/Quantitative-Big-Imaging-2016/wiki/KNIME-Setup#updating-to-the-latest-image-processing-extensions) if you are running KNIME for the first time to get the additional image processing tools.
 
 ### Knime Basics
 - Creating a node can be done by going to the 'Node Repository' and finding it inside the tree or typing the name next to the magnifying glass icon. 
