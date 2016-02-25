@@ -47,7 +47,7 @@ KNIME is already installed so you can start it by typing ```Alt+F2``` (a Run App
  1. Select 'File name column in optional table' and select 'URL'
  1. _This reads the file from the path in the table from list files instead of a specific file_
 
-### Part 2 - Calculate the mean nucleus intensity
+### Part 2 - Calculate the mean vessel intensity
 Video - https://www.youtube.com/watch?v=HR5fqEoAQ5c
 
 1. Create a new 'Image Cropper' Node
@@ -61,33 +61,6 @@ Video - https://www.youtube.com/watch?v=HR5fqEoAQ5c
  3. Go to the 'Features' tab
  4. Check the box next to 'First Order Statistics'
  5. Select 'Mean'
-
-### Part 3 - Group by the Image Group and Plot the Mean Value
-Video - https://www.youtube.com/watch?v=ZPd7ZXl9dPs
-
-_While this task in of itself isn't very useful, it is easy to imagine a scenario where because of constantly changing illumination, the average intensity of a group of images will need to be checked and plotted_
-
-1. Select the 'Image Reader' node
- 1. _The `Image Reader` needs to be reconfigured to save the image name as the row key (in the table) so it can be later combined with the group information we previously identified_
- 2. Go to the 'Additional Option' tab
- 3. Check the 'Use complete file path as row key' box
-1. Create a new 'Joiner' node
- 1. _The joiner node combines information from two different tables based on a column value._ http://en.wikipedia.org/wiki/Join_%28SQL%29
- 2. Connect the 'Image Features' node to the top input
- 3. Connect the 'Column Rename' to the bottom input
- 4. Right click on 'Joiner' and select 'Configure'
- 5. Select 'Inner Join' for Join Mode
- 6. Click the small '+' icon (or click "Add Row", depending on your OS).
- 7. Select 'Row ID' in the left column
- 8. Select 'URL' in the right column
-1. Create a new 'GroupBy' Node
- 1. Add 'Group' to the list of 'Group Columns'
- 2. Change to the 'Manual Aggregation' tab
- 3. Select 'Mean' column and click 'Add >>>'
- 4. Under 'Aggregation' select 'Mean' to calculate the mean value of the mean value in each images
-6. Create a new 'Line Plot' node
- 1. _This node will display a plot from the grouped data_
- 2. Right click and select 'Execute' to show the results
 
 ## More information about KNIME
 1. KNIME Website: http://knime.org
