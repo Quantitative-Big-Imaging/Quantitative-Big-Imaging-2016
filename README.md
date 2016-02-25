@@ -5,7 +5,7 @@ The lectures have been prepared and given by Kevin Mader and guest lecturer Ande
 
 ### Lectures
 - 25th February - Introduction and Workflows
- - [Lecture Slides](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2015/master/Lectures/01-Slides.html)
+ - [Lecture Slides](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2016/master/Lectures/01-Slides.html)
  - [Lecture Handout](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2015/master/Lectures/01-Handout.html)
 - 3rd March - Image Enhancement (A. Kaestner)
  - [Lecture Slides](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2015/master/Lectures/02-Slides.pdf)
@@ -47,11 +47,10 @@ The exercises from last year (available on: kmader.github.io/Quantitative-Big-Im
 #### Assistance
 The exercises will be supported by Yannis Vogiatzis, Kevin Mader, and Christian Dietz. There will be office hours in ETZ H75 on Thursdays between 14-15 or by appointment.
 
-#### Specific Assignements
+#### Specific Assignments
 
 - 25th February - Introduction and Workflows (Christian Dietz, Intro to KNIME for Image Processing)
- - [Setup](https://github.com/kmader/Quantitative-Big-Imaging-2015/blob/master/Exercises/01-Description.md)
- - [Workflow and Data](http://tinyurl.com/knime-ws-eth)
+ - [Setup](https://github.com/kmader/Quantitative-Big-Imaging-2016/blob/master/Exercises/01-Description.md)
 - 26th February - Image Enhancement (A. Kaestner)
  - [KNIME Exercises](https://github.com/kmader/Quantitative-Big-Imaging-2015/blob/master/Exercises/02-Description-KNIME.md)
  - [Matlab Exercises](https://github.com/kmader/Quantitative-Big-Imaging-Course/blob/master/Ex2/Exercises_ImageEnhancement.pdf?raw=true) (for students experienced in Matlab)
