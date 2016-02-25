@@ -30,7 +30,8 @@ KNIME is already installed so you can start it by typing ```Alt+F2``` (a Run App
  - One of the last options is usually the '... Table' which contains the results (only after execution)
 
 ### Part 1 - Load the images
-Video - https://www.youtube.com/watch?v=7HwCgleJMk4
+- Video - https://www.youtube.com/watch?v=7HwCgleJMk4
+- (Skip the cell splitter and other nodes, you just need __List Files__ and __Image Reader (Table)__
 
 1. Start KNIME (click OK for default workspace)
 1. Go to File->New... and Select 'New Knime Workflow'
@@ -40,17 +41,7 @@ Video - https://www.youtube.com/watch?v=7HwCgleJMk4
  1. Select the folder where the extracted files are _if you did this correctly this should be /scratch_
  1. Check the 'File extension(s)' option under 'Filter'
  1. Type ```tif``` in the Exensions Field
-1. Create a new 'Cell Splitter' Node and connect it to 'List Files'
- 1. Right click 'Cell Splitter' and put '-' in the delimeter field
- 1. Right click 'Cell Splitter' and click 'Execute'
- 1. Right click 'Cell Splitter' and click 'Filtered Table'
-1. Create a new 'Column Filter' and right click 'Configure'
- 1. Click on Columns 'URL_Arr[0]' and 'URL_Arr[2]' and click exclude
- 1. _This removes the results of the split which are not the group which we are interested in (we only want the letter, the group)_
-1. Create a new 'Column Rename' and right click 'Configure'
- 1. Click 'URL_Arr[1]' and check 'Change', fill 'Group' in the text.
- 1. _We want to have a meaningful column name_
-1. Create an 'Image Reader' node and right click 'Configure'
+1. Create an 'Image Reader (Table)' node and right click 'Configure'
  1. Go to the 'Additional Option' tab 
  1. Select 'File name column in optional table' and select 'URL'
  1. _This reads the file from the path in the table from list files instead of a specific file_
