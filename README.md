@@ -9,6 +9,7 @@ The lectures have been prepared and given by Kevin Mader and guest lecturer Ande
  - [Lecture Handout](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2015/master/Lectures/01-Handout.html)
 - 3rd March - Image Enhancement (A. Kaestner)
  - [Lecture Slides](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2016/master/Lectures/02-Slides.pdf)
+ - Lecture Video: [Part 1](https://youtu.be/0Wrvjg8vbPg)
 - 10th March - Ground Truth and Visualization
 - 17th March - Basic Segmentation, Discrete Binary Structures
  - [Lecture Slides](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2015/master/Lectures/03-Slides.html)

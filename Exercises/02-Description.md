@@ -239,6 +239,9 @@ The basic overview is images are read in using 'Image Reader' and downsampled us
 1. Change the 'Salt and Pepper' noise to 'Add Specific Noise' and now instead of changing 'Sigma' change the standard deviation of the noise with a fixed sigma. How does the SNR change with increasing noise?
 1. __MegaChallenge__ combine the result from the last with the code from Part 3 to determine which filters work best at which noise level.
 
+## Part 5 - Reproducing a workflow
 
+Using the spot removal example mentioned in the lecture, create KNIME workflow to perform the same task
+![Workflow](02-files/SpotRemovalWorkflow.png?raw=true)
 
 
