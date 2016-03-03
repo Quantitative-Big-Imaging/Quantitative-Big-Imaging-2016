@@ -22,11 +22,11 @@ If you load a workflow and get an error message, click on the details button. If
 
 ## Part 1 - Images, Resizing, Noise, and Filters
 
-![Workflow](02-files/ImageNoise.svg?raw=true)
+![Workflow](02-files/ImageNoise.png?raw=true)
 
 ![Output Images](02-files/FilterAndNoiseImages.png?raw=true)
 
-Video - Coming soon
+Tutorial Video [here](https://www.youtube.com/watch?v=oOyUKaLny94)
 
 Basic Workflow - [Images Noise and Gaussian](02-files/ImagesNoiseAndGaussian.zip?raw=true)
 
@@ -229,7 +229,6 @@ The basic overview is images are read in using 'Image Reader' and downsampled us
 - Chunk Loop Start
  - This node runs the next steps for one (or more, depending on how its configured) row at a time. Like this, we can save the results for each image separately into the table as we will see later. This is also a useful approach when the datasets get very large (1000s of images) and allows you to just process a portion for testing the pipeline
 
-
 ### Tasks
 1. Change the values of Sigma (Sigma Table Inputs) to go to even higher values (10, 15 20), how does this affect the images? How does it change the SNR curves?
 1. Add an 'Image Resize' node before the noise and scale the image by 0.5 in X and Y, how does this affect SNR? Is this to be expected?
@@ -239,3 +238,7 @@ The basic overview is images are read in using 'Image Reader' and downsampled us
 1. Change the Gaussian filter to an Anisotropic Diffusion Filter and show the results, how do Kappa and Iterations effect the SNR of the output images? Is there a value of Kappa which works for all images?
 1. Change the 'Salt and Pepper' noise to 'Add Specific Noise' and now instead of changing 'Sigma' change the standard deviation of the noise with a fixed sigma. How does the SNR change with increasing noise?
 1. __MegaChallenge__ combine the result from the last with the code from Part 3 to determine which filters work best at which noise level.
+
+
+
+
