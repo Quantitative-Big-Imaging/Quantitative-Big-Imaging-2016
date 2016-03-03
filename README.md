@@ -8,7 +8,7 @@ The lectures have been prepared and given by Kevin Mader and guest lecturer Ande
  - [Lecture Slides](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2016/master/Lectures/01-Slides.html)
  - [Lecture Handout](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2015/master/Lectures/01-Handout.html)
 - 3rd March - Image Enhancement (A. Kaestner)
- - [Lecture Slides](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2015/master/Lectures/02-Slides.pdf)
+ - [Lecture Slides](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2016/master/Lectures/02-Slides.pdf)
 - 10th March - Ground Truth and Visualization
 - 17th March - Basic Segmentation, Discrete Binary Structures
  - [Lecture Slides](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2015/master/Lectures/03-Slides.html)
@@ -52,9 +52,10 @@ The exercises will be supported by Yannis Vogiatzis, Kevin Mader, and Christian 
 - 25th February - Introduction and Workflows (Christian Dietz, Intro to KNIME for Image Processing)
  - [Setup](https://github.com/kmader/Quantitative-Big-Imaging-2016/blob/master/Exercises/01-Description.md)
 - 26th February - Image Enhancement (A. Kaestner)
- - [KNIME Exercises](https://github.com/kmader/Quantitative-Big-Imaging-2015/blob/master/Exercises/02-Description-KNIME.md)
+ - [KNIME Exercises](https://github.com/kmader/Quantitative-Big-Imaging-2016/blob/master/Exercises/02-Description.md)
+  - [Starting Data / Matlab Directory](https://github.com/kmader/Quantitative-Big-Imaging-Course/blob/master/Ex2/matlab.zip?raw=true)
  - [Matlab Exercises](https://github.com/kmader/Quantitative-Big-Imaging-Course/blob/master/Ex2/Exercises_ImageEnhancement.pdf?raw=true) (for students experienced in Matlab)
- - [Starting Data / Matlab Directory](https://github.com/kmader/Quantitative-Big-Imaging-Course/blob/master/Ex2/matlab.zip?raw=true)
+
 
 ### Feedback (as much as possible)
  - Create an [issue](https://github.com/kmader/Quantitative-Big-Imaging-2016/issues) (on the group site that everyone can see and respond to, requires a Github account), [issues from last year](https://github.com/kmader/Quantitative-Big-Imaging-2015/issues)
