@@ -1,4 +1,15 @@
-# Project Descriptions
+# Project Overview
+
+- Scientifically driven project __clear question__
+ - _Not_ count number of bubbles in system
+ - Does temperature affect bubble size?
+- Take images through appropriate processing steps
+- Characterize parameter space and error sources
+- Short presentation (5-10 minutes depending on number of students) 
+ - Problem
+ - Solution
+ - Key Findings
+
 
 # Our Projects
 ## Detection and Analysis of Calcifications in Breast Mamographies (Z. Wang)
@@ -10,7 +21,7 @@
 ## Circardian Rhythm in Neuron Cells
 Fluorescence signal in neuron cells in the region of the brain responsible for circadian regulation
 
-<iframe width="420" height="315" src="https://www.youtube.com/embed/lfC9jbbV8nw" frameborder="0" allowfullscreen></iframe>
+![Brain](images/brainScan.gif?raw=true)
 
 ### Questions
 
@@ -50,6 +61,8 @@ The goal is to automatically measure the ejection fraction of a heart using 4D (
 ## Connecteomics
 - Can a cell network be reconstructed from the fluorescence signals of the firing neurons?
 - [$3000 in Prize Money for Best Result](https://www.kaggle.com/c/connectomics)
+
+[Show video](https://www.youtube.com/embed/lppAwkek6DI)
 
 <iframe width="420" height="315" src="https://www.youtube.com/embed/lppAwkek6DI" frameborder="0" allowfullscreen></iframe>
 
