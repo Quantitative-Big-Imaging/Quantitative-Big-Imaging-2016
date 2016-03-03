@@ -10,11 +10,7 @@
 ## Circardian Rhythm in Neuron Cells
 Fluorescence signal in neuron cells in the region of the brain responsible for circadian regulation
 
-<video controls>
-  <source src="images/florTracking.avi" type="video/avi">
-Your browser does not support the video tag.
-</video>
-
+<iframe width="420" height="315" src="https://www.youtube.com/embed/lfC9jbbV8nw" frameborder="0" allowfullscreen></iframe>
 
 ### Questions
 
@@ -55,11 +51,12 @@ The goal is to automatically measure the ejection fraction of a heart using 4D (
 - Can a cell network be reconstructed from the fluorescence signals of the firing neurons?
 - [$3000 in Prize Money for Best Result](https://www.kaggle.com/c/connectomics)
 
-![Connecteomics](https://kaggle2.blob.core.windows.net/competitions/kaggle/3774/logos/front_page.png)
+<iframe width="420" height="315" src="https://www.youtube.com/embed/lppAwkek6DI" frameborder="0" allowfullscreen></iframe>
 
 ## Digit Recognizer
 - Can digits be accurately identified from images?
 - [Automated identification](https://www.kaggle.com/c/digit-recognizer) is important for thousands of applications from traffic control to reciept validation.
 - Number of solutions already [available](https://www.kaggle.com/c/digit-recognizer/prospector)
  
-![Digits](https://kaggle2.blob.core.windows.net/competitions/kaggle/3004/logos/front_page.png)
+(Image borrowed from: Andrej Karpathy, http://karpathy.github.io/2015/05/21/rnn-effectiveness/)
+![Digits](images/house_read.gif?raw=true)
