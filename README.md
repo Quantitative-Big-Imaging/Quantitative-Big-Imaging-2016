@@ -9,7 +9,7 @@ The lectures have been prepared and given by Kevin Mader and guest lecturer Ande
  - [Lecture Handout](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2015/master/Lectures/01-Handout.html)
 - 3rd March - Image Enhancement (A. Kaestner)
  - [Lecture Slides](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2016/master/Lectures/02-Slides.pdf)
- - Lecture Video: [Part 1](https://youtu.be/0Wrvjg8vbPg)
+ - Lecture Video: [Part 1](https://youtu.be/0Wrvjg8vbPg), [Part 2](https://youtu.be/Q6C1rO9x4PA)
 - 10th March - Ground Truth and Visualization
 - 17th March - Basic Segmentation, Discrete Binary Structures
  - [Lecture Slides](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2015/master/Lectures/03-Slides.html)
@@ -55,8 +55,8 @@ The exercises will be supported by Yannis Vogiatzis, Kevin Mader, and Christian 
 - 26th February - Image Enhancement (A. Kaestner)
  - [KNIME Exercises](https://github.com/kmader/Quantitative-Big-Imaging-2016/blob/master/Exercises/02-Description.md)
   - [Starting Data / Matlab Directory](https://github.com/kmader/Quantitative-Big-Imaging-Course/blob/master/Ex2/matlab.zip?raw=true)
- - [Matlab Exercises](https://github.com/kmader/Quantitative-Big-Imaging-Course/blob/master/Ex2/Exercises_ImageEnhancement.pdf?raw=true) (for students experienced in Matlab)
-
+ - For students experienced in Matlab they can be found here [Matlab Exercises](https://github.com/kmader/Quantitative-Big-Imaging-Course/blob/master/Ex2/Exercises_ImageEnhancement.pdf?raw=true)
+ - For students experienced in Python there is an Jupyter notebook with the same exercises as Matlab [Jupyter Notebook](02-files/Exercises1-3.ipynb) or [download](02-files/Exercises1-3.ipynb)
 
 ### Feedback (as much as possible)
  - Create an [issue](https://github.com/kmader/Quantitative-Big-Imaging-2016/issues) (on the group site that everyone can see and respond to, requires a Github account), [issues from last year](https://github.com/kmader/Quantitative-Big-Imaging-2015/issues)
@@ -68,10 +68,14 @@ The exercises will be supported by Yannis Vogiatzis, Kevin Mader, and Christian 
 The final examination (as originally stated in the course material) will be a 30 minute oral exam covering the material of the course and its applications to real systems. For students who present a project, they will have the option to use their project for some of the real systems related questions (provided they have sent their slides to [Kevin](mailto:mader@biomed.ee.ethz.ch) after the presentation and bring a printed out copy to the exam including several image slices if not already in the slides).  The exam will cover all the lecture material from Image Enhancement to Scaling Up (the guest lecture will not be covered). Several example questions (not exhaustive) have been collected which might be helpful for preparation.
 - [Practice Questions](https://rawgithub.com/kmader/Quantitative-Big-Imaging-Course/master/PracticeExam/exam.html)
 
-### Other Material
-- Project Signup
+
+### Projects
+- Project [Overview](https://github.com/kmader/Quantitative-Big-Imaging-2016/blob/master/Projects/Overview.md)
+- Signup
  - Here you signup for your project with team members and a short title and description
  - [List](https://docs.google.com/spreadsheet/ccc?key=0AnOOBjdH2wMXdFNzVUNEUUc1WG1Cb21Gb24xZnQ5dWc&usp=sharing)
+
+### Other Material
 - Course Wiki (For Questions and Answers, discussions etc)
  - [Main Page](https://github.com/kmader/Quantitative-Big-Imaging-Course/wiki/Course-Wiki-Page)
 - Performance Computing Courses
