@@ -1224,16 +1224,14 @@ ggplot(cellImage,aes(x=y,y=-x,fill=val))+
 <h3 id="model-based">Model-Based</h3>
 <ul>
 <li><span class="math inline">→</span> Experimentalist</li>
-</ul>
-<p>-Problem-driven</p>
-<ul>
+<li>Problem-driven</li>
 <li>Top-down</li>
 <li><em>Reality</em> Model-based</li>
 </ul>
 <h3 id="machine-learning-approach">Machine Learning Approach</h3>
 <ul>
-<li><p><span class="math inline">→</span> Computer Vision / Deep Learning</p></li>
-<li><p>Results-driven</p></li>
+<li><span class="math inline">→</span> Computer Vision / Deep Learning</li>
+<li>Results-driven</li>
 </ul>
 <h1 id="model-based-analysis">Model-based Analysis</h1>
 <p><img src="../common/figures/image-formation.png" alt="Traditional Imaging" /></p>
@@ -1702,11 +1700,12 @@ ggplot(g.cmp.thresh,
 </div>
 </div>
 <h1 id="looking-at-orientations">Looking at Orientations</h1>
-We can tune the angular acceptance by using the fact <br /><span class="math display">$$\vec{x}\cdot\vec{y}=|\vec{x}| |\vec{y}| \cos(\theta_{x\rightarrow y}) $$</span><br /> <br /><span class="math display">$$ I(x,y) = 
+<p>We can tune the angular acceptance by using the fact <br /><span class="math display">$$\vec{x}\cdot\vec{y}=|\vec{x}| |\vec{y}| \cos(\theta_{x\rightarrow y}) $$</span><br /> <br /><span class="math display">$$ I(x,y) = 
 \begin{cases}
 1, &amp; \cos^{-1}(\vec{f}(x,y)\cdot \vec{i}) \leq \theta^{\circ} \\
 0, &amp; \text{otherwise}
-\end{cases}$$</span><br /> ***
+\end{cases}$$</span><br /></p>
+<hr />
 <div class="row">
 <button class="source R toggle btn btn-xs btn-primary">
 <span class="glyphicon glyphicon-chevron-down"></span> R source
@@ -2165,7 +2164,7 @@ ggplot(prec.table,aes(x=Recall,y=Precision,color=name))+
 <li><strong>False Positive Rate</strong> = <span class="math inline"><em>F</em><em>P</em>/(<em>F</em><em>P</em> + <em>T</em><em>N</em>)</span></li>
 </ul>
 <hr />
-These show very similar information with the major difference being the goal is to be in the upper left-hand corner. Additionally random guesses can be shown as the slope 1 line. Therefore for a system to be useful it must lie above the random line.
+<p>These show very similar information with the major difference being the goal is to be in the upper left-hand corner. Additionally random guesses can be shown as the slope 1 line. Therefore for a system to be useful it must lie above the random line.</p>
 <div class="row">
 <button class="source R toggle btn btn-xs btn-primary">
 <span class="glyphicon glyphicon-chevron-down"></span> R source
@@ -2194,14 +2193,15 @@ ggplot(tp.table,aes(x=FPRate,y=TPRate,color=name))+
 <li><a href="https://github.com/jvns/talks/blob/master/pydatanyc2014/slides.md" class="uri">https://github.com/jvns/talks/blob/master/pydatanyc2014/slides.md</a></li>
 <li><a href="http://mathbabe.org/2012/03/06/the-value-added-teacher-model-sucks/" class="uri">http://mathbabe.org/2012/03/06/the-value-added-teacher-model-sucks/</a></li>
 </ul>
-<h1 id="practical-example-self-driving-cars-finding-road-stripes">Practical Example: Self-Driving Cars, Finding Road Stripes</h1>
-<p>A more complicated example is finding stripes on the road.</p>
+<h1 id="practical-example-self-driving-cars-finding-the-road">Practical Example: Self-Driving Cars, Finding the Road</h1>
+<p>A more complicated example is finding the road in an image with cars and buildings</p>
 <div class="row">
 <button class="source R toggle btn btn-xs btn-primary">
 <span class="glyphicon glyphicon-chevron-down"></span> R source
 </button>
 <pre style=""><code class="source r"># image data
-road.arr<- readJPEG(qbi.data("road_image.jpg"))[,,1] %>% t %>% flip</code></pre>
+road.rgb.arr<-readJPEG(qbi.data("road_image.jpg"))
+road.arr<-((road.rgb.arr[,,1]+road.rgb.arr[,,2]+road.rgb.arr[,,3])/3) %>% t %>% flip</code></pre>
 <button class="error R toggle btn btn-xs btn-danger">
 <span class="glyphicon glyphicon-chevron-down"></span> R error
 </button>
@@ -2220,8 +2220,8 @@ road.arr<- readJPEG(qbi.data("road_image.jpg"))[,,1] %>% t %>% flip</code></pre>
 <span class="glyphicon glyphicon-chevron-down"></span> R source
 </button>
 <pre style=""><code class="source r"># ground truth
-cal.image<-readJPEG(qbi.data("road_image_seg_bw.jpg"))[,,1]  %>% t %>% flip %>% im.to.df %>% 
-  mutate(Segmented = ifelse(val,"Stripe","Background"))</code></pre>
+cal.image<-readJPEG(qbi.data("road_image_street_bw.jpg")) %>% t %>% flip %>% im.to.df %>% 
+  mutate(Segmented = ifelse(val,"Road","Background"))</code></pre>
 <button class="error R toggle btn btn-xs btn-danger">
 <span class="glyphicon glyphicon-chevron-down"></span> R error
 </button>
@@ -2259,13 +2259,13 @@ cal.image<-readJPEG(qbi.data("road_image_seg_bw.jpg"))[,,1]  %>% t %>% flip %>% 
 </code></pre>
 </div>
 <h1 id="applying-a-threshold-2">Applying a threshold</h1>
-<p>We can perform the same analysis on an image like this one, again using a simple threshold to evalulate how accurately we identify the calcifications</p>
+<p>We can perform the same analysis on an image like this one, again using a simple threshold to evalulate how accurately we identify the stripes. Since they are white, we can selectively keep the white components.</p>
 <div class="row">
 <button class="source R toggle btn btn-xs btn-primary">
 <span class="glyphicon glyphicon-chevron-down"></span> R source
 </button>
 <pre style=""><code class="source r">tr.road<-mutate(road.image,
-                 Segmented=ifelse(val>0.75,"Stripe","Background")
+                 Segmented=ifelse(val>0.75,"Road","Background")
                  )</code></pre>
 <button class="error R toggle btn btn-xs btn-danger">
 <span class="glyphicon glyphicon-chevron-down"></span> R error
@@ -2298,8 +2298,8 @@ cal.image<-readJPEG(qbi.data("road_image_seg_bw.jpg"))[,,1]  %>% t %>% flip %>% 
   Match=(SegmentedC==SegmentedGT),
   Category=
     ifelse(Match,
-           ifelse(SegmentedC=="Stripe","True Positive","True Negative"),
-           ifelse(SegmentedC=="Stripe","False Positive","False Negative")
+           ifelse(SegmentedC=="Road","True Positive","True Negative"),
+           ifelse(SegmentedC=="Road","False Positive","False Negative")
       )
   )</code></pre>
 <button class="error R toggle btn btn-xs btn-danger">
@@ -2313,7 +2313,7 @@ cal.image<-readJPEG(qbi.data("road_image_seg_bw.jpg"))[,,1]  %>% t %>% flip %>% 
 <pre style=""><code class="source r">ggplot(score.img,
        aes(x,y,fill=SegmentedGT))+
   geom_tile()+
-  facet_wrap(~Category)+
+  facet_grid(Category~.)+
   coord_equal()+
   scale_colour_manual(values=c("green","black"))+
   scale_fill_manual(values=c("red","blue"))+
@@ -2334,7 +2334,7 @@ cal.image<-readJPEG(qbi.data("road_image_seg_bw.jpg"))[,,1]  %>% t %>% flip %>% 
   mutate(in.img,
          Segmented = ifelse(
                          val>c.thresh,
-                         "Stripe","Background"),
+                         "Road","Background"),
          Thresh = c.thresh
         )
 })
@@ -2345,9 +2345,9 @@ mk.stat.table<-function(in.img,stepseq)
                cal.image[,c("x","y","Segmented")],
                by=c("x","y"),suffixes=c("C","GT"))
   in.df<-mutate(in.df,Match=(SegmentedC==SegmentedGT))
-  data.frame(TP=nrow(subset(in.df,SegmentedGT=="Stripe" & Match)),
+  data.frame(TP=nrow(subset(in.df,SegmentedGT=="Road" & Match)),
              TN=nrow(subset(in.df,SegmentedGT=="Background" & Match)),
-             FP=nrow(subset(in.df,SegmentedC=="Stripe" & !Match)),
+             FP=nrow(subset(in.df,SegmentedC=="Road" & !Match)),
              FN=nrow(subset(in.df,SegmentedC=="Background" & !Match))
              )
 })
@@ -2377,17 +2377,21 @@ abs.steps<-step.fcn(road.image$val,6)</code></pre>
                    Thresh=round(100*Thresh),
                    Recall=round(100*TP/(TP+FN)),
                    Precision=round(100*TP/(TP+FP))
-                   )</code></pre>
-<button class="error R toggle btn btn-xs btn-danger">
-<span class="glyphicon glyphicon-chevron-down"></span> R error
-</button>
-<pre style=""><code class="error r">## Error in mutate_(.data, .dots = lazyeval::lazy_dots(...)): cannot open file '/Users/mader/Dropbox/TeachingRelated/QuantBig/Lectures/03 - Segmentation/print_cache/unnamed-chunk-36_7b938447ad2cd5ae6096426d9158a1f0.rdb': No such file or directory
-</code></pre>
-<button class="source R toggle btn btn-xs btn-primary">
-<span class="glyphicon glyphicon-chevron-down"></span> R source
-</button>
-<pre style=""><code class="source r">kable(prec.table)</code></pre>
-<table>
+                   )
+kable(prec.table)</code></pre>
+<table style="width:110%;">
+<colgroup>
+<col width="11%" />
+<col width="6%" />
+<col width="6%" />
+<col width="6%" />
+<col width="6%" />
+<col width="13%" />
+<col width="15%" />
+<col width="15%" />
+<col width="11%" />
+<col width="15%" />
+</colgroup>
 <thead>
 <tr class="header">
 <th align="right">Thresh</th>
@@ -2396,3009 +2400,3611 @@ abs.steps<-step.fcn(road.image$val,6)</code></pre>
 <th align="right">FP</th>
 <th align="right">FN</th>
 <th align="left">name</th>
+<th align="right">TPRate</th>
+<th align="right">FPRate</th>
 <th align="right">Recall</th>
 <th align="right">Precision</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td align="right">0.0500000</td>
+<td align="right">5</td>
 <td align="right">224</td>
 <td align="right">0</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="left">Normal</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5079365</td>
+<td align="right">1.0000000</td>
+<td align="right">100</td>
+<td align="right">51</td>
 </tr>
 <tr class="even">
-<td align="right">0.0590909</td>
+<td align="right">6</td>
 <td align="right">224</td>
 <td align="right">0</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="left">Normal</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5079365</td>
+<td align="right">1.0000000</td>
+<td align="right">100</td>
+<td align="right">51</td>
 </tr>
 <tr class="odd">
-<td align="right">0.0681818</td>
+<td align="right">7</td>
 <td align="right">224</td>
 <td align="right">1</td>
 <td align="right">216</td>
 <td align="right">0</td>
 <td align="left">Normal</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5090909</td>
+<td align="right">0.9953917</td>
+<td align="right">100</td>
+<td align="right">51</td>
 </tr>
 <tr class="even">
-<td align="right">0.0772727</td>
+<td align="right">8</td>
 <td align="right">224</td>
 <td align="right">1</td>
 <td align="right">216</td>
 <td align="right">0</td>
 <td align="left">Normal</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5090909</td>
+<td align="right">0.9953917</td>
+<td align="right">100</td>
+<td align="right">51</td>
 </tr>
 <tr class="odd">
-<td align="right">0.0863636</td>
+<td align="right">9</td>
 <td align="right">224</td>
 <td align="right">1</td>
 <td align="right">216</td>
 <td align="right">0</td>
 <td align="left">Normal</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5090909</td>
+<td align="right">0.9953917</td>
+<td align="right">100</td>
+<td align="right">51</td>
 </tr>
 <tr class="even">
-<td align="right">0.0954545</td>
+<td align="right">10</td>
 <td align="right">224</td>
 <td align="right">2</td>
 <td align="right">215</td>
 <td align="right">0</td>
 <td align="left">Normal</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5102506</td>
+<td align="right">0.9907834</td>
+<td align="right">100</td>
+<td align="right">51</td>
 </tr>
 <tr class="odd">
-<td align="right">0.1045455</td>
+<td align="right">10</td>
 <td align="right">224</td>
 <td align="right">3</td>
 <td align="right">214</td>
 <td align="right">0</td>
 <td align="left">Normal</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5114155</td>
+<td align="right">0.9861751</td>
+<td align="right">100</td>
+<td align="right">51</td>
 </tr>
 <tr class="even">
-<td align="right">0.1136364</td>
+<td align="right">11</td>
 <td align="right">224</td>
 <td align="right">7</td>
 <td align="right">210</td>
 <td align="right">0</td>
 <td align="left">Normal</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5161290</td>
+<td align="right">0.9677419</td>
+<td align="right">100</td>
+<td align="right">52</td>
 </tr>
 <tr class="odd">
-<td align="right">0.1227273</td>
+<td align="right">12</td>
 <td align="right">224</td>
 <td align="right">8</td>
 <td align="right">209</td>
 <td align="right">0</td>
 <td align="left">Normal</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5173210</td>
+<td align="right">0.9631336</td>
+<td align="right">100</td>
+<td align="right">52</td>
 </tr>
 <tr class="even">
-<td align="right">0.1318182</td>
+<td align="right">13</td>
 <td align="right">224</td>
 <td align="right">8</td>
 <td align="right">209</td>
 <td align="right">0</td>
 <td align="left">Normal</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5173210</td>
+<td align="right">0.9631336</td>
+<td align="right">100</td>
+<td align="right">52</td>
 </tr>
 <tr class="odd">
-<td align="right">0.1409091</td>
+<td align="right">14</td>
 <td align="right">224</td>
 <td align="right">8</td>
 <td align="right">209</td>
 <td align="right">0</td>
 <td align="left">Normal</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5173210</td>
+<td align="right">0.9631336</td>
+<td align="right">100</td>
+<td align="right">52</td>
 </tr>
 <tr class="even">
-<td align="right">0.1500000</td>
+<td align="right">15</td>
 <td align="right">224</td>
 <td align="right">11</td>
 <td align="right">206</td>
 <td align="right">0</td>
 <td align="left">Normal</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5209302</td>
+<td align="right">0.9493088</td>
+<td align="right">100</td>
+<td align="right">52</td>
 </tr>
 <tr class="odd">
-<td align="right">0.1590909</td>
+<td align="right">16</td>
 <td align="right">224</td>
 <td align="right">16</td>
 <td align="right">201</td>
 <td align="right">0</td>
 <td align="left">Normal</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5270588</td>
+<td align="right">0.9262673</td>
+<td align="right">100</td>
+<td align="right">53</td>
 </tr>
 <tr class="even">
-<td align="right">0.1681818</td>
+<td align="right">17</td>
 <td align="right">224</td>
 <td align="right">17</td>
 <td align="right">200</td>
 <td align="right">0</td>
 <td align="left">Normal</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5283019</td>
+<td align="right">0.9216590</td>
+<td align="right">100</td>
+<td align="right">53</td>
 </tr>
 <tr class="odd">
-<td align="right">0.1772727</td>
+<td align="right">18</td>
 <td align="right">224</td>
 <td align="right">20</td>
 <td align="right">197</td>
 <td align="right">0</td>
 <td align="left">Normal</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5320665</td>
+<td align="right">0.9078341</td>
+<td align="right">100</td>
+<td align="right">53</td>
 </tr>
 <tr class="even">
-<td align="right">0.1863636</td>
+<td align="right">19</td>
 <td align="right">224</td>
 <td align="right">21</td>
 <td align="right">196</td>
 <td align="right">0</td>
 <td align="left">Normal</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5333333</td>
+<td align="right">0.9032258</td>
+<td align="right">100</td>
+<td align="right">53</td>
 </tr>
 <tr class="odd">
-<td align="right">0.1954545</td>
+<td align="right">20</td>
 <td align="right">224</td>
 <td align="right">24</td>
 <td align="right">193</td>
 <td align="right">0</td>
 <td align="left">Normal</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5371703</td>
+<td align="right">0.8894009</td>
+<td align="right">100</td>
+<td align="right">54</td>
 </tr>
 <tr class="even">
-<td align="right">0.2045455</td>
+<td align="right">20</td>
 <td align="right">224</td>
 <td align="right">26</td>
 <td align="right">191</td>
 <td align="right">0</td>
 <td align="left">Normal</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5397590</td>
+<td align="right">0.8801843</td>
+<td align="right">100</td>
+<td align="right">54</td>
 </tr>
 <tr class="odd">
-<td align="right">0.2136364</td>
+<td align="right">21</td>
 <td align="right">224</td>
 <td align="right">28</td>
 <td align="right">189</td>
 <td align="right">0</td>
 <td align="left">Normal</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5423729</td>
+<td align="right">0.8709677</td>
+<td align="right">100</td>
+<td align="right">54</td>
 </tr>
 <tr class="even">
-<td align="right">0.2227273</td>
+<td align="right">22</td>
 <td align="right">224</td>
 <td align="right">32</td>
 <td align="right">185</td>
 <td align="right">0</td>
 <td align="left">Normal</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5476773</td>
+<td align="right">0.8525346</td>
+<td align="right">100</td>
+<td align="right">55</td>
 </tr>
 <tr class="odd">
-<td align="right">0.2318182</td>
+<td align="right">23</td>
 <td align="right">224</td>
 <td align="right">34</td>
 <td align="right">183</td>
 <td align="right">0</td>
 <td align="left">Normal</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5503686</td>
+<td align="right">0.8433180</td>
+<td align="right">100</td>
+<td align="right">55</td>
 </tr>
 <tr class="even">
-<td align="right">0.2409091</td>
+<td align="right">24</td>
 <td align="right">224</td>
 <td align="right">34</td>
 <td align="right">183</td>
 <td align="right">0</td>
 <td align="left">Normal</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5503686</td>
+<td align="right">0.8433180</td>
+<td align="right">100</td>
+<td align="right">55</td>
 </tr>
 <tr class="odd">
-<td align="right">0.2500000</td>
+<td align="right">25</td>
 <td align="right">224</td>
 <td align="right">35</td>
 <td align="right">182</td>
 <td align="right">0</td>
 <td align="left">Normal</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5517241</td>
+<td align="right">0.8387097</td>
+<td align="right">100</td>
+<td align="right">55</td>
 </tr>
 <tr class="even">
-<td align="right">0.2590909</td>
+<td align="right">26</td>
 <td align="right">224</td>
 <td align="right">38</td>
 <td align="right">179</td>
 <td align="right">0</td>
 <td align="left">Normal</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5558313</td>
+<td align="right">0.8248848</td>
+<td align="right">100</td>
+<td align="right">56</td>
 </tr>
 <tr class="odd">
-<td align="right">0.2681818</td>
+<td align="right">27</td>
 <td align="right">224</td>
 <td align="right">41</td>
 <td align="right">176</td>
 <td align="right">0</td>
 <td align="left">Normal</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5600000</td>
+<td align="right">0.8110599</td>
+<td align="right">100</td>
+<td align="right">56</td>
 </tr>
 <tr class="even">
-<td align="right">0.2772727</td>
+<td align="right">28</td>
 <td align="right">224</td>
 <td align="right">44</td>
 <td align="right">173</td>
 <td align="right">0</td>
 <td align="left">Normal</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5642317</td>
+<td align="right">0.7972350</td>
+<td align="right">100</td>
+<td align="right">56</td>
 </tr>
 <tr class="odd">
-<td align="right">0.2863636</td>
+<td align="right">29</td>
 <td align="right">223</td>
 <td align="right">48</td>
 <td align="right">169</td>
 <td align="right">1</td>
 <td align="left">Normal</td>
 <td align="right">0.9955357</td>
-<td align="right">0.5688776</td>
+<td align="right">0.7788018</td>
+<td align="right">100</td>
+<td align="right">57</td>
 </tr>
 <tr class="even">
-<td align="right">0.2954545</td>
+<td align="right">30</td>
 <td align="right">221</td>
 <td align="right">50</td>
 <td align="right">167</td>
 <td align="right">3</td>
 <td align="left">Normal</td>
 <td align="right">0.9866071</td>
-<td align="right">0.5695876</td>
+<td align="right">0.7695853</td>
+<td align="right">99</td>
+<td align="right">57</td>
 </tr>
 <tr class="odd">
-<td align="right">0.3045455</td>
+<td align="right">30</td>
 <td align="right">221</td>
 <td align="right">51</td>
 <td align="right">166</td>
 <td align="right">3</td>
 <td align="left">Normal</td>
 <td align="right">0.9866071</td>
-<td align="right">0.5710594</td>
+<td align="right">0.7649770</td>
+<td align="right">99</td>
+<td align="right">57</td>
 </tr>
 <tr class="even">
-<td align="right">0.3136364</td>
+<td align="right">31</td>
 <td align="right">221</td>
 <td align="right">55</td>
 <td align="right">162</td>
 <td align="right">3</td>
 <td align="left">Normal</td>
 <td align="right">0.9866071</td>
-<td align="right">0.5770235</td>
+<td align="right">0.7465438</td>
+<td align="right">99</td>
+<td align="right">58</td>
 </tr>
 <tr class="odd">
-<td align="right">0.3227273</td>
+<td align="right">32</td>
 <td align="right">221</td>
 <td align="right">59</td>
 <td align="right">158</td>
 <td align="right">3</td>
 <td align="left">Normal</td>
 <td align="right">0.9866071</td>
-<td align="right">0.5831135</td>
+<td align="right">0.7281106</td>
+<td align="right">99</td>
+<td align="right">58</td>
 </tr>
 <tr class="even">
-<td align="right">0.3318182</td>
+<td align="right">33</td>
 <td align="right">221</td>
 <td align="right">66</td>
 <td align="right">151</td>
 <td align="right">3</td>
 <td align="left">Normal</td>
 <td align="right">0.9866071</td>
-<td align="right">0.5940860</td>
+<td align="right">0.6958525</td>
+<td align="right">99</td>
+<td align="right">59</td>
 </tr>
 <tr class="odd">
-<td align="right">0.3409091</td>
+<td align="right">34</td>
 <td align="right">221</td>
 <td align="right">68</td>
 <td align="right">149</td>
 <td align="right">3</td>
 <td align="left">Normal</td>
 <td align="right">0.9866071</td>
-<td align="right">0.5972973</td>
+<td align="right">0.6866359</td>
+<td align="right">99</td>
+<td align="right">60</td>
 </tr>
 <tr class="even">
-<td align="right">0.3500000</td>
+<td align="right">35</td>
 <td align="right">220</td>
 <td align="right">70</td>
 <td align="right">147</td>
 <td align="right">4</td>
 <td align="left">Normal</td>
 <td align="right">0.9821429</td>
-<td align="right">0.5994550</td>
+<td align="right">0.6774194</td>
+<td align="right">98</td>
+<td align="right">60</td>
 </tr>
 <tr class="odd">
-<td align="right">0.3590909</td>
+<td align="right">36</td>
 <td align="right">220</td>
 <td align="right">72</td>
 <td align="right">145</td>
 <td align="right">4</td>
 <td align="left">Normal</td>
 <td align="right">0.9821429</td>
-<td align="right">0.6027397</td>
+<td align="right">0.6682028</td>
+<td align="right">98</td>
+<td align="right">60</td>
 </tr>
 <tr class="even">
-<td align="right">0.3681818</td>
+<td align="right">37</td>
 <td align="right">220</td>
 <td align="right">73</td>
 <td align="right">144</td>
 <td align="right">4</td>
 <td align="left">Normal</td>
 <td align="right">0.9821429</td>
-<td align="right">0.6043956</td>
+<td align="right">0.6635945</td>
+<td align="right">98</td>
+<td align="right">60</td>
 </tr>
 <tr class="odd">
-<td align="right">0.3772727</td>
+<td align="right">38</td>
 <td align="right">219</td>
 <td align="right">76</td>
 <td align="right">141</td>
 <td align="right">5</td>
 <td align="left">Normal</td>
 <td align="right">0.9776786</td>
-<td align="right">0.6083333</td>
+<td align="right">0.6497696</td>
+<td align="right">98</td>
+<td align="right">61</td>
 </tr>
 <tr class="even">
-<td align="right">0.3863636</td>
+<td align="right">39</td>
 <td align="right">217</td>
 <td align="right">77</td>
 <td align="right">140</td>
 <td align="right">7</td>
 <td align="left">Normal</td>
 <td align="right">0.9687500</td>
-<td align="right">0.6078431</td>
+<td align="right">0.6451613</td>
+<td align="right">97</td>
+<td align="right">61</td>
 </tr>
 <tr class="odd">
-<td align="right">0.3954545</td>
+<td align="right">40</td>
 <td align="right">216</td>
 <td align="right">81</td>
 <td align="right">136</td>
 <td align="right">8</td>
 <td align="left">Normal</td>
 <td align="right">0.9642857</td>
-<td align="right">0.6136364</td>
+<td align="right">0.6267281</td>
+<td align="right">96</td>
+<td align="right">61</td>
 </tr>
 <tr class="even">
-<td align="right">0.4045455</td>
+<td align="right">40</td>
 <td align="right">214</td>
 <td align="right">85</td>
 <td align="right">132</td>
 <td align="right">10</td>
 <td align="left">Normal</td>
 <td align="right">0.9553571</td>
-<td align="right">0.6184971</td>
+<td align="right">0.6082949</td>
+<td align="right">96</td>
+<td align="right">62</td>
 </tr>
 <tr class="odd">
-<td align="right">0.4136364</td>
+<td align="right">41</td>
 <td align="right">213</td>
 <td align="right">87</td>
 <td align="right">130</td>
 <td align="right">11</td>
 <td align="left">Normal</td>
 <td align="right">0.9508929</td>
-<td align="right">0.6209913</td>
+<td align="right">0.5990783</td>
+<td align="right">95</td>
+<td align="right">62</td>
 </tr>
 <tr class="even">
-<td align="right">0.4227273</td>
+<td align="right">42</td>
 <td align="right">212</td>
 <td align="right">89</td>
 <td align="right">128</td>
 <td align="right">12</td>
 <td align="left">Normal</td>
 <td align="right">0.9464286</td>
-<td align="right">0.6235294</td>
+<td align="right">0.5898618</td>
+<td align="right">95</td>
+<td align="right">62</td>
 </tr>
 <tr class="odd">
-<td align="right">0.4318182</td>
+<td align="right">43</td>
 <td align="right">208</td>
 <td align="right">95</td>
 <td align="right">122</td>
 <td align="right">16</td>
 <td align="left">Normal</td>
 <td align="right">0.9285714</td>
-<td align="right">0.6303030</td>
+<td align="right">0.5622120</td>
+<td align="right">93</td>
+<td align="right">63</td>
 </tr>
 <tr class="even">
-<td align="right">0.4409091</td>
+<td align="right">44</td>
 <td align="right">207</td>
 <td align="right">100</td>
 <td align="right">117</td>
 <td align="right">17</td>
 <td align="left">Normal</td>
 <td align="right">0.9241071</td>
-<td align="right">0.6388889</td>
+<td align="right">0.5391705</td>
+<td align="right">92</td>
+<td align="right">64</td>
 </tr>
 <tr class="odd">
-<td align="right">0.4500000</td>
+<td align="right">45</td>
 <td align="right">205</td>
 <td align="right">103</td>
 <td align="right">114</td>
 <td align="right">19</td>
 <td align="left">Normal</td>
 <td align="right">0.9151786</td>
-<td align="right">0.6426332</td>
+<td align="right">0.5253456</td>
+<td align="right">92</td>
+<td align="right">64</td>
 </tr>
 <tr class="even">
-<td align="right">0.4590909</td>
+<td align="right">46</td>
 <td align="right">204</td>
 <td align="right">106</td>
 <td align="right">111</td>
 <td align="right">20</td>
 <td align="left">Normal</td>
 <td align="right">0.9107143</td>
-<td align="right">0.6476190</td>
+<td align="right">0.5115207</td>
+<td align="right">91</td>
+<td align="right">65</td>
 </tr>
 <tr class="odd">
-<td align="right">0.4681818</td>
+<td align="right">47</td>
 <td align="right">201</td>
 <td align="right">112</td>
 <td align="right">105</td>
 <td align="right">23</td>
 <td align="left">Normal</td>
 <td align="right">0.8973214</td>
-<td align="right">0.6568627</td>
+<td align="right">0.4838710</td>
+<td align="right">90</td>
+<td align="right">66</td>
 </tr>
 <tr class="even">
-<td align="right">0.4772727</td>
+<td align="right">48</td>
 <td align="right">200</td>
 <td align="right">115</td>
 <td align="right">102</td>
 <td align="right">24</td>
 <td align="left">Normal</td>
 <td align="right">0.8928571</td>
-<td align="right">0.6622517</td>
+<td align="right">0.4700461</td>
+<td align="right">89</td>
+<td align="right">66</td>
 </tr>
 <tr class="odd">
-<td align="right">0.4863636</td>
+<td align="right">49</td>
 <td align="right">198</td>
 <td align="right">118</td>
 <td align="right">99</td>
 <td align="right">26</td>
 <td align="left">Normal</td>
 <td align="right">0.8839286</td>
-<td align="right">0.6666667</td>
+<td align="right">0.4562212</td>
+<td align="right">88</td>
+<td align="right">67</td>
 </tr>
 <tr class="even">
-<td align="right">0.4954545</td>
+<td align="right">50</td>
 <td align="right">192</td>
 <td align="right">124</td>
 <td align="right">93</td>
 <td align="right">32</td>
 <td align="left">Normal</td>
 <td align="right">0.8571429</td>
-<td align="right">0.6736842</td>
+<td align="right">0.4285714</td>
+<td align="right">86</td>
+<td align="right">67</td>
 </tr>
 <tr class="odd">
-<td align="right">0.5045455</td>
+<td align="right">50</td>
 <td align="right">188</td>
 <td align="right">130</td>
 <td align="right">87</td>
 <td align="right">36</td>
 <td align="left">Normal</td>
 <td align="right">0.8392857</td>
-<td align="right">0.6836364</td>
+<td align="right">0.4009217</td>
+<td align="right">84</td>
+<td align="right">68</td>
 </tr>
 <tr class="even">
-<td align="right">0.5136364</td>
+<td align="right">51</td>
 <td align="right">180</td>
 <td align="right">131</td>
 <td align="right">86</td>
 <td align="right">44</td>
 <td align="left">Normal</td>
 <td align="right">0.8035714</td>
-<td align="right">0.6766917</td>
+<td align="right">0.3963134</td>
+<td align="right">80</td>
+<td align="right">68</td>
 </tr>
 <tr class="odd">
-<td align="right">0.5227273</td>
+<td align="right">52</td>
 <td align="right">172</td>
 <td align="right">134</td>
 <td align="right">83</td>
 <td align="right">52</td>
 <td align="left">Normal</td>
 <td align="right">0.7678571</td>
-<td align="right">0.6745098</td>
+<td align="right">0.3824885</td>
+<td align="right">77</td>
+<td align="right">67</td>
 </tr>
 <tr class="even">
-<td align="right">0.5318182</td>
+<td align="right">53</td>
 <td align="right">168</td>
 <td align="right">141</td>
 <td align="right">76</td>
 <td align="right">56</td>
 <td align="left">Normal</td>
 <td align="right">0.7500000</td>
-<td align="right">0.6885246</td>
+<td align="right">0.3502304</td>
+<td align="right">75</td>
+<td align="right">69</td>
 </tr>
 <tr class="odd">
-<td align="right">0.5409091</td>
+<td align="right">54</td>
 <td align="right">164</td>
 <td align="right">146</td>
 <td align="right">71</td>
 <td align="right">60</td>
 <td align="left">Normal</td>
 <td align="right">0.7321429</td>
-<td align="right">0.6978723</td>
+<td align="right">0.3271889</td>
+<td align="right">73</td>
+<td align="right">70</td>
 </tr>
 <tr class="even">
-<td align="right">0.5500000</td>
+<td align="right">55</td>
 <td align="right">160</td>
 <td align="right">149</td>
 <td align="right">68</td>
 <td align="right">64</td>
 <td align="left">Normal</td>
 <td align="right">0.7142857</td>
-<td align="right">0.7017544</td>
+<td align="right">0.3133641</td>
+<td align="right">71</td>
+<td align="right">70</td>
 </tr>
 <tr class="odd">
-<td align="right">0.5590909</td>
+<td align="right">56</td>
 <td align="right">157</td>
 <td align="right">149</td>
 <td align="right">68</td>
 <td align="right">67</td>
 <td align="left">Normal</td>
 <td align="right">0.7008929</td>
-<td align="right">0.6977778</td>
+<td align="right">0.3133641</td>
+<td align="right">70</td>
+<td align="right">70</td>
 </tr>
 <tr class="even">
-<td align="right">0.5681818</td>
+<td align="right">57</td>
 <td align="right">152</td>
 <td align="right">157</td>
 <td align="right">60</td>
 <td align="right">72</td>
 <td align="left">Normal</td>
 <td align="right">0.6785714</td>
-<td align="right">0.7169811</td>
+<td align="right">0.2764977</td>
+<td align="right">68</td>
+<td align="right">72</td>
 </tr>
 <tr class="odd">
-<td align="right">0.5772727</td>
+<td align="right">58</td>
 <td align="right">150</td>
 <td align="right">161</td>
 <td align="right">56</td>
 <td align="right">74</td>
 <td align="left">Normal</td>
 <td align="right">0.6696429</td>
-<td align="right">0.7281553</td>
+<td align="right">0.2580645</td>
+<td align="right">67</td>
+<td align="right">73</td>
 </tr>
 <tr class="even">
-<td align="right">0.5863636</td>
+<td align="right">59</td>
 <td align="right">144</td>
 <td align="right">165</td>
 <td align="right">52</td>
 <td align="right">80</td>
 <td align="left">Normal</td>
 <td align="right">0.6428571</td>
-<td align="right">0.7346939</td>
+<td align="right">0.2396313</td>
+<td align="right">64</td>
+<td align="right">73</td>
 </tr>
 <tr class="odd">
-<td align="right">0.5954545</td>
+<td align="right">60</td>
 <td align="right">138</td>
 <td align="right">170</td>
 <td align="right">47</td>
 <td align="right">86</td>
 <td align="left">Normal</td>
 <td align="right">0.6160714</td>
-<td align="right">0.7459459</td>
+<td align="right">0.2165899</td>
+<td align="right">62</td>
+<td align="right">75</td>
 </tr>
 <tr class="even">
-<td align="right">0.6045455</td>
+<td align="right">60</td>
 <td align="right">135</td>
 <td align="right">175</td>
 <td align="right">42</td>
 <td align="right">89</td>
 <td align="left">Normal</td>
 <td align="right">0.6026786</td>
-<td align="right">0.7627119</td>
+<td align="right">0.1935484</td>
+<td align="right">60</td>
+<td align="right">76</td>
 </tr>
 <tr class="odd">
-<td align="right">0.6136364</td>
+<td align="right">61</td>
 <td align="right">129</td>
 <td align="right">176</td>
 <td align="right">41</td>
 <td align="right">95</td>
 <td align="left">Normal</td>
 <td align="right">0.5758929</td>
-<td align="right">0.7588235</td>
+<td align="right">0.1889401</td>
+<td align="right">58</td>
+<td align="right">76</td>
 </tr>
 <tr class="even">
-<td align="right">0.6227273</td>
+<td align="right">62</td>
 <td align="right">128</td>
 <td align="right">178</td>
 <td align="right">39</td>
 <td align="right">96</td>
 <td align="left">Normal</td>
 <td align="right">0.5714286</td>
-<td align="right">0.7664671</td>
+<td align="right">0.1797235</td>
+<td align="right">57</td>
+<td align="right">77</td>
 </tr>
 <tr class="odd">
-<td align="right">0.6318182</td>
+<td align="right">63</td>
 <td align="right">127</td>
 <td align="right">180</td>
 <td align="right">37</td>
 <td align="right">97</td>
 <td align="left">Normal</td>
 <td align="right">0.5669643</td>
-<td align="right">0.7743902</td>
+<td align="right">0.1705069</td>
+<td align="right">57</td>
+<td align="right">77</td>
 </tr>
 <tr class="even">
-<td align="right">0.6409091</td>
+<td align="right">64</td>
 <td align="right">124</td>
 <td align="right">182</td>
 <td align="right">35</td>
 <td align="right">100</td>
 <td align="left">Normal</td>
 <td align="right">0.5535714</td>
-<td align="right">0.7798742</td>
+<td align="right">0.1612903</td>
+<td align="right">55</td>
+<td align="right">78</td>
 </tr>
 <tr class="odd">
-<td align="right">0.6500000</td>
+<td align="right">65</td>
 <td align="right">120</td>
 <td align="right">185</td>
 <td align="right">32</td>
 <td align="right">104</td>
 <td align="left">Normal</td>
 <td align="right">0.5357143</td>
-<td align="right">0.7894737</td>
+<td align="right">0.1474654</td>
+<td align="right">54</td>
+<td align="right">79</td>
 </tr>
 <tr class="even">
-<td align="right">0.6590909</td>
+<td align="right">66</td>
 <td align="right">119</td>
 <td align="right">189</td>
 <td align="right">28</td>
 <td align="right">105</td>
 <td align="left">Normal</td>
 <td align="right">0.5312500</td>
-<td align="right">0.8095238</td>
+<td align="right">0.1290323</td>
+<td align="right">53</td>
+<td align="right">81</td>
 </tr>
 <tr class="odd">
-<td align="right">0.6681818</td>
+<td align="right">67</td>
 <td align="right">114</td>
 <td align="right">194</td>
 <td align="right">23</td>
 <td align="right">110</td>
 <td align="left">Normal</td>
 <td align="right">0.5089286</td>
-<td align="right">0.8321168</td>
+<td align="right">0.1059908</td>
+<td align="right">51</td>
+<td align="right">83</td>
 </tr>
 <tr class="even">
-<td align="right">0.6772727</td>
+<td align="right">68</td>
 <td align="right">108</td>
 <td align="right">196</td>
 <td align="right">21</td>
 <td align="right">116</td>
 <td align="left">Normal</td>
 <td align="right">0.4821429</td>
-<td align="right">0.8372093</td>
+<td align="right">0.0967742</td>
+<td align="right">48</td>
+<td align="right">84</td>
 </tr>
 <tr class="odd">
-<td align="right">0.6863636</td>
+<td align="right">69</td>
 <td align="right">106</td>
 <td align="right">198</td>
 <td align="right">19</td>
 <td align="right">118</td>
 <td align="left">Normal</td>
 <td align="right">0.4732143</td>
-<td align="right">0.8480000</td>
+<td align="right">0.0875576</td>
+<td align="right">47</td>
+<td align="right">85</td>
 </tr>
 <tr class="even">
-<td align="right">0.6954545</td>
+<td align="right">70</td>
 <td align="right">101</td>
 <td align="right">200</td>
 <td align="right">17</td>
 <td align="right">123</td>
 <td align="left">Normal</td>
 <td align="right">0.4508929</td>
-<td align="right">0.8559322</td>
+<td align="right">0.0783410</td>
+<td align="right">45</td>
+<td align="right">86</td>
 </tr>
 <tr class="odd">
-<td align="right">0.7045455</td>
+<td align="right">70</td>
 <td align="right">96</td>
 <td align="right">200</td>
 <td align="right">17</td>
 <td align="right">128</td>
 <td align="left">Normal</td>
 <td align="right">0.4285714</td>
-<td align="right">0.8495575</td>
+<td align="right">0.0783410</td>
+<td align="right">43</td>
+<td align="right">85</td>
 </tr>
 <tr class="even">
-<td align="right">0.7136364</td>
+<td align="right">71</td>
 <td align="right">85</td>
 <td align="right">202</td>
 <td align="right">15</td>
 <td align="right">139</td>
 <td align="left">Normal</td>
 <td align="right">0.3794643</td>
-<td align="right">0.8500000</td>
+<td align="right">0.0691244</td>
+<td align="right">38</td>
+<td align="right">85</td>
 </tr>
 <tr class="odd">
-<td align="right">0.7227273</td>
+<td align="right">72</td>
 <td align="right">82</td>
 <td align="right">204</td>
 <td align="right">13</td>
 <td align="right">142</td>
 <td align="left">Normal</td>
 <td align="right">0.3660714</td>
-<td align="right">0.8631579</td>
+<td align="right">0.0599078</td>
+<td align="right">37</td>
+<td align="right">86</td>
 </tr>
 <tr class="even">
-<td align="right">0.7318182</td>
+<td align="right">73</td>
 <td align="right">80</td>
 <td align="right">207</td>
 <td align="right">10</td>
 <td align="right">144</td>
 <td align="left">Normal</td>
 <td align="right">0.3571429</td>
-<td align="right">0.8888889</td>
+<td align="right">0.0460829</td>
+<td align="right">36</td>
+<td align="right">89</td>
 </tr>
 <tr class="odd">
-<td align="right">0.7409091</td>
+<td align="right">74</td>
 <td align="right">80</td>
 <td align="right">208</td>
 <td align="right">9</td>
 <td align="right">144</td>
 <td align="left">Normal</td>
 <td align="right">0.3571429</td>
-<td align="right">0.8988764</td>
+<td align="right">0.0414747</td>
+<td align="right">36</td>
+<td align="right">90</td>
 </tr>
 <tr class="even">
-<td align="right">0.7500000</td>
+<td align="right">75</td>
 <td align="right">78</td>
 <td align="right">211</td>
 <td align="right">6</td>
 <td align="right">146</td>
 <td align="left">Normal</td>
 <td align="right">0.3482143</td>
-<td align="right">0.9285714</td>
+<td align="right">0.0276498</td>
+<td align="right">35</td>
+<td align="right">93</td>
 </tr>
 <tr class="odd">
-<td align="right">0.7590909</td>
+<td align="right">76</td>
 <td align="right">76</td>
 <td align="right">212</td>
 <td align="right">5</td>
 <td align="right">148</td>
 <td align="left">Normal</td>
 <td align="right">0.3392857</td>
-<td align="right">0.9382716</td>
+<td align="right">0.0230415</td>
+<td align="right">34</td>
+<td align="right">94</td>
 </tr>
 <tr class="even">
-<td align="right">0.7681818</td>
+<td align="right">77</td>
 <td align="right">71</td>
 <td align="right">212</td>
 <td align="right">5</td>
 <td align="right">153</td>
 <td align="left">Normal</td>
 <td align="right">0.3169643</td>
-<td align="right">0.9342105</td>
+<td align="right">0.0230415</td>
+<td align="right">32</td>
+<td align="right">93</td>
 </tr>
 <tr class="odd">
-<td align="right">0.7772727</td>
+<td align="right">78</td>
 <td align="right">70</td>
 <td align="right">212</td>
 <td align="right">5</td>
 <td align="right">154</td>
 <td align="left">Normal</td>
 <td align="right">0.3125000</td>
-<td align="right">0.9333333</td>
+<td align="right">0.0230415</td>
+<td align="right">31</td>
+<td align="right">93</td>
 </tr>
 <tr class="even">
-<td align="right">0.7863636</td>
+<td align="right">79</td>
 <td align="right">65</td>
 <td align="right">212</td>
 <td align="right">5</td>
 <td align="right">159</td>
 <td align="left">Normal</td>
 <td align="right">0.2901786</td>
-<td align="right">0.9285714</td>
+<td align="right">0.0230415</td>
+<td align="right">29</td>
+<td align="right">93</td>
 </tr>
 <tr class="odd">
-<td align="right">0.7954545</td>
+<td align="right">80</td>
 <td align="right">59</td>
 <td align="right">212</td>
 <td align="right">5</td>
 <td align="right">165</td>
 <td align="left">Normal</td>
 <td align="right">0.2633929</td>
-<td align="right">0.9218750</td>
+<td align="right">0.0230415</td>
+<td align="right">26</td>
+<td align="right">92</td>
 </tr>
 <tr class="even">
-<td align="right">0.8045455</td>
+<td align="right">80</td>
 <td align="right">55</td>
 <td align="right">212</td>
 <td align="right">5</td>
 <td align="right">169</td>
 <td align="left">Normal</td>
 <td align="right">0.2455357</td>
-<td align="right">0.9166667</td>
+<td align="right">0.0230415</td>
+<td align="right">25</td>
+<td align="right">92</td>
 </tr>
 <tr class="odd">
-<td align="right">0.8136364</td>
+<td align="right">81</td>
 <td align="right">50</td>
 <td align="right">212</td>
 <td align="right">5</td>
 <td align="right">174</td>
 <td align="left">Normal</td>
 <td align="right">0.2232143</td>
-<td align="right">0.9090909</td>
+<td align="right">0.0230415</td>
+<td align="right">22</td>
+<td align="right">91</td>
 </tr>
 <tr class="even">
-<td align="right">0.8227273</td>
+<td align="right">82</td>
 <td align="right">44</td>
 <td align="right">214</td>
 <td align="right">3</td>
 <td align="right">180</td>
 <td align="left">Normal</td>
 <td align="right">0.1964286</td>
-<td align="right">0.9361702</td>
+<td align="right">0.0138249</td>
+<td align="right">20</td>
+<td align="right">94</td>
 </tr>
 <tr class="odd">
-<td align="right">0.8318182</td>
+<td align="right">83</td>
 <td align="right">42</td>
 <td align="right">215</td>
 <td align="right">2</td>
 <td align="right">182</td>
 <td align="left">Normal</td>
 <td align="right">0.1875000</td>
-<td align="right">0.9545455</td>
+<td align="right">0.0092166</td>
+<td align="right">19</td>
+<td align="right">95</td>
 </tr>
 <tr class="even">
-<td align="right">0.8409091</td>
+<td align="right">84</td>
 <td align="right">41</td>
 <td align="right">215</td>
 <td align="right">2</td>
 <td align="right">183</td>
 <td align="left">Normal</td>
 <td align="right">0.1830357</td>
-<td align="right">0.9534884</td>
+<td align="right">0.0092166</td>
+<td align="right">18</td>
+<td align="right">95</td>
 </tr>
 <tr class="odd">
-<td align="right">0.8500000</td>
+<td align="right">85</td>
 <td align="right">39</td>
 <td align="right">215</td>
 <td align="right">2</td>
 <td align="right">185</td>
 <td align="left">Normal</td>
 <td align="right">0.1741071</td>
-<td align="right">0.9512195</td>
+<td align="right">0.0092166</td>
+<td align="right">17</td>
+<td align="right">95</td>
 </tr>
 <tr class="even">
-<td align="right">0.8590909</td>
+<td align="right">86</td>
 <td align="right">32</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="right">192</td>
 <td align="left">Normal</td>
 <td align="right">0.1428571</td>
-<td align="right">1.0000000</td>
+<td align="right">0.0000000</td>
+<td align="right">14</td>
+<td align="right">100</td>
 </tr>
 <tr class="odd">
-<td align="right">0.8681818</td>
+<td align="right">87</td>
 <td align="right">28</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="right">196</td>
 <td align="left">Normal</td>
 <td align="right">0.1250000</td>
-<td align="right">1.0000000</td>
+<td align="right">0.0000000</td>
+<td align="right">12</td>
+<td align="right">100</td>
 </tr>
 <tr class="even">
-<td align="right">0.8772727</td>
+<td align="right">88</td>
 <td align="right">27</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="right">197</td>
 <td align="left">Normal</td>
 <td align="right">0.1205357</td>
-<td align="right">1.0000000</td>
+<td align="right">0.0000000</td>
+<td align="right">12</td>
+<td align="right">100</td>
 </tr>
 <tr class="odd">
-<td align="right">0.8863636</td>
+<td align="right">89</td>
 <td align="right">25</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="right">199</td>
 <td align="left">Normal</td>
 <td align="right">0.1116071</td>
-<td align="right">1.0000000</td>
+<td align="right">0.0000000</td>
+<td align="right">11</td>
+<td align="right">100</td>
 </tr>
 <tr class="even">
-<td align="right">0.8954545</td>
+<td align="right">90</td>
 <td align="right">23</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="right">201</td>
 <td align="left">Normal</td>
 <td align="right">0.1026786</td>
-<td align="right">1.0000000</td>
+<td align="right">0.0000000</td>
+<td align="right">10</td>
+<td align="right">100</td>
 </tr>
 <tr class="odd">
-<td align="right">0.9045455</td>
+<td align="right">90</td>
 <td align="right">22</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="right">202</td>
 <td align="left">Normal</td>
 <td align="right">0.0982143</td>
-<td align="right">1.0000000</td>
+<td align="right">0.0000000</td>
+<td align="right">10</td>
+<td align="right">100</td>
 </tr>
 <tr class="even">
-<td align="right">0.9136364</td>
+<td align="right">91</td>
 <td align="right">20</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="right">204</td>
 <td align="left">Normal</td>
 <td align="right">0.0892857</td>
-<td align="right">1.0000000</td>
+<td align="right">0.0000000</td>
+<td align="right">9</td>
+<td align="right">100</td>
 </tr>
 <tr class="odd">
-<td align="right">0.9227273</td>
+<td align="right">92</td>
 <td align="right">17</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="right">207</td>
 <td align="left">Normal</td>
 <td align="right">0.0758929</td>
-<td align="right">1.0000000</td>
+<td align="right">0.0000000</td>
+<td align="right">8</td>
+<td align="right">100</td>
 </tr>
 <tr class="even">
-<td align="right">0.9318182</td>
+<td align="right">93</td>
 <td align="right">16</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="right">208</td>
 <td align="left">Normal</td>
 <td align="right">0.0714286</td>
-<td align="right">1.0000000</td>
+<td align="right">0.0000000</td>
+<td align="right">7</td>
+<td align="right">100</td>
 </tr>
 <tr class="odd">
-<td align="right">0.9409091</td>
+<td align="right">94</td>
 <td align="right">10</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="right">214</td>
 <td align="left">Normal</td>
 <td align="right">0.0446429</td>
-<td align="right">1.0000000</td>
+<td align="right">0.0000000</td>
+<td align="right">4</td>
+<td align="right">100</td>
 </tr>
 <tr class="even">
-<td align="right">0.9500000</td>
+<td align="right">95</td>
 <td align="right">7</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="right">217</td>
 <td align="left">Normal</td>
 <td align="right">0.0312500</td>
-<td align="right">1.0000000</td>
+<td align="right">0.0000000</td>
+<td align="right">3</td>
+<td align="right">100</td>
 </tr>
 <tr class="odd">
-<td align="right">0.0500000</td>
+<td align="right">5</td>
 <td align="right">224</td>
 <td align="right">0</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="left">Gaussian</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5079365</td>
+<td align="right">1.0000000</td>
+<td align="right">100</td>
+<td align="right">51</td>
 </tr>
 <tr class="even">
-<td align="right">0.0590909</td>
+<td align="right">6</td>
 <td align="right">224</td>
 <td align="right">0</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="left">Gaussian</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5079365</td>
+<td align="right">1.0000000</td>
+<td align="right">100</td>
+<td align="right">51</td>
 </tr>
 <tr class="odd">
-<td align="right">0.0681818</td>
+<td align="right">7</td>
 <td align="right">224</td>
 <td align="right">0</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="left">Gaussian</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5079365</td>
+<td align="right">1.0000000</td>
+<td align="right">100</td>
+<td align="right">51</td>
 </tr>
 <tr class="even">
-<td align="right">0.0772727</td>
+<td align="right">8</td>
 <td align="right">224</td>
 <td align="right">0</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="left">Gaussian</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5079365</td>
+<td align="right">1.0000000</td>
+<td align="right">100</td>
+<td align="right">51</td>
 </tr>
 <tr class="odd">
-<td align="right">0.0863636</td>
+<td align="right">9</td>
 <td align="right">224</td>
 <td align="right">0</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="left">Gaussian</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5079365</td>
+<td align="right">1.0000000</td>
+<td align="right">100</td>
+<td align="right">51</td>
 </tr>
 <tr class="even">
-<td align="right">0.0954545</td>
+<td align="right">10</td>
 <td align="right">224</td>
 <td align="right">0</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="left">Gaussian</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5079365</td>
+<td align="right">1.0000000</td>
+<td align="right">100</td>
+<td align="right">51</td>
 </tr>
 <tr class="odd">
-<td align="right">0.1045455</td>
+<td align="right">10</td>
 <td align="right">224</td>
 <td align="right">0</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="left">Gaussian</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5079365</td>
+<td align="right">1.0000000</td>
+<td align="right">100</td>
+<td align="right">51</td>
 </tr>
 <tr class="even">
-<td align="right">0.1136364</td>
+<td align="right">11</td>
 <td align="right">224</td>
 <td align="right">0</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="left">Gaussian</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5079365</td>
+<td align="right">1.0000000</td>
+<td align="right">100</td>
+<td align="right">51</td>
 </tr>
 <tr class="odd">
-<td align="right">0.1227273</td>
+<td align="right">12</td>
 <td align="right">224</td>
 <td align="right">0</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="left">Gaussian</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5079365</td>
+<td align="right">1.0000000</td>
+<td align="right">100</td>
+<td align="right">51</td>
 </tr>
 <tr class="even">
-<td align="right">0.1318182</td>
+<td align="right">13</td>
 <td align="right">224</td>
 <td align="right">0</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="left">Gaussian</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5079365</td>
+<td align="right">1.0000000</td>
+<td align="right">100</td>
+<td align="right">51</td>
 </tr>
 <tr class="odd">
-<td align="right">0.1409091</td>
+<td align="right">14</td>
 <td align="right">224</td>
 <td align="right">0</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="left">Gaussian</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5079365</td>
+<td align="right">1.0000000</td>
+<td align="right">100</td>
+<td align="right">51</td>
 </tr>
 <tr class="even">
-<td align="right">0.1500000</td>
+<td align="right">15</td>
 <td align="right">224</td>
 <td align="right">0</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="left">Gaussian</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5079365</td>
+<td align="right">1.0000000</td>
+<td align="right">100</td>
+<td align="right">51</td>
 </tr>
 <tr class="odd">
-<td align="right">0.1590909</td>
+<td align="right">16</td>
 <td align="right">224</td>
 <td align="right">1</td>
 <td align="right">216</td>
 <td align="right">0</td>
 <td align="left">Gaussian</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5090909</td>
+<td align="right">0.9953917</td>
+<td align="right">100</td>
+<td align="right">51</td>
 </tr>
 <tr class="even">
-<td align="right">0.1681818</td>
+<td align="right">17</td>
 <td align="right">224</td>
 <td align="right">1</td>
 <td align="right">216</td>
 <td align="right">0</td>
 <td align="left">Gaussian</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5090909</td>
+<td align="right">0.9953917</td>
+<td align="right">100</td>
+<td align="right">51</td>
 </tr>
 <tr class="odd">
-<td align="right">0.1772727</td>
+<td align="right">18</td>
 <td align="right">224</td>
 <td align="right">1</td>
 <td align="right">216</td>
 <td align="right">0</td>
 <td align="left">Gaussian</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5090909</td>
+<td align="right">0.9953917</td>
+<td align="right">100</td>
+<td align="right">51</td>
 </tr>
 <tr class="even">
-<td align="right">0.1863636</td>
+<td align="right">19</td>
 <td align="right">224</td>
 <td align="right">1</td>
 <td align="right">216</td>
 <td align="right">0</td>
 <td align="left">Gaussian</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5090909</td>
+<td align="right">0.9953917</td>
+<td align="right">100</td>
+<td align="right">51</td>
 </tr>
 <tr class="odd">
-<td align="right">0.1954545</td>
+<td align="right">20</td>
 <td align="right">224</td>
 <td align="right">2</td>
 <td align="right">215</td>
 <td align="right">0</td>
 <td align="left">Gaussian</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5102506</td>
+<td align="right">0.9907834</td>
+<td align="right">100</td>
+<td align="right">51</td>
 </tr>
 <tr class="even">
-<td align="right">0.2045455</td>
+<td align="right">20</td>
 <td align="right">224</td>
 <td align="right">3</td>
 <td align="right">214</td>
 <td align="right">0</td>
 <td align="left">Gaussian</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5114155</td>
+<td align="right">0.9861751</td>
+<td align="right">100</td>
+<td align="right">51</td>
 </tr>
 <tr class="odd">
-<td align="right">0.2136364</td>
+<td align="right">21</td>
 <td align="right">224</td>
 <td align="right">3</td>
 <td align="right">214</td>
 <td align="right">0</td>
 <td align="left">Gaussian</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5114155</td>
+<td align="right">0.9861751</td>
+<td align="right">100</td>
+<td align="right">51</td>
 </tr>
 <tr class="even">
-<td align="right">0.2227273</td>
+<td align="right">22</td>
 <td align="right">224</td>
 <td align="right">5</td>
 <td align="right">212</td>
 <td align="right">0</td>
 <td align="left">Gaussian</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5137615</td>
+<td align="right">0.9769585</td>
+<td align="right">100</td>
+<td align="right">51</td>
 </tr>
 <tr class="odd">
-<td align="right">0.2318182</td>
+<td align="right">23</td>
 <td align="right">224</td>
 <td align="right">8</td>
 <td align="right">209</td>
 <td align="right">0</td>
 <td align="left">Gaussian</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5173210</td>
+<td align="right">0.9631336</td>
+<td align="right">100</td>
+<td align="right">52</td>
 </tr>
 <tr class="even">
-<td align="right">0.2409091</td>
+<td align="right">24</td>
 <td align="right">224</td>
 <td align="right">9</td>
 <td align="right">208</td>
 <td align="right">0</td>
 <td align="left">Gaussian</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5185185</td>
+<td align="right">0.9585253</td>
+<td align="right">100</td>
+<td align="right">52</td>
 </tr>
 <tr class="odd">
-<td align="right">0.2500000</td>
+<td align="right">25</td>
 <td align="right">224</td>
 <td align="right">12</td>
 <td align="right">205</td>
 <td align="right">0</td>
 <td align="left">Gaussian</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5221445</td>
+<td align="right">0.9447005</td>
+<td align="right">100</td>
+<td align="right">52</td>
 </tr>
 <tr class="even">
-<td align="right">0.2590909</td>
+<td align="right">26</td>
 <td align="right">224</td>
 <td align="right">14</td>
 <td align="right">203</td>
 <td align="right">0</td>
 <td align="left">Gaussian</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5245902</td>
+<td align="right">0.9354839</td>
+<td align="right">100</td>
+<td align="right">52</td>
 </tr>
 <tr class="odd">
-<td align="right">0.2681818</td>
+<td align="right">27</td>
 <td align="right">224</td>
 <td align="right">18</td>
 <td align="right">199</td>
 <td align="right">0</td>
 <td align="left">Gaussian</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5295508</td>
+<td align="right">0.9170507</td>
+<td align="right">100</td>
+<td align="right">53</td>
 </tr>
 <tr class="even">
-<td align="right">0.2772727</td>
+<td align="right">28</td>
 <td align="right">224</td>
 <td align="right">20</td>
 <td align="right">197</td>
 <td align="right">0</td>
 <td align="left">Gaussian</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5320665</td>
+<td align="right">0.9078341</td>
+<td align="right">100</td>
+<td align="right">53</td>
 </tr>
 <tr class="odd">
-<td align="right">0.2863636</td>
+<td align="right">29</td>
 <td align="right">224</td>
 <td align="right">22</td>
 <td align="right">195</td>
 <td align="right">0</td>
 <td align="left">Gaussian</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5346062</td>
+<td align="right">0.8986175</td>
+<td align="right">100</td>
+<td align="right">53</td>
 </tr>
 <tr class="even">
-<td align="right">0.2954545</td>
+<td align="right">30</td>
 <td align="right">224</td>
 <td align="right">26</td>
 <td align="right">191</td>
 <td align="right">0</td>
 <td align="left">Gaussian</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5397590</td>
+<td align="right">0.8801843</td>
+<td align="right">100</td>
+<td align="right">54</td>
 </tr>
 <tr class="odd">
-<td align="right">0.3045455</td>
+<td align="right">30</td>
 <td align="right">224</td>
 <td align="right">30</td>
 <td align="right">187</td>
 <td align="right">0</td>
 <td align="left">Gaussian</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5450122</td>
+<td align="right">0.8617512</td>
+<td align="right">100</td>
+<td align="right">55</td>
 </tr>
 <tr class="even">
-<td align="right">0.3136364</td>
+<td align="right">31</td>
 <td align="right">224</td>
 <td align="right">36</td>
 <td align="right">181</td>
 <td align="right">0</td>
 <td align="left">Gaussian</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5530864</td>
+<td align="right">0.8341014</td>
+<td align="right">100</td>
+<td align="right">55</td>
 </tr>
 <tr class="odd">
-<td align="right">0.3227273</td>
+<td align="right">32</td>
 <td align="right">224</td>
 <td align="right">39</td>
 <td align="right">178</td>
 <td align="right">0</td>
 <td align="left">Gaussian</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5572139</td>
+<td align="right">0.8202765</td>
+<td align="right">100</td>
+<td align="right">56</td>
 </tr>
 <tr class="even">
-<td align="right">0.3318182</td>
+<td align="right">33</td>
 <td align="right">224</td>
 <td align="right">43</td>
 <td align="right">174</td>
 <td align="right">0</td>
 <td align="left">Gaussian</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5628141</td>
+<td align="right">0.8018433</td>
+<td align="right">100</td>
+<td align="right">56</td>
 </tr>
 <tr class="odd">
-<td align="right">0.3409091</td>
+<td align="right">34</td>
 <td align="right">223</td>
 <td align="right">47</td>
 <td align="right">170</td>
 <td align="right">1</td>
 <td align="left">Gaussian</td>
 <td align="right">0.9955357</td>
-<td align="right">0.5674300</td>
+<td align="right">0.7834101</td>
+<td align="right">100</td>
+<td align="right">57</td>
 </tr>
 <tr class="even">
-<td align="right">0.3500000</td>
+<td align="right">35</td>
 <td align="right">223</td>
 <td align="right">54</td>
 <td align="right">163</td>
 <td align="right">1</td>
 <td align="left">Gaussian</td>
 <td align="right">0.9955357</td>
-<td align="right">0.5777202</td>
+<td align="right">0.7511521</td>
+<td align="right">100</td>
+<td align="right">58</td>
 </tr>
 <tr class="odd">
-<td align="right">0.3590909</td>
+<td align="right">36</td>
 <td align="right">223</td>
 <td align="right">58</td>
 <td align="right">159</td>
 <td align="right">1</td>
 <td align="left">Gaussian</td>
 <td align="right">0.9955357</td>
-<td align="right">0.5837696</td>
+<td align="right">0.7327189</td>
+<td align="right">100</td>
+<td align="right">58</td>
 </tr>
 <tr class="even">
-<td align="right">0.3681818</td>
+<td align="right">37</td>
 <td align="right">223</td>
 <td align="right">61</td>
 <td align="right">156</td>
 <td align="right">1</td>
 <td align="left">Gaussian</td>
 <td align="right">0.9955357</td>
-<td align="right">0.5883905</td>
+<td align="right">0.7188940</td>
+<td align="right">100</td>
+<td align="right">59</td>
 </tr>
 <tr class="odd">
-<td align="right">0.3772727</td>
+<td align="right">38</td>
 <td align="right">222</td>
 <td align="right">66</td>
 <td align="right">151</td>
 <td align="right">2</td>
 <td align="left">Gaussian</td>
 <td align="right">0.9910714</td>
-<td align="right">0.5951743</td>
+<td align="right">0.6958525</td>
+<td align="right">99</td>
+<td align="right">60</td>
 </tr>
 <tr class="even">
-<td align="right">0.3863636</td>
+<td align="right">39</td>
 <td align="right">221</td>
 <td align="right">68</td>
 <td align="right">149</td>
 <td align="right">3</td>
 <td align="left">Gaussian</td>
 <td align="right">0.9866071</td>
-<td align="right">0.5972973</td>
+<td align="right">0.6866359</td>
+<td align="right">99</td>
+<td align="right">60</td>
 </tr>
 <tr class="odd">
-<td align="right">0.3954545</td>
+<td align="right">40</td>
 <td align="right">221</td>
 <td align="right">74</td>
 <td align="right">143</td>
 <td align="right">3</td>
 <td align="left">Gaussian</td>
 <td align="right">0.9866071</td>
-<td align="right">0.6071429</td>
+<td align="right">0.6589862</td>
+<td align="right">99</td>
+<td align="right">61</td>
 </tr>
 <tr class="even">
-<td align="right">0.4045455</td>
+<td align="right">40</td>
 <td align="right">220</td>
 <td align="right">77</td>
 <td align="right">140</td>
 <td align="right">4</td>
 <td align="left">Gaussian</td>
 <td align="right">0.9821429</td>
-<td align="right">0.6111111</td>
+<td align="right">0.6451613</td>
+<td align="right">98</td>
+<td align="right">61</td>
 </tr>
 <tr class="odd">
-<td align="right">0.4136364</td>
+<td align="right">41</td>
 <td align="right">219</td>
 <td align="right">82</td>
 <td align="right">135</td>
 <td align="right">5</td>
 <td align="left">Gaussian</td>
 <td align="right">0.9776786</td>
-<td align="right">0.6186441</td>
+<td align="right">0.6221198</td>
+<td align="right">98</td>
+<td align="right">62</td>
 </tr>
 <tr class="even">
-<td align="right">0.4227273</td>
+<td align="right">42</td>
 <td align="right">219</td>
 <td align="right">88</td>
 <td align="right">129</td>
 <td align="right">5</td>
 <td align="left">Gaussian</td>
 <td align="right">0.9776786</td>
-<td align="right">0.6293103</td>
+<td align="right">0.5944700</td>
+<td align="right">98</td>
+<td align="right">63</td>
 </tr>
 <tr class="odd">
-<td align="right">0.4318182</td>
+<td align="right">43</td>
 <td align="right">218</td>
 <td align="right">94</td>
 <td align="right">123</td>
 <td align="right">6</td>
 <td align="left">Gaussian</td>
 <td align="right">0.9732143</td>
-<td align="right">0.6392962</td>
+<td align="right">0.5668203</td>
+<td align="right">97</td>
+<td align="right">64</td>
 </tr>
 <tr class="even">
-<td align="right">0.4409091</td>
+<td align="right">44</td>
 <td align="right">217</td>
 <td align="right">99</td>
 <td align="right">118</td>
 <td align="right">7</td>
 <td align="left">Gaussian</td>
 <td align="right">0.9687500</td>
-<td align="right">0.6477612</td>
+<td align="right">0.5437788</td>
+<td align="right">97</td>
+<td align="right">65</td>
 </tr>
 <tr class="odd">
-<td align="right">0.4500000</td>
+<td align="right">45</td>
 <td align="right">217</td>
 <td align="right">100</td>
 <td align="right">117</td>
 <td align="right">7</td>
 <td align="left">Gaussian</td>
 <td align="right">0.9687500</td>
-<td align="right">0.6497006</td>
+<td align="right">0.5391705</td>
+<td align="right">97</td>
+<td align="right">65</td>
 </tr>
 <tr class="even">
-<td align="right">0.4590909</td>
+<td align="right">46</td>
 <td align="right">216</td>
 <td align="right">106</td>
 <td align="right">111</td>
 <td align="right">8</td>
 <td align="left">Gaussian</td>
 <td align="right">0.9642857</td>
-<td align="right">0.6605505</td>
+<td align="right">0.5115207</td>
+<td align="right">96</td>
+<td align="right">66</td>
 </tr>
 <tr class="odd">
-<td align="right">0.4681818</td>
+<td align="right">47</td>
 <td align="right">214</td>
 <td align="right">110</td>
 <td align="right">107</td>
 <td align="right">10</td>
 <td align="left">Gaussian</td>
 <td align="right">0.9553571</td>
-<td align="right">0.6666667</td>
+<td align="right">0.4930876</td>
+<td align="right">96</td>
+<td align="right">67</td>
 </tr>
 <tr class="even">
-<td align="right">0.4772727</td>
+<td align="right">48</td>
 <td align="right">213</td>
 <td align="right">115</td>
 <td align="right">102</td>
 <td align="right">11</td>
 <td align="left">Gaussian</td>
 <td align="right">0.9508929</td>
-<td align="right">0.6761905</td>
+<td align="right">0.4700461</td>
+<td align="right">95</td>
+<td align="right">68</td>
 </tr>
 <tr class="odd">
-<td align="right">0.4863636</td>
+<td align="right">49</td>
 <td align="right">209</td>
 <td align="right">125</td>
 <td align="right">92</td>
 <td align="right">15</td>
 <td align="left">Gaussian</td>
 <td align="right">0.9330357</td>
-<td align="right">0.6943522</td>
+<td align="right">0.4239631</td>
+<td align="right">93</td>
+<td align="right">69</td>
 </tr>
 <tr class="even">
-<td align="right">0.4954545</td>
+<td align="right">50</td>
 <td align="right">208</td>
 <td align="right">133</td>
 <td align="right">84</td>
 <td align="right">16</td>
 <td align="left">Gaussian</td>
 <td align="right">0.9285714</td>
-<td align="right">0.7123288</td>
+<td align="right">0.3870968</td>
+<td align="right">93</td>
+<td align="right">71</td>
 </tr>
 <tr class="odd">
-<td align="right">0.5045455</td>
+<td align="right">50</td>
 <td align="right">207</td>
 <td align="right">139</td>
 <td align="right">78</td>
 <td align="right">17</td>
 <td align="left">Gaussian</td>
 <td align="right">0.9241071</td>
-<td align="right">0.7263158</td>
+<td align="right">0.3594470</td>
+<td align="right">92</td>
+<td align="right">73</td>
 </tr>
 <tr class="even">
-<td align="right">0.5136364</td>
+<td align="right">51</td>
 <td align="right">205</td>
 <td align="right">142</td>
 <td align="right">75</td>
 <td align="right">19</td>
 <td align="left">Gaussian</td>
 <td align="right">0.9151786</td>
-<td align="right">0.7321429</td>
+<td align="right">0.3456221</td>
+<td align="right">92</td>
+<td align="right">73</td>
 </tr>
 <tr class="odd">
-<td align="right">0.5227273</td>
+<td align="right">52</td>
 <td align="right">202</td>
 <td align="right">149</td>
 <td align="right">68</td>
 <td align="right">22</td>
 <td align="left">Gaussian</td>
 <td align="right">0.9017857</td>
-<td align="right">0.7481481</td>
+<td align="right">0.3133641</td>
+<td align="right">90</td>
+<td align="right">75</td>
 </tr>
 <tr class="even">
-<td align="right">0.5318182</td>
+<td align="right">53</td>
 <td align="right">194</td>
 <td align="right">154</td>
 <td align="right">63</td>
 <td align="right">30</td>
 <td align="left">Gaussian</td>
 <td align="right">0.8660714</td>
-<td align="right">0.7548638</td>
+<td align="right">0.2903226</td>
+<td align="right">87</td>
+<td align="right">75</td>
 </tr>
 <tr class="odd">
-<td align="right">0.5409091</td>
+<td align="right">54</td>
 <td align="right">189</td>
 <td align="right">162</td>
 <td align="right">55</td>
 <td align="right">35</td>
 <td align="left">Gaussian</td>
 <td align="right">0.8437500</td>
-<td align="right">0.7745902</td>
+<td align="right">0.2534562</td>
+<td align="right">84</td>
+<td align="right">77</td>
 </tr>
 <tr class="even">
-<td align="right">0.5500000</td>
+<td align="right">55</td>
 <td align="right">181</td>
 <td align="right">167</td>
 <td align="right">50</td>
 <td align="right">43</td>
 <td align="left">Gaussian</td>
 <td align="right">0.8080357</td>
-<td align="right">0.7835498</td>
+<td align="right">0.2304147</td>
+<td align="right">81</td>
+<td align="right">78</td>
 </tr>
 <tr class="odd">
-<td align="right">0.5590909</td>
+<td align="right">56</td>
 <td align="right">178</td>
 <td align="right">171</td>
 <td align="right">46</td>
 <td align="right">46</td>
 <td align="left">Gaussian</td>
 <td align="right">0.7946429</td>
-<td align="right">0.7946429</td>
+<td align="right">0.2119816</td>
+<td align="right">79</td>
+<td align="right">79</td>
 </tr>
 <tr class="even">
-<td align="right">0.5681818</td>
+<td align="right">57</td>
 <td align="right">170</td>
 <td align="right">174</td>
 <td align="right">43</td>
 <td align="right">54</td>
 <td align="left">Gaussian</td>
 <td align="right">0.7589286</td>
-<td align="right">0.7981221</td>
+<td align="right">0.1981567</td>
+<td align="right">76</td>
+<td align="right">80</td>
 </tr>
 <tr class="odd">
-<td align="right">0.5772727</td>
+<td align="right">58</td>
 <td align="right">164</td>
 <td align="right">177</td>
 <td align="right">40</td>
 <td align="right">60</td>
 <td align="left">Gaussian</td>
 <td align="right">0.7321429</td>
-<td align="right">0.8039216</td>
+<td align="right">0.1843318</td>
+<td align="right">73</td>
+<td align="right">80</td>
 </tr>
 <tr class="even">
-<td align="right">0.5863636</td>
+<td align="right">59</td>
 <td align="right">159</td>
 <td align="right">180</td>
 <td align="right">37</td>
 <td align="right">65</td>
 <td align="left">Gaussian</td>
 <td align="right">0.7098214</td>
-<td align="right">0.8112245</td>
+<td align="right">0.1705069</td>
+<td align="right">71</td>
+<td align="right">81</td>
 </tr>
 <tr class="odd">
-<td align="right">0.5954545</td>
+<td align="right">60</td>
 <td align="right">151</td>
 <td align="right">185</td>
 <td align="right">32</td>
 <td align="right">73</td>
 <td align="left">Gaussian</td>
 <td align="right">0.6741071</td>
-<td align="right">0.8251366</td>
+<td align="right">0.1474654</td>
+<td align="right">67</td>
+<td align="right">83</td>
 </tr>
 <tr class="even">
-<td align="right">0.6045455</td>
+<td align="right">60</td>
 <td align="right">148</td>
 <td align="right">189</td>
 <td align="right">28</td>
 <td align="right">76</td>
 <td align="left">Gaussian</td>
 <td align="right">0.6607143</td>
-<td align="right">0.8409091</td>
+<td align="right">0.1290323</td>
+<td align="right">66</td>
+<td align="right">84</td>
 </tr>
 <tr class="odd">
-<td align="right">0.6136364</td>
+<td align="right">61</td>
 <td align="right">144</td>
 <td align="right">191</td>
 <td align="right">26</td>
 <td align="right">80</td>
 <td align="left">Gaussian</td>
 <td align="right">0.6428571</td>
-<td align="right">0.8470588</td>
+<td align="right">0.1198157</td>
+<td align="right">64</td>
+<td align="right">85</td>
 </tr>
 <tr class="even">
-<td align="right">0.6227273</td>
+<td align="right">62</td>
 <td align="right">138</td>
 <td align="right">196</td>
 <td align="right">21</td>
 <td align="right">86</td>
 <td align="left">Gaussian</td>
 <td align="right">0.6160714</td>
-<td align="right">0.8679245</td>
+<td align="right">0.0967742</td>
+<td align="right">62</td>
+<td align="right">87</td>
 </tr>
 <tr class="odd">
-<td align="right">0.6318182</td>
+<td align="right">63</td>
 <td align="right">130</td>
 <td align="right">198</td>
 <td align="right">19</td>
 <td align="right">94</td>
 <td align="left">Gaussian</td>
 <td align="right">0.5803571</td>
-<td align="right">0.8724832</td>
+<td align="right">0.0875576</td>
+<td align="right">58</td>
+<td align="right">87</td>
 </tr>
 <tr class="even">
-<td align="right">0.6409091</td>
+<td align="right">64</td>
 <td align="right">127</td>
 <td align="right">200</td>
 <td align="right">17</td>
 <td align="right">97</td>
 <td align="left">Gaussian</td>
 <td align="right">0.5669643</td>
-<td align="right">0.8819444</td>
+<td align="right">0.0783410</td>
+<td align="right">57</td>
+<td align="right">88</td>
 </tr>
 <tr class="odd">
-<td align="right">0.6500000</td>
+<td align="right">65</td>
 <td align="right">121</td>
 <td align="right">202</td>
 <td align="right">15</td>
 <td align="right">103</td>
 <td align="left">Gaussian</td>
 <td align="right">0.5401786</td>
-<td align="right">0.8897059</td>
+<td align="right">0.0691244</td>
+<td align="right">54</td>
+<td align="right">89</td>
 </tr>
 <tr class="even">
-<td align="right">0.6590909</td>
+<td align="right">66</td>
 <td align="right">112</td>
 <td align="right">203</td>
 <td align="right">14</td>
 <td align="right">112</td>
 <td align="left">Gaussian</td>
 <td align="right">0.5000000</td>
-<td align="right">0.8888889</td>
+<td align="right">0.0645161</td>
+<td align="right">50</td>
+<td align="right">89</td>
 </tr>
 <tr class="odd">
-<td align="right">0.6681818</td>
+<td align="right">67</td>
 <td align="right">109</td>
 <td align="right">204</td>
 <td align="right">13</td>
 <td align="right">115</td>
 <td align="left">Gaussian</td>
 <td align="right">0.4866071</td>
-<td align="right">0.8934426</td>
+<td align="right">0.0599078</td>
+<td align="right">49</td>
+<td align="right">89</td>
 </tr>
 <tr class="even">
-<td align="right">0.6772727</td>
+<td align="right">68</td>
 <td align="right">102</td>
 <td align="right">206</td>
 <td align="right">11</td>
 <td align="right">122</td>
 <td align="left">Gaussian</td>
 <td align="right">0.4553571</td>
-<td align="right">0.9026549</td>
+<td align="right">0.0506912</td>
+<td align="right">46</td>
+<td align="right">90</td>
 </tr>
 <tr class="odd">
-<td align="right">0.6863636</td>
+<td align="right">69</td>
 <td align="right">100</td>
 <td align="right">210</td>
 <td align="right">7</td>
 <td align="right">124</td>
 <td align="left">Gaussian</td>
 <td align="right">0.4464286</td>
-<td align="right">0.9345794</td>
+<td align="right">0.0322581</td>
+<td align="right">45</td>
+<td align="right">93</td>
 </tr>
 <tr class="even">
-<td align="right">0.6954545</td>
+<td align="right">70</td>
 <td align="right">93</td>
 <td align="right">211</td>
 <td align="right">6</td>
 <td align="right">131</td>
 <td align="left">Gaussian</td>
 <td align="right">0.4151786</td>
-<td align="right">0.9393939</td>
+<td align="right">0.0276498</td>
+<td align="right">42</td>
+<td align="right">94</td>
 </tr>
 <tr class="odd">
-<td align="right">0.7045455</td>
+<td align="right">70</td>
 <td align="right">82</td>
 <td align="right">212</td>
 <td align="right">5</td>
 <td align="right">142</td>
 <td align="left">Gaussian</td>
 <td align="right">0.3660714</td>
-<td align="right">0.9425287</td>
+<td align="right">0.0230415</td>
+<td align="right">37</td>
+<td align="right">94</td>
 </tr>
 <tr class="even">
-<td align="right">0.7136364</td>
+<td align="right">71</td>
 <td align="right">77</td>
 <td align="right">213</td>
 <td align="right">4</td>
 <td align="right">147</td>
 <td align="left">Gaussian</td>
 <td align="right">0.3437500</td>
-<td align="right">0.9506173</td>
+<td align="right">0.0184332</td>
+<td align="right">34</td>
+<td align="right">95</td>
 </tr>
 <tr class="odd">
-<td align="right">0.7227273</td>
+<td align="right">72</td>
 <td align="right">72</td>
 <td align="right">213</td>
 <td align="right">4</td>
 <td align="right">152</td>
 <td align="left">Gaussian</td>
 <td align="right">0.3214286</td>
-<td align="right">0.9473684</td>
+<td align="right">0.0184332</td>
+<td align="right">32</td>
+<td align="right">95</td>
 </tr>
 <tr class="even">
-<td align="right">0.7318182</td>
+<td align="right">73</td>
 <td align="right">70</td>
 <td align="right">213</td>
 <td align="right">4</td>
 <td align="right">154</td>
 <td align="left">Gaussian</td>
 <td align="right">0.3125000</td>
-<td align="right">0.9459459</td>
+<td align="right">0.0184332</td>
+<td align="right">31</td>
+<td align="right">95</td>
 </tr>
 <tr class="odd">
-<td align="right">0.7409091</td>
+<td align="right">74</td>
 <td align="right">64</td>
 <td align="right">213</td>
 <td align="right">4</td>
 <td align="right">160</td>
 <td align="left">Gaussian</td>
 <td align="right">0.2857143</td>
-<td align="right">0.9411765</td>
+<td align="right">0.0184332</td>
+<td align="right">29</td>
+<td align="right">94</td>
 </tr>
 <tr class="even">
-<td align="right">0.7500000</td>
+<td align="right">75</td>
 <td align="right">58</td>
 <td align="right">213</td>
 <td align="right">4</td>
 <td align="right">166</td>
 <td align="left">Gaussian</td>
 <td align="right">0.2589286</td>
-<td align="right">0.9354839</td>
+<td align="right">0.0184332</td>
+<td align="right">26</td>
+<td align="right">94</td>
 </tr>
 <tr class="odd">
-<td align="right">0.7590909</td>
+<td align="right">76</td>
 <td align="right">55</td>
 <td align="right">215</td>
 <td align="right">2</td>
 <td align="right">169</td>
 <td align="left">Gaussian</td>
 <td align="right">0.2455357</td>
-<td align="right">0.9649123</td>
+<td align="right">0.0092166</td>
+<td align="right">25</td>
+<td align="right">96</td>
 </tr>
 <tr class="even">
-<td align="right">0.7681818</td>
+<td align="right">77</td>
 <td align="right">47</td>
 <td align="right">215</td>
 <td align="right">2</td>
 <td align="right">177</td>
 <td align="left">Gaussian</td>
 <td align="right">0.2098214</td>
-<td align="right">0.9591837</td>
+<td align="right">0.0092166</td>
+<td align="right">21</td>
+<td align="right">96</td>
 </tr>
 <tr class="odd">
-<td align="right">0.7772727</td>
+<td align="right">78</td>
 <td align="right">44</td>
 <td align="right">215</td>
 <td align="right">2</td>
 <td align="right">180</td>
 <td align="left">Gaussian</td>
 <td align="right">0.1964286</td>
-<td align="right">0.9565217</td>
+<td align="right">0.0092166</td>
+<td align="right">20</td>
+<td align="right">96</td>
 </tr>
 <tr class="even">
-<td align="right">0.7863636</td>
+<td align="right">79</td>
 <td align="right">38</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="right">186</td>
 <td align="left">Gaussian</td>
 <td align="right">0.1696429</td>
-<td align="right">1.0000000</td>
+<td align="right">0.0000000</td>
+<td align="right">17</td>
+<td align="right">100</td>
 </tr>
 <tr class="odd">
-<td align="right">0.7954545</td>
+<td align="right">80</td>
 <td align="right">33</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="right">191</td>
 <td align="left">Gaussian</td>
 <td align="right">0.1473214</td>
-<td align="right">1.0000000</td>
+<td align="right">0.0000000</td>
+<td align="right">15</td>
+<td align="right">100</td>
 </tr>
 <tr class="even">
-<td align="right">0.8045455</td>
+<td align="right">80</td>
 <td align="right">30</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="right">194</td>
 <td align="left">Gaussian</td>
 <td align="right">0.1339286</td>
-<td align="right">1.0000000</td>
+<td align="right">0.0000000</td>
+<td align="right">13</td>
+<td align="right">100</td>
 </tr>
 <tr class="odd">
-<td align="right">0.8136364</td>
+<td align="right">81</td>
 <td align="right">25</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="right">199</td>
 <td align="left">Gaussian</td>
 <td align="right">0.1116071</td>
-<td align="right">1.0000000</td>
+<td align="right">0.0000000</td>
+<td align="right">11</td>
+<td align="right">100</td>
 </tr>
 <tr class="even">
-<td align="right">0.8227273</td>
+<td align="right">82</td>
 <td align="right">22</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="right">202</td>
 <td align="left">Gaussian</td>
 <td align="right">0.0982143</td>
-<td align="right">1.0000000</td>
+<td align="right">0.0000000</td>
+<td align="right">10</td>
+<td align="right">100</td>
 </tr>
 <tr class="odd">
-<td align="right">0.8318182</td>
+<td align="right">83</td>
 <td align="right">18</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="right">206</td>
 <td align="left">Gaussian</td>
 <td align="right">0.0803571</td>
-<td align="right">1.0000000</td>
+<td align="right">0.0000000</td>
+<td align="right">8</td>
+<td align="right">100</td>
 </tr>
 <tr class="even">
-<td align="right">0.8409091</td>
+<td align="right">84</td>
 <td align="right">15</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="right">209</td>
 <td align="left">Gaussian</td>
 <td align="right">0.0669643</td>
-<td align="right">1.0000000</td>
+<td align="right">0.0000000</td>
+<td align="right">7</td>
+<td align="right">100</td>
 </tr>
 <tr class="odd">
-<td align="right">0.8500000</td>
+<td align="right">85</td>
 <td align="right">11</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="right">213</td>
 <td align="left">Gaussian</td>
 <td align="right">0.0491071</td>
-<td align="right">1.0000000</td>
+<td align="right">0.0000000</td>
+<td align="right">5</td>
+<td align="right">100</td>
 </tr>
 <tr class="even">
-<td align="right">0.8590909</td>
+<td align="right">86</td>
 <td align="right">10</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="right">214</td>
 <td align="left">Gaussian</td>
 <td align="right">0.0446429</td>
-<td align="right">1.0000000</td>
+<td align="right">0.0000000</td>
+<td align="right">4</td>
+<td align="right">100</td>
 </tr>
 <tr class="odd">
-<td align="right">0.8681818</td>
+<td align="right">87</td>
 <td align="right">7</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="right">217</td>
 <td align="left">Gaussian</td>
 <td align="right">0.0312500</td>
-<td align="right">1.0000000</td>
+<td align="right">0.0000000</td>
+<td align="right">3</td>
+<td align="right">100</td>
 </tr>
 <tr class="even">
-<td align="right">0.8772727</td>
+<td align="right">88</td>
 <td align="right">5</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="right">219</td>
 <td align="left">Gaussian</td>
 <td align="right">0.0223214</td>
-<td align="right">1.0000000</td>
+<td align="right">0.0000000</td>
+<td align="right">2</td>
+<td align="right">100</td>
 </tr>
 <tr class="odd">
-<td align="right">0.8863636</td>
+<td align="right">89</td>
 <td align="right">3</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="right">221</td>
 <td align="left">Gaussian</td>
 <td align="right">0.0133929</td>
-<td align="right">1.0000000</td>
+<td align="right">0.0000000</td>
+<td align="right">1</td>
+<td align="right">100</td>
 </tr>
 <tr class="even">
-<td align="right">0.8954545</td>
+<td align="right">90</td>
 <td align="right">1</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="right">223</td>
 <td align="left">Gaussian</td>
 <td align="right">0.0044643</td>
-<td align="right">1.0000000</td>
+<td align="right">0.0000000</td>
+<td align="right">0</td>
+<td align="right">100</td>
 </tr>
 <tr class="odd">
-<td align="right">0.9045455</td>
+<td align="right">90</td>
 <td align="right">1</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="right">223</td>
 <td align="left">Gaussian</td>
 <td align="right">0.0044643</td>
-<td align="right">1.0000000</td>
+<td align="right">0.0000000</td>
+<td align="right">0</td>
+<td align="right">100</td>
 </tr>
 <tr class="even">
-<td align="right">0.9136364</td>
+<td align="right">91</td>
 <td align="right">0</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="right">224</td>
 <td align="left">Gaussian</td>
 <td align="right">0.0000000</td>
+<td align="right">0.0000000</td>
+<td align="right">0</td>
 <td align="right">NaN</td>
 </tr>
 <tr class="odd">
-<td align="right">0.9227273</td>
+<td align="right">92</td>
 <td align="right">0</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="right">224</td>
 <td align="left">Gaussian</td>
 <td align="right">0.0000000</td>
+<td align="right">0.0000000</td>
+<td align="right">0</td>
 <td align="right">NaN</td>
 </tr>
 <tr class="even">
-<td align="right">0.9318182</td>
+<td align="right">93</td>
 <td align="right">0</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="right">224</td>
 <td align="left">Gaussian</td>
 <td align="right">0.0000000</td>
+<td align="right">0.0000000</td>
+<td align="right">0</td>
 <td align="right">NaN</td>
 </tr>
 <tr class="odd">
-<td align="right">0.9409091</td>
+<td align="right">94</td>
 <td align="right">0</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="right">224</td>
 <td align="left">Gaussian</td>
 <td align="right">0.0000000</td>
+<td align="right">0.0000000</td>
+<td align="right">0</td>
 <td align="right">NaN</td>
 </tr>
 <tr class="even">
-<td align="right">0.9500000</td>
+<td align="right">95</td>
 <td align="right">0</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="right">224</td>
 <td align="left">Gaussian</td>
 <td align="right">0.0000000</td>
+<td align="right">0.0000000</td>
+<td align="right">0</td>
 <td align="right">NaN</td>
 </tr>
 <tr class="odd">
-<td align="right">0.0500000</td>
+<td align="right">5</td>
 <td align="right">224</td>
 <td align="right">0</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="left">Median</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5079365</td>
+<td align="right">1.0000000</td>
+<td align="right">100</td>
+<td align="right">51</td>
 </tr>
 <tr class="even">
-<td align="right">0.0590909</td>
+<td align="right">6</td>
 <td align="right">224</td>
 <td align="right">0</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="left">Median</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5079365</td>
+<td align="right">1.0000000</td>
+<td align="right">100</td>
+<td align="right">51</td>
 </tr>
 <tr class="odd">
-<td align="right">0.0681818</td>
+<td align="right">7</td>
 <td align="right">224</td>
 <td align="right">0</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="left">Median</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5079365</td>
+<td align="right">1.0000000</td>
+<td align="right">100</td>
+<td align="right">51</td>
 </tr>
 <tr class="even">
-<td align="right">0.0772727</td>
+<td align="right">8</td>
 <td align="right">224</td>
 <td align="right">0</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="left">Median</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5079365</td>
+<td align="right">1.0000000</td>
+<td align="right">100</td>
+<td align="right">51</td>
 </tr>
 <tr class="odd">
-<td align="right">0.0863636</td>
+<td align="right">9</td>
 <td align="right">224</td>
 <td align="right">0</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="left">Median</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5079365</td>
+<td align="right">1.0000000</td>
+<td align="right">100</td>
+<td align="right">51</td>
 </tr>
 <tr class="even">
-<td align="right">0.0954545</td>
+<td align="right">10</td>
 <td align="right">224</td>
 <td align="right">0</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="left">Median</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5079365</td>
+<td align="right">1.0000000</td>
+<td align="right">100</td>
+<td align="right">51</td>
 </tr>
 <tr class="odd">
-<td align="right">0.1045455</td>
+<td align="right">10</td>
 <td align="right">224</td>
 <td align="right">0</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="left">Median</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5079365</td>
+<td align="right">1.0000000</td>
+<td align="right">100</td>
+<td align="right">51</td>
 </tr>
 <tr class="even">
-<td align="right">0.1136364</td>
+<td align="right">11</td>
 <td align="right">224</td>
 <td align="right">0</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="left">Median</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5079365</td>
+<td align="right">1.0000000</td>
+<td align="right">100</td>
+<td align="right">51</td>
 </tr>
 <tr class="odd">
-<td align="right">0.1227273</td>
+<td align="right">12</td>
 <td align="right">224</td>
 <td align="right">0</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="left">Median</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5079365</td>
+<td align="right">1.0000000</td>
+<td align="right">100</td>
+<td align="right">51</td>
 </tr>
 <tr class="even">
-<td align="right">0.1318182</td>
+<td align="right">13</td>
 <td align="right">224</td>
 <td align="right">0</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="left">Median</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5079365</td>
+<td align="right">1.0000000</td>
+<td align="right">100</td>
+<td align="right">51</td>
 </tr>
 <tr class="odd">
-<td align="right">0.1409091</td>
+<td align="right">14</td>
 <td align="right">224</td>
 <td align="right">0</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="left">Median</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5079365</td>
+<td align="right">1.0000000</td>
+<td align="right">100</td>
+<td align="right">51</td>
 </tr>
 <tr class="even">
-<td align="right">0.1500000</td>
+<td align="right">15</td>
 <td align="right">224</td>
 <td align="right">0</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="left">Median</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5079365</td>
+<td align="right">1.0000000</td>
+<td align="right">100</td>
+<td align="right">51</td>
 </tr>
 <tr class="odd">
-<td align="right">0.1590909</td>
+<td align="right">16</td>
 <td align="right">224</td>
 <td align="right">0</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="left">Median</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5079365</td>
+<td align="right">1.0000000</td>
+<td align="right">100</td>
+<td align="right">51</td>
 </tr>
 <tr class="even">
-<td align="right">0.1681818</td>
+<td align="right">17</td>
 <td align="right">224</td>
 <td align="right">0</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="left">Median</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5079365</td>
+<td align="right">1.0000000</td>
+<td align="right">100</td>
+<td align="right">51</td>
 </tr>
 <tr class="odd">
-<td align="right">0.1772727</td>
+<td align="right">18</td>
 <td align="right">224</td>
 <td align="right">0</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="left">Median</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5079365</td>
+<td align="right">1.0000000</td>
+<td align="right">100</td>
+<td align="right">51</td>
 </tr>
 <tr class="even">
-<td align="right">0.1863636</td>
+<td align="right">19</td>
 <td align="right">224</td>
 <td align="right">0</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="left">Median</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5079365</td>
+<td align="right">1.0000000</td>
+<td align="right">100</td>
+<td align="right">51</td>
 </tr>
 <tr class="odd">
-<td align="right">0.1954545</td>
+<td align="right">20</td>
 <td align="right">224</td>
 <td align="right">0</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="left">Median</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5079365</td>
+<td align="right">1.0000000</td>
+<td align="right">100</td>
+<td align="right">51</td>
 </tr>
 <tr class="even">
-<td align="right">0.2045455</td>
+<td align="right">20</td>
 <td align="right">224</td>
 <td align="right">0</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="left">Median</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5079365</td>
+<td align="right">1.0000000</td>
+<td align="right">100</td>
+<td align="right">51</td>
 </tr>
 <tr class="odd">
-<td align="right">0.2136364</td>
+<td align="right">21</td>
 <td align="right">224</td>
 <td align="right">0</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="left">Median</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5079365</td>
+<td align="right">1.0000000</td>
+<td align="right">100</td>
+<td align="right">51</td>
 </tr>
 <tr class="even">
-<td align="right">0.2227273</td>
+<td align="right">22</td>
 <td align="right">224</td>
 <td align="right">0</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="left">Median</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5079365</td>
+<td align="right">1.0000000</td>
+<td align="right">100</td>
+<td align="right">51</td>
 </tr>
 <tr class="odd">
-<td align="right">0.2318182</td>
+<td align="right">23</td>
 <td align="right">224</td>
 <td align="right">0</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="left">Median</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5079365</td>
+<td align="right">1.0000000</td>
+<td align="right">100</td>
+<td align="right">51</td>
 </tr>
 <tr class="even">
-<td align="right">0.2409091</td>
+<td align="right">24</td>
 <td align="right">224</td>
 <td align="right">0</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="left">Median</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5079365</td>
+<td align="right">1.0000000</td>
+<td align="right">100</td>
+<td align="right">51</td>
 </tr>
 <tr class="odd">
-<td align="right">0.2500000</td>
+<td align="right">25</td>
 <td align="right">224</td>
 <td align="right">0</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="left">Median</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5079365</td>
+<td align="right">1.0000000</td>
+<td align="right">100</td>
+<td align="right">51</td>
 </tr>
 <tr class="even">
-<td align="right">0.2590909</td>
+<td align="right">26</td>
 <td align="right">224</td>
 <td align="right">0</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="left">Median</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5079365</td>
+<td align="right">1.0000000</td>
+<td align="right">100</td>
+<td align="right">51</td>
 </tr>
 <tr class="odd">
-<td align="right">0.2681818</td>
+<td align="right">27</td>
 <td align="right">224</td>
 <td align="right">0</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="left">Median</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5079365</td>
+<td align="right">1.0000000</td>
+<td align="right">100</td>
+<td align="right">51</td>
 </tr>
 <tr class="even">
-<td align="right">0.2772727</td>
+<td align="right">28</td>
 <td align="right">224</td>
 <td align="right">0</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="left">Median</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5079365</td>
+<td align="right">1.0000000</td>
+<td align="right">100</td>
+<td align="right">51</td>
 </tr>
 <tr class="odd">
-<td align="right">0.2863636</td>
+<td align="right">29</td>
 <td align="right">224</td>
 <td align="right">0</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="left">Median</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5079365</td>
+<td align="right">1.0000000</td>
+<td align="right">100</td>
+<td align="right">51</td>
 </tr>
 <tr class="even">
-<td align="right">0.2954545</td>
+<td align="right">30</td>
 <td align="right">224</td>
 <td align="right">0</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="left">Median</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5079365</td>
+<td align="right">1.0000000</td>
+<td align="right">100</td>
+<td align="right">51</td>
 </tr>
 <tr class="odd">
-<td align="right">0.3045455</td>
+<td align="right">30</td>
 <td align="right">224</td>
 <td align="right">0</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="left">Median</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5079365</td>
+<td align="right">1.0000000</td>
+<td align="right">100</td>
+<td align="right">51</td>
 </tr>
 <tr class="even">
-<td align="right">0.3136364</td>
+<td align="right">31</td>
 <td align="right">224</td>
 <td align="right">0</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="left">Median</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5079365</td>
+<td align="right">1.0000000</td>
+<td align="right">100</td>
+<td align="right">51</td>
 </tr>
 <tr class="odd">
-<td align="right">0.3227273</td>
+<td align="right">32</td>
 <td align="right">224</td>
 <td align="right">0</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="left">Median</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5079365</td>
+<td align="right">1.0000000</td>
+<td align="right">100</td>
+<td align="right">51</td>
 </tr>
 <tr class="even">
-<td align="right">0.3318182</td>
+<td align="right">33</td>
 <td align="right">224</td>
 <td align="right">1</td>
 <td align="right">216</td>
 <td align="right">0</td>
 <td align="left">Median</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5090909</td>
+<td align="right">0.9953917</td>
+<td align="right">100</td>
+<td align="right">51</td>
 </tr>
 <tr class="odd">
-<td align="right">0.3409091</td>
+<td align="right">34</td>
 <td align="right">224</td>
 <td align="right">1</td>
 <td align="right">216</td>
 <td align="right">0</td>
 <td align="left">Median</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5090909</td>
+<td align="right">0.9953917</td>
+<td align="right">100</td>
+<td align="right">51</td>
 </tr>
 <tr class="even">
-<td align="right">0.3500000</td>
+<td align="right">35</td>
 <td align="right">224</td>
 <td align="right">1</td>
 <td align="right">216</td>
 <td align="right">0</td>
 <td align="left">Median</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5090909</td>
+<td align="right">0.9953917</td>
+<td align="right">100</td>
+<td align="right">51</td>
 </tr>
 <tr class="odd">
-<td align="right">0.3590909</td>
+<td align="right">36</td>
 <td align="right">224</td>
 <td align="right">2</td>
 <td align="right">215</td>
 <td align="right">0</td>
 <td align="left">Median</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5102506</td>
+<td align="right">0.9907834</td>
+<td align="right">100</td>
+<td align="right">51</td>
 </tr>
 <tr class="even">
-<td align="right">0.3681818</td>
+<td align="right">37</td>
 <td align="right">224</td>
 <td align="right">2</td>
 <td align="right">215</td>
 <td align="right">0</td>
 <td align="left">Median</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5102506</td>
+<td align="right">0.9907834</td>
+<td align="right">100</td>
+<td align="right">51</td>
 </tr>
 <tr class="odd">
-<td align="right">0.3772727</td>
+<td align="right">38</td>
 <td align="right">224</td>
 <td align="right">2</td>
 <td align="right">215</td>
 <td align="right">0</td>
 <td align="left">Median</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5102506</td>
+<td align="right">0.9907834</td>
+<td align="right">100</td>
+<td align="right">51</td>
 </tr>
 <tr class="even">
-<td align="right">0.3863636</td>
+<td align="right">39</td>
 <td align="right">224</td>
 <td align="right">2</td>
 <td align="right">215</td>
 <td align="right">0</td>
 <td align="left">Median</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5102506</td>
+<td align="right">0.9907834</td>
+<td align="right">100</td>
+<td align="right">51</td>
 </tr>
 <tr class="odd">
-<td align="right">0.3954545</td>
+<td align="right">40</td>
 <td align="right">224</td>
 <td align="right">2</td>
 <td align="right">215</td>
 <td align="right">0</td>
 <td align="left">Median</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5102506</td>
+<td align="right">0.9907834</td>
+<td align="right">100</td>
+<td align="right">51</td>
 </tr>
 <tr class="even">
-<td align="right">0.4045455</td>
+<td align="right">40</td>
 <td align="right">224</td>
 <td align="right">2</td>
 <td align="right">215</td>
 <td align="right">0</td>
 <td align="left">Median</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5102506</td>
+<td align="right">0.9907834</td>
+<td align="right">100</td>
+<td align="right">51</td>
 </tr>
 <tr class="odd">
-<td align="right">0.4136364</td>
+<td align="right">41</td>
 <td align="right">224</td>
 <td align="right">2</td>
 <td align="right">215</td>
 <td align="right">0</td>
 <td align="left">Median</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5102506</td>
+<td align="right">0.9907834</td>
+<td align="right">100</td>
+<td align="right">51</td>
 </tr>
 <tr class="even">
-<td align="right">0.4227273</td>
+<td align="right">42</td>
 <td align="right">224</td>
 <td align="right">3</td>
 <td align="right">214</td>
 <td align="right">0</td>
 <td align="left">Median</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5114155</td>
+<td align="right">0.9861751</td>
+<td align="right">100</td>
+<td align="right">51</td>
 </tr>
 <tr class="odd">
-<td align="right">0.4318182</td>
+<td align="right">43</td>
 <td align="right">224</td>
 <td align="right">4</td>
 <td align="right">213</td>
 <td align="right">0</td>
 <td align="left">Median</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5125858</td>
+<td align="right">0.9815668</td>
+<td align="right">100</td>
+<td align="right">51</td>
 </tr>
 <tr class="even">
-<td align="right">0.4409091</td>
+<td align="right">44</td>
 <td align="right">224</td>
 <td align="right">5</td>
 <td align="right">212</td>
 <td align="right">0</td>
 <td align="left">Median</td>
 <td align="right">1.0000000</td>
-<td align="right">0.5137615</td>
+<td align="right">0.9769585</td>
+<td align="right">100</td>
+<td align="right">51</td>
 </tr>
 <tr class="odd">
-<td align="right">0.4500000</td>
+<td align="right">45</td>
 <td align="right">223</td>
 <td align="right">7</td>
 <td align="right">210</td>
 <td align="right">1</td>
 <td align="left">Median</td>
 <td align="right">0.9955357</td>
-<td align="right">0.5150115</td>
+<td align="right">0.9677419</td>
+<td align="right">100</td>
+<td align="right">52</td>
 </tr>
 <tr class="even">
-<td align="right">0.4590909</td>
+<td align="right">46</td>
 <td align="right">222</td>
 <td align="right">11</td>
 <td align="right">206</td>
 <td align="right">2</td>
 <td align="left">Median</td>
 <td align="right">0.9910714</td>
-<td align="right">0.5186916</td>
+<td align="right">0.9493088</td>
+<td align="right">99</td>
+<td align="right">52</td>
 </tr>
 <tr class="odd">
-<td align="right">0.4681818</td>
+<td align="right">47</td>
 <td align="right">222</td>
 <td align="right">17</td>
 <td align="right">200</td>
 <td align="right">2</td>
 <td align="left">Median</td>
 <td align="right">0.9910714</td>
-<td align="right">0.5260664</td>
+<td align="right">0.9216590</td>
+<td align="right">99</td>
+<td align="right">53</td>
 </tr>
 <tr class="even">
-<td align="right">0.4772727</td>
+<td align="right">48</td>
 <td align="right">222</td>
 <td align="right">20</td>
 <td align="right">197</td>
 <td align="right">2</td>
 <td align="left">Median</td>
 <td align="right">0.9910714</td>
-<td align="right">0.5298329</td>
+<td align="right">0.9078341</td>
+<td align="right">99</td>
+<td align="right">53</td>
 </tr>
 <tr class="odd">
-<td align="right">0.4863636</td>
+<td align="right">49</td>
 <td align="right">222</td>
 <td align="right">21</td>
 <td align="right">196</td>
 <td align="right">2</td>
 <td align="left">Median</td>
 <td align="right">0.9910714</td>
-<td align="right">0.5311005</td>
+<td align="right">0.9032258</td>
+<td align="right">99</td>
+<td align="right">53</td>
 </tr>
 <tr class="even">
-<td align="right">0.4954545</td>
+<td align="right">50</td>
 <td align="right">222</td>
 <td align="right">39</td>
 <td align="right">178</td>
 <td align="right">2</td>
 <td align="left">Median</td>
 <td align="right">0.9910714</td>
-<td align="right">0.5550000</td>
+<td align="right">0.8202765</td>
+<td align="right">99</td>
+<td align="right">56</td>
 </tr>
 <tr class="odd">
-<td align="right">0.5045455</td>
+<td align="right">50</td>
 <td align="right">222</td>
 <td align="right">60</td>
 <td align="right">157</td>
 <td align="right">2</td>
 <td align="left">Median</td>
 <td align="right">0.9910714</td>
-<td align="right">0.5857520</td>
+<td align="right">0.7235023</td>
+<td align="right">99</td>
+<td align="right">59</td>
 </tr>
 <tr class="even">
-<td align="right">0.5136364</td>
+<td align="right">51</td>
 <td align="right">220</td>
 <td align="right">69</td>
 <td align="right">148</td>
 <td align="right">4</td>
 <td align="left">Median</td>
 <td align="right">0.9821429</td>
-<td align="right">0.5978261</td>
+<td align="right">0.6820276</td>
+<td align="right">98</td>
+<td align="right">60</td>
 </tr>
 <tr class="odd">
-<td align="right">0.5227273</td>
+<td align="right">52</td>
 <td align="right">218</td>
 <td align="right">85</td>
 <td align="right">132</td>
 <td align="right">6</td>
 <td align="left">Median</td>
 <td align="right">0.9732143</td>
-<td align="right">0.6228571</td>
+<td align="right">0.6082949</td>
+<td align="right">97</td>
+<td align="right">62</td>
 </tr>
 <tr class="even">
-<td align="right">0.5318182</td>
+<td align="right">53</td>
 <td align="right">214</td>
 <td align="right">119</td>
 <td align="right">98</td>
 <td align="right">10</td>
 <td align="left">Median</td>
 <td align="right">0.9553571</td>
-<td align="right">0.6858974</td>
+<td align="right">0.4516129</td>
+<td align="right">96</td>
+<td align="right">69</td>
 </tr>
 <tr class="odd">
-<td align="right">0.5409091</td>
+<td align="right">54</td>
 <td align="right">200</td>
 <td align="right">142</td>
 <td align="right">75</td>
 <td align="right">24</td>
 <td align="left">Median</td>
 <td align="right">0.8928571</td>
-<td align="right">0.7272727</td>
+<td align="right">0.3456221</td>
+<td align="right">89</td>
+<td align="right">73</td>
 </tr>
 <tr class="even">
-<td align="right">0.5500000</td>
+<td align="right">55</td>
 <td align="right">188</td>
 <td align="right">155</td>
 <td align="right">62</td>
 <td align="right">36</td>
 <td align="left">Median</td>
 <td align="right">0.8392857</td>
-<td align="right">0.7520000</td>
+<td align="right">0.2857143</td>
+<td align="right">84</td>
+<td align="right">75</td>
 </tr>
 <tr class="odd">
-<td align="right">0.5590909</td>
+<td align="right">56</td>
 <td align="right">179</td>
 <td align="right">157</td>
 <td align="right">60</td>
 <td align="right">45</td>
 <td align="left">Median</td>
 <td align="right">0.7991071</td>
-<td align="right">0.7489540</td>
+<td align="right">0.2764977</td>
+<td align="right">80</td>
+<td align="right">75</td>
 </tr>
 <tr class="even">
-<td align="right">0.5681818</td>
+<td align="right">57</td>
 <td align="right">144</td>
 <td align="right">175</td>
 <td align="right">42</td>
 <td align="right">80</td>
 <td align="left">Median</td>
 <td align="right">0.6428571</td>
-<td align="right">0.7741935</td>
+<td align="right">0.1935484</td>
+<td align="right">64</td>
+<td align="right">77</td>
 </tr>
 <tr class="odd">
-<td align="right">0.5772727</td>
+<td align="right">58</td>
 <td align="right">121</td>
 <td align="right">182</td>
 <td align="right">35</td>
 <td align="right">103</td>
 <td align="left">Median</td>
 <td align="right">0.5401786</td>
-<td align="right">0.7756410</td>
+<td align="right">0.1612903</td>
+<td align="right">54</td>
+<td align="right">78</td>
 </tr>
 <tr class="even">
-<td align="right">0.5863636</td>
+<td align="right">59</td>
 <td align="right">82</td>
 <td align="right">191</td>
 <td align="right">26</td>
 <td align="right">142</td>
 <td align="left">Median</td>
 <td align="right">0.3660714</td>
-<td align="right">0.7592593</td>
+<td align="right">0.1198157</td>
+<td align="right">37</td>
+<td align="right">76</td>
 </tr>
 <tr class="odd">
-<td align="right">0.5954545</td>
+<td align="right">60</td>
 <td align="right">65</td>
 <td align="right">204</td>
 <td align="right">13</td>
 <td align="right">159</td>
 <td align="left">Median</td>
 <td align="right">0.2901786</td>
-<td align="right">0.8333333</td>
+<td align="right">0.0599078</td>
+<td align="right">29</td>
+<td align="right">83</td>
 </tr>
 <tr class="even">
-<td align="right">0.6045455</td>
+<td align="right">60</td>
 <td align="right">52</td>
 <td align="right">206</td>
 <td align="right">11</td>
 <td align="right">172</td>
 <td align="left">Median</td>
 <td align="right">0.2321429</td>
-<td align="right">0.8253968</td>
+<td align="right">0.0506912</td>
+<td align="right">23</td>
+<td align="right">83</td>
 </tr>
 <tr class="odd">
-<td align="right">0.6136364</td>
+<td align="right">61</td>
 <td align="right">39</td>
 <td align="right">209</td>
 <td align="right">8</td>
 <td align="right">185</td>
 <td align="left">Median</td>
 <td align="right">0.1741071</td>
-<td align="right">0.8297872</td>
+<td align="right">0.0368664</td>
+<td align="right">17</td>
+<td align="right">83</td>
 </tr>
 <tr class="even">
-<td align="right">0.6227273</td>
+<td align="right">62</td>
 <td align="right">37</td>
 <td align="right">209</td>
 <td align="right">8</td>
 <td align="right">187</td>
 <td align="left">Median</td>
 <td align="right">0.1651786</td>
-<td align="right">0.8222222</td>
+<td align="right">0.0368664</td>
+<td align="right">17</td>
+<td align="right">82</td>
 </tr>
 <tr class="odd">
-<td align="right">0.6318182</td>
+<td align="right">63</td>
 <td align="right">34</td>
 <td align="right">210</td>
 <td align="right">7</td>
 <td align="right">190</td>
 <td align="left">Median</td>
 <td align="right">0.1517857</td>
-<td align="right">0.8292683</td>
+<td align="right">0.0322581</td>
+<td align="right">15</td>
+<td align="right">83</td>
 </tr>
 <tr class="even">
-<td align="right">0.6409091</td>
+<td align="right">64</td>
 <td align="right">24</td>
 <td align="right">210</td>
 <td align="right">7</td>
 <td align="right">200</td>
 <td align="left">Median</td>
 <td align="right">0.1071429</td>
-<td align="right">0.7741935</td>
+<td align="right">0.0322581</td>
+<td align="right">11</td>
+<td align="right">77</td>
 </tr>
 <tr class="odd">
-<td align="right">0.6500000</td>
+<td align="right">65</td>
 <td align="right">14</td>
 <td align="right">213</td>
 <td align="right">4</td>
 <td align="right">210</td>
 <td align="left">Median</td>
 <td align="right">0.0625000</td>
-<td align="right">0.7777778</td>
+<td align="right">0.0184332</td>
+<td align="right">6</td>
+<td align="right">78</td>
 </tr>
 <tr class="even">
-<td align="right">0.6590909</td>
+<td align="right">66</td>
 <td align="right">9</td>
 <td align="right">214</td>
 <td align="right">3</td>
 <td align="right">215</td>
 <td align="left">Median</td>
 <td align="right">0.0401786</td>
-<td align="right">0.7500000</td>
+<td align="right">0.0138249</td>
+<td align="right">4</td>
+<td align="right">75</td>
 </tr>
 <tr class="odd">
-<td align="right">0.6681818</td>
+<td align="right">67</td>
 <td align="right">5</td>
 <td align="right">216</td>
 <td align="right">1</td>
 <td align="right">219</td>
 <td align="left">Median</td>
 <td align="right">0.0223214</td>
-<td align="right">0.8333333</td>
+<td align="right">0.0046083</td>
+<td align="right">2</td>
+<td align="right">83</td>
 </tr>
 <tr class="even">
-<td align="right">0.6772727</td>
+<td align="right">68</td>
 <td align="right">0</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="right">224</td>
 <td align="left">Median</td>
 <td align="right">0.0000000</td>
+<td align="right">0.0000000</td>
+<td align="right">0</td>
 <td align="right">NaN</td>
 </tr>
 <tr class="odd">
-<td align="right">0.6863636</td>
+<td align="right">69</td>
 <td align="right">0</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="right">224</td>
 <td align="left">Median</td>
 <td align="right">0.0000000</td>
+<td align="right">0.0000000</td>
+<td align="right">0</td>
 <td align="right">NaN</td>
 </tr>
 <tr class="even">
-<td align="right">0.6954545</td>
+<td align="right">70</td>
 <td align="right">0</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="right">224</td>
 <td align="left">Median</td>
 <td align="right">0.0000000</td>
+<td align="right">0.0000000</td>
+<td align="right">0</td>
 <td align="right">NaN</td>
 </tr>
 <tr class="odd">
-<td align="right">0.7045455</td>
+<td align="right">70</td>
 <td align="right">0</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="right">224</td>
 <td align="left">Median</td>
 <td align="right">0.0000000</td>
+<td align="right">0.0000000</td>
+<td align="right">0</td>
 <td align="right">NaN</td>
 </tr>
 <tr class="even">
-<td align="right">0.7136364</td>
+<td align="right">71</td>
 <td align="right">0</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="right">224</td>
 <td align="left">Median</td>
 <td align="right">0.0000000</td>
+<td align="right">0.0000000</td>
+<td align="right">0</td>
 <td align="right">NaN</td>
 </tr>
 <tr class="odd">
-<td align="right">0.7227273</td>
+<td align="right">72</td>
 <td align="right">0</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="right">224</td>
 <td align="left">Median</td>
 <td align="right">0.0000000</td>
+<td align="right">0.0000000</td>
+<td align="right">0</td>
 <td align="right">NaN</td>
 </tr>
 <tr class="even">
-<td align="right">0.7318182</td>
+<td align="right">73</td>
 <td align="right">0</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="right">224</td>
 <td align="left">Median</td>
 <td align="right">0.0000000</td>
+<td align="right">0.0000000</td>
+<td align="right">0</td>
 <td align="right">NaN</td>
 </tr>
 <tr class="odd">
-<td align="right">0.7409091</td>
+<td align="right">74</td>
 <td align="right">0</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="right">224</td>
 <td align="left">Median</td>
 <td align="right">0.0000000</td>
+<td align="right">0.0000000</td>
+<td align="right">0</td>
 <td align="right">NaN</td>
 </tr>
 <tr class="even">
-<td align="right">0.7500000</td>
+<td align="right">75</td>
 <td align="right">0</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="right">224</td>
 <td align="left">Median</td>
 <td align="right">0.0000000</td>
+<td align="right">0.0000000</td>
+<td align="right">0</td>
 <td align="right">NaN</td>
 </tr>
 <tr class="odd">
-<td align="right">0.7590909</td>
+<td align="right">76</td>
 <td align="right">0</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="right">224</td>
 <td align="left">Median</td>
 <td align="right">0.0000000</td>
+<td align="right">0.0000000</td>
+<td align="right">0</td>
 <td align="right">NaN</td>
 </tr>
 <tr class="even">
-<td align="right">0.7681818</td>
+<td align="right">77</td>
 <td align="right">0</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="right">224</td>
 <td align="left">Median</td>
 <td align="right">0.0000000</td>
+<td align="right">0.0000000</td>
+<td align="right">0</td>
 <td align="right">NaN</td>
 </tr>
 <tr class="odd">
-<td align="right">0.7772727</td>
+<td align="right">78</td>
 <td align="right">0</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="right">224</td>
 <td align="left">Median</td>
 <td align="right">0.0000000</td>
+<td align="right">0.0000000</td>
+<td align="right">0</td>
 <td align="right">NaN</td>
 </tr>
 <tr class="even">
-<td align="right">0.7863636</td>
+<td align="right">79</td>
 <td align="right">0</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="right">224</td>
 <td align="left">Median</td>
 <td align="right">0.0000000</td>
+<td align="right">0.0000000</td>
+<td align="right">0</td>
 <td align="right">NaN</td>
 </tr>
 <tr class="odd">
-<td align="right">0.7954545</td>
+<td align="right">80</td>
 <td align="right">0</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="right">224</td>
 <td align="left">Median</td>
 <td align="right">0.0000000</td>
+<td align="right">0.0000000</td>
+<td align="right">0</td>
 <td align="right">NaN</td>
 </tr>
 <tr class="even">
-<td align="right">0.8045455</td>
+<td align="right">80</td>
 <td align="right">0</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="right">224</td>
 <td align="left">Median</td>
 <td align="right">0.0000000</td>
+<td align="right">0.0000000</td>
+<td align="right">0</td>
 <td align="right">NaN</td>
 </tr>
 <tr class="odd">
-<td align="right">0.8136364</td>
+<td align="right">81</td>
 <td align="right">0</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="right">224</td>
 <td align="left">Median</td>
 <td align="right">0.0000000</td>
+<td align="right">0.0000000</td>
+<td align="right">0</td>
 <td align="right">NaN</td>
 </tr>
 <tr class="even">
-<td align="right">0.8227273</td>
+<td align="right">82</td>
 <td align="right">0</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="right">224</td>
 <td align="left">Median</td>
 <td align="right">0.0000000</td>
+<td align="right">0.0000000</td>
+<td align="right">0</td>
 <td align="right">NaN</td>
 </tr>
 <tr class="odd">
-<td align="right">0.8318182</td>
+<td align="right">83</td>
 <td align="right">0</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="right">224</td>
 <td align="left">Median</td>
 <td align="right">0.0000000</td>
+<td align="right">0.0000000</td>
+<td align="right">0</td>
 <td align="right">NaN</td>
 </tr>
 <tr class="even">
-<td align="right">0.8409091</td>
+<td align="right">84</td>
 <td align="right">0</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="right">224</td>
 <td align="left">Median</td>
 <td align="right">0.0000000</td>
+<td align="right">0.0000000</td>
+<td align="right">0</td>
 <td align="right">NaN</td>
 </tr>
 <tr class="odd">
-<td align="right">0.8500000</td>
+<td align="right">85</td>
 <td align="right">0</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="right">224</td>
 <td align="left">Median</td>
 <td align="right">0.0000000</td>
+<td align="right">0.0000000</td>
+<td align="right">0</td>
 <td align="right">NaN</td>
 </tr>
 <tr class="even">
-<td align="right">0.8590909</td>
+<td align="right">86</td>
 <td align="right">0</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="right">224</td>
 <td align="left">Median</td>
 <td align="right">0.0000000</td>
+<td align="right">0.0000000</td>
+<td align="right">0</td>
 <td align="right">NaN</td>
 </tr>
 <tr class="odd">
-<td align="right">0.8681818</td>
+<td align="right">87</td>
 <td align="right">0</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="right">224</td>
 <td align="left">Median</td>
 <td align="right">0.0000000</td>
+<td align="right">0.0000000</td>
+<td align="right">0</td>
 <td align="right">NaN</td>
 </tr>
 <tr class="even">
-<td align="right">0.8772727</td>
+<td align="right">88</td>
 <td align="right">0</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="right">224</td>
 <td align="left">Median</td>
 <td align="right">0.0000000</td>
+<td align="right">0.0000000</td>
+<td align="right">0</td>
 <td align="right">NaN</td>
 </tr>
 <tr class="odd">
-<td align="right">0.8863636</td>
+<td align="right">89</td>
 <td align="right">0</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="right">224</td>
 <td align="left">Median</td>
 <td align="right">0.0000000</td>
+<td align="right">0.0000000</td>
+<td align="right">0</td>
 <td align="right">NaN</td>
 </tr>
 <tr class="even">
-<td align="right">0.8954545</td>
+<td align="right">90</td>
 <td align="right">0</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="right">224</td>
 <td align="left">Median</td>
 <td align="right">0.0000000</td>
+<td align="right">0.0000000</td>
+<td align="right">0</td>
 <td align="right">NaN</td>
 </tr>
 <tr class="odd">
-<td align="right">0.9045455</td>
+<td align="right">90</td>
 <td align="right">0</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="right">224</td>
 <td align="left">Median</td>
 <td align="right">0.0000000</td>
+<td align="right">0.0000000</td>
+<td align="right">0</td>
 <td align="right">NaN</td>
 </tr>
 <tr class="even">
-<td align="right">0.9136364</td>
+<td align="right">91</td>
 <td align="right">0</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="right">224</td>
 <td align="left">Median</td>
 <td align="right">0.0000000</td>
+<td align="right">0.0000000</td>
+<td align="right">0</td>
 <td align="right">NaN</td>
 </tr>
 <tr class="odd">
-<td align="right">0.9227273</td>
+<td align="right">92</td>
 <td align="right">0</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="right">224</td>
 <td align="left">Median</td>
 <td align="right">0.0000000</td>
+<td align="right">0.0000000</td>
+<td align="right">0</td>
 <td align="right">NaN</td>
 </tr>
 <tr class="even">
-<td align="right">0.9318182</td>
+<td align="right">93</td>
 <td align="right">0</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="right">224</td>
 <td align="left">Median</td>
 <td align="right">0.0000000</td>
+<td align="right">0.0000000</td>
+<td align="right">0</td>
 <td align="right">NaN</td>
 </tr>
 <tr class="odd">
-<td align="right">0.9409091</td>
+<td align="right">94</td>
 <td align="right">0</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="right">224</td>
 <td align="left">Median</td>
 <td align="right">0.0000000</td>
+<td align="right">0.0000000</td>
+<td align="right">0</td>
 <td align="right">NaN</td>
 </tr>
 <tr class="even">
-<td align="right">0.9500000</td>
+<td align="right">95</td>
 <td align="right">0</td>
 <td align="right">217</td>
 <td align="right">0</td>
 <td align="right">224</td>
 <td align="left">Median</td>
 <td align="right">0.0000000</td>
+<td align="right">0.0000000</td>
+<td align="right">0</td>
 <td align="right">NaN</td>
 </tr>
 </tbody>
@@ -5408,25 +6014,7 @@ abs.steps<-step.fcn(road.image$val,6)</code></pre>
 <button class="source R toggle btn btn-xs btn-primary">
 <span class="glyphicon glyphicon-chevron-down"></span> R source
 </button>
-<pre style=""><code class="source r">ggplot(melt(tp.table,id.vars=c("Thresh")),
-       aes(x=Thresh*100,y=value,color=variable))+
-  geom_point()+
-  geom_path()+
-  labs(color="",y="Pixel Count",x="Threshold Value (%)")+
-  scale_y_sqrt()+
-  theme_bw(20)</code></pre>
-<button class="error R toggle btn btn-xs btn-danger">
-<span class="glyphicon glyphicon-chevron-down"></span> R error
-</button>
-<pre style=""><code class="error r">## Error in melt(tp.table, id.vars = c("Thresh")): cannot open file '/Users/mader/Dropbox/TeachingRelated/QuantBig/Lectures/03 - Segmentation/print_cache/unnamed-chunk-36_7b938447ad2cd5ae6096426d9158a1f0.rdb': No such file or directory
-</code></pre>
-</div>
-<hr />
-<div class="row">
-<button class="source R toggle btn btn-xs btn-primary">
-<span class="glyphicon glyphicon-chevron-down"></span> R source
-</button>
-<pre style=""><code class="source r">abs.steps<-step.fcn(road.image$val,12)</code></pre>
+<pre style=""><code class="source r">abs.steps<-step.fcn(road.image$val,15)</code></pre>
 <button class="error R toggle btn btn-xs btn-danger">
 <span class="glyphicon glyphicon-chevron-down"></span> R error
 </button>
@@ -5444,24 +6032,39 @@ abs.steps<-step.fcn(road.image$val,6)</code></pre>
 <button class="source R toggle btn btn-xs btn-primary">
 <span class="glyphicon glyphicon-chevron-down"></span> R source
 </button>
-<pre style=""><code class="source r">prec.table<-mutate(tp.table,
-                   Recall=TP/(TP+FN),
-                  Precision=TP/(TP+FP)
-                   )</code></pre>
+<pre style=""><code class="source r">ggplot(melt(tp.table,id.vars=c("Thresh")),
+       aes(x=Thresh*100,y=value,color=variable))+
+  geom_point()+
+  geom_path()+
+  labs(color="",y="Pixel Count",x="Threshold Value (%)")+
+  scale_y_sqrt()+
+  theme_bw(20)</code></pre>
 <button class="error R toggle btn btn-xs btn-danger">
 <span class="glyphicon glyphicon-chevron-down"></span> R error
 </button>
-<pre style=""><code class="error r">## Error in mutate_(.data, .dots = lazyeval::lazy_dots(...)): cannot open file '/Users/mader/Dropbox/TeachingRelated/QuantBig/Lectures/03 - Segmentation/print_cache/unnamed-chunk-36_7b938447ad2cd5ae6096426d9158a1f0.rdb': No such file or directory
+<pre style=""><code class="error r">## Error in self$trans$transform(x): non-numeric argument to mathematical function
 </code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-43-1.png" title="plot of chunk unnamed-chunk-43" alt="plot of chunk unnamed-chunk-43" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<hr />
+<div class="row">
 <button class="source R toggle btn btn-xs btn-primary">
 <span class="glyphicon glyphicon-chevron-down"></span> R source
 </button>
-<pre style=""><code class="source r">ggplot(prec.table,aes(x=Recall,y=Precision))+
+<pre style=""><code class="source r">prec.table<-mutate(tp.table,
+                   Recall=TP/(TP+FN),
+                  Precision=TP/(TP+FP)
+                   )
+
+ggplot(prec.table,aes(x=Recall,y=Precision))+
   geom_point(aes(color=Thresh,shape="Image"),size=5)+
   geom_point(data=data.frame(Recall=1,Precision=1),
              aes(shape="Ideal"),size=5,color="red")+
   geom_path()+
-  #coord_equal()+
   scale_color_gradientn(colours=rainbow(6))+
   scale_x_sqrt()+
   labs(shape="")+
@@ -5472,32 +6075,60 @@ abs.steps<-step.fcn(road.image$val,6)</code></pre>
 </div>
 </div>
 </div>
-<h1 id="comparing-absorption-and-scattering-channels">Comparing Absorption and Scattering Channels</h1>
-<p>Since our image has two channels we can examine both of them (Recall is not on a linear scale so the differences can more easily be seen). It is clear that scattering provides more useful information than absorption except for very high recall and meaninglessly low precision.</p>
+<h1 id="roc-true-positive-rate-vs-false-positive">ROC: True Positive Rate vs False Positive</h1>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">tpr.table<-mutate(tp.table,
+                   TPRate=TP/(TP+FN),
+                   FPRate=FP/(FP+TN)
+                   )
+ggplot(tpr.table,aes(x=FPRate,y=TPRate))+
+  geom_point(aes(shape="Image"),size=2)+
+  geom_point(data=data.frame(TPRate=1,FPRate=0),
+             aes(shape="Ideal"),size=5,color="red")+
+  geom_path()+
+  geom_segment(x=0,xend=1,y=0,yend=1,aes(color="Random Guess"))+
+  xlim(0,1)+ylim(0,1)+coord_equal()+
+  labs(shape="",x="False Positive Rate",y="True Positive Rate",linetype="")+
+  theme_bw(20)</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-45-1.png" title="plot of chunk unnamed-chunk-45" alt="plot of chunk unnamed-chunk-45" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<h1 id="using-other-pieces-of-information">Using other pieces of information</h1>
+<p>Since we know the stripes are on the road, we can add another criteria (just the lower half), we can improve the ROC curve substantially.</p>
 <div class="row">
 <button class="source R toggle btn btn-xs btn-primary">
 <span class="glyphicon glyphicon-chevron-down"></span> R source
 </button>
 <pre style=""><code class="source r"># subtract blur
-road.blur <- (road.arr - gblur(road.arr,2)) %>% im.to.df</code></pre>
+#road.blur <- (road.arr - gblur(road.arr,2)) %>% im.to.df
+roi.road.image<-road.image %>% 
+  mutate(val = 
+           ifelse(x>200,ifelse(y<200,val,0),0)
+         )</code></pre>
 <button class="error R toggle btn btn-xs btn-danger">
 <span class="glyphicon glyphicon-chevron-down"></span> R error
 </button>
-<pre style=""><code class="error r">## Error in eval(expr, envir, enclos): object 'road.arr' not found
+<pre style=""><code class="error r">## Error in eval(expr, envir, enclos): object 'road.image' not found
 </code></pre>
 <button class="source R toggle btn btn-xs btn-primary">
 <span class="glyphicon glyphicon-chevron-down"></span> R source
 </button>
-<pre style=""><code class="source r">dci.steps<-step.fcn(road.blur$val,12)</code></pre>
+<pre style=""><code class="source r">dci.steps<-step.fcn(roi.road.image$val,12)</code></pre>
 <button class="error R toggle btn btn-xs btn-danger">
 <span class="glyphicon glyphicon-chevron-down"></span> R error
 </button>
-<pre style=""><code class="error r">## Error in quantile(vals, seq(0, 1, length.out = n + 2)[-c(1, n + 2)]): object 'road.blur' not found
+<pre style=""><code class="error r">## Error in quantile(vals, seq(0, 1, length.out = n + 2)[-c(1, n + 2)]): object 'roi.road.image' not found
 </code></pre>
 <button class="source R toggle btn btn-xs btn-primary">
 <span class="glyphicon glyphicon-chevron-down"></span> R source
 </button>
-<pre style=""><code class="source r">dci.table<-mk.stat.table(road.blur,dci.steps)</code></pre>
+<pre style=""><code class="source r">dci.table<-mk.stat.table(roi.road.image,dci.steps)</code></pre>
 <button class="error R toggle btn btn-xs btn-danger">
 <span class="glyphicon glyphicon-chevron-down"></span> R error
 </button>
@@ -5520,8 +6151,92 @@ road.blur <- (road.arr - gblur(road.arr,2)) %>% im.to.df</code></pre>
 <button class="source R toggle btn btn-xs btn-primary">
 <span class="glyphicon glyphicon-chevron-down"></span> R source
 </button>
+<pre style=""><code class="source r">ggplot(roi.road.image,
+       aes(x,y,fill=val))+
+  geom_tile()+
+  coord_equal()+
+  scale_fill_gradientn(colours=c("black","white"))+
+  guides(fill=F)+
+  theme_bw(20)</code></pre>
+<button class="error R toggle btn btn-xs btn-danger">
+<span class="glyphicon glyphicon-chevron-down"></span> R error
+</button>
+<pre style=""><code class="error r">## Error in ggplot(roi.road.image, aes(x, y, fill = val)): object 'roi.road.image' not found
+</code></pre>
+</div>
+<hr />
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r"># subtract blur
+# road.blur <- (road.arr - gblur(road.arr,2)) %>% im.to.df
+roi.blur.image<-gblur(road.arr,2) %>% im.to.df %>% 
+  mutate(val = 
+           ifelse(x>200,ifelse(y<200,val,0),0)
+         )</code></pre>
+<button class="error R toggle btn btn-xs btn-danger">
+<span class="glyphicon glyphicon-chevron-down"></span> R error
+</button>
+<pre style=""><code class="error r">## Error in validObject(x): object 'road.arr' not found
+</code></pre>
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">blur.steps<-step.fcn(roi.blur.image$val,12)</code></pre>
+<button class="error R toggle btn btn-xs btn-danger">
+<span class="glyphicon glyphicon-chevron-down"></span> R error
+</button>
+<pre style=""><code class="error r">## Error in quantile(vals, seq(0, 1, length.out = n + 2)[-c(1, n + 2)]): object 'roi.blur.image' not found
+</code></pre>
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">blur.table<-mk.stat.table(roi.blur.image,blur.steps)</code></pre>
+<button class="error R toggle btn btn-xs btn-danger">
+<span class="glyphicon glyphicon-chevron-down"></span> R error
+</button>
+<pre style=""><code class="error r">## Error in inherits(.data, "split"): object 'blur.steps' not found
+</code></pre>
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">prec.blur.table<-mutate(blur.table,
+                   Recall=TP/(TP+FN),
+                  Precision=TP/(TP+FP)
+                   )</code></pre>
+<button class="error R toggle btn btn-xs btn-danger">
+<span class="glyphicon glyphicon-chevron-down"></span> R error
+</button>
+<pre style=""><code class="error r">## Error in mutate_(.data, .dots = lazyeval::lazy_dots(...)): object 'blur.table' not found
+</code></pre>
+</div>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">ggplot(roi.blur.image,
+       aes(x,y,fill=val))+
+  geom_tile()+
+  coord_equal()+
+  scale_fill_gradientn(colours=c("black","white"))+
+  guides(fill=F)+
+  theme_bw(20)</code></pre>
+<button class="error R toggle btn btn-xs btn-danger">
+<span class="glyphicon glyphicon-chevron-down"></span> R error
+</button>
+<pre style=""><code class="error r">## Error in ggplot(roi.blur.image, aes(x, y, fill = val)): object 'roi.blur.image' not found
+</code></pre>
+</div>
+<h1 id="the-resulting-roc-curves">The resulting ROC curves</h1>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
 <pre style=""><code class="source r">ggplot(rbind(cbind(prec.table,Channel="Standard"),
-             cbind(prec.dci.table,Channel="Edge Enhanced")),
+             cbind(prec.dci.table,Channel="Region"),
+             cbind(prec.blur.table,Channel="Region Blur")
+             ),
              aes(x=Recall,y=Precision))+
   geom_point(aes(shape="Image"),size=5)+
   geom_point(data=data.frame(Recall=1,Precision=1),
@@ -5529,16 +6244,15 @@ road.blur <- (road.arr - gblur(road.arr,2)) %>% im.to.df</code></pre>
   geom_path(aes(group=Channel,color=Channel))+
   scale_y_sqrt()+
   labs(shape="")+
-  
   theme_bw(20)</code></pre>
 <button class="error R toggle btn btn-xs btn-danger">
 <span class="glyphicon glyphicon-chevron-down"></span> R error
 </button>
-<pre style=""><code class="error r">## Error in cbind(prec.dci.table, Channel = "Edge Enhanced"): object 'prec.dci.table' not found
+<pre style=""><code class="error r">## Error in cbind(prec.dci.table, Channel = "Region"): object 'prec.dci.table' not found
 </code></pre>
 </div>
 <h1 id="other-image-types-1">Other Image Types</h1>
-Going beyond vector the possibilities for images are limitless. The following shows a tensor plot with the tensor represented as an ellipse. <br /><span class="math display">$$ I(x,y) = \hat{f}(x,y) $$</span><br />
+<p>Going beyond vector the possibilities for images are limitless. The following shows a tensor plot with the tensor represented as an ellipse. <br /><span class="math display">$$ I(x,y) = \hat{f}(x,y) $$</span><br /></p>
 <div class="row">
 <button class="source R toggle btn btn-xs btn-primary">
 <span class="glyphicon glyphicon-chevron-down"></span> R source
@@ -5581,7 +6295,7 @@ ggplot(tens.im,aes(x=x,y=y,group=as.factor(id),fill=col))+
   theme_bw(20)</code></pre>
 <div class="row">
 <div class="col-md-offset-3 col-md-6">
-<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-47-1.png" title="" alt="" style="display: block; margin: auto;" /></a>
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-51-1.png" title="" alt="" style="display: block; margin: auto;" /></a>
 </div>
 </div>
 </div>
@@ -5600,7 +6314,7 @@ ggplot(tens.im,aes(x=x,y=y,group=as.factor(id),fill=col))+
   theme_bw(15)</code></pre>
 <div class="row">
 <div class="col-md-offset-3 col-md-6">
-<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-48-1.png" title="Variable distributions" alt="Variable distributions" style="display: block; margin: auto;" /></a>
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-52-1.png" title="Variable distributions" alt="Variable distributions" style="display: block; margin: auto;" /></a>
 </div>
 </div>
 </div>
@@ -5611,7 +6325,7 @@ ggplot(tens.im,aes(x=x,y=y,group=as.factor(id),fill=col))+
 <pre style=""><code class="source r">plot(grad.im[,c("a","b","th","col")])</code></pre>
 <div class="row">
 <div class="col-md-offset-3 col-md-6">
-<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-49-1.png" title="With Threshold Overlay" alt="With Threshold Overlay" style="display: block; margin: auto;" /></a>
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-53-1.png" title="With Threshold Overlay" alt="With Threshold Overlay" style="display: block; margin: auto;" /></a>
 </div>
 </div>
 </div>
@@ -5630,7 +6344,7 @@ ggplot(shaleImage,aes(x=x,y=y,fill=val))+
   labs(fill="Absorption (au)")+theme_bw(20)</code></pre>
 <div class="row">
 <div class="col-md-offset-3 col-md-6">
-<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-50-1.png" title="Shale Sample" alt="Shale Sample" style="display: block; margin: auto;" /></a>
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-54-1.png" title="Shale Sample" alt="Shale Sample" style="display: block; margin: auto;" /></a>
 </div>
 </div>
 </div></li>
@@ -5642,7 +6356,7 @@ ggplot(shaleImage,aes(x=x,y=y,fill=val))+
 <div class="row">
 <div class="row">
 <div class="col-md-offset-3 col-md-6">
-<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-51-1.png" title="plot of chunk unnamed-chunk-51" alt="plot of chunk unnamed-chunk-51" style="display: block; margin: auto;" /></a>
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-55-1.png" title="plot of chunk unnamed-chunk-55" alt="plot of chunk unnamed-chunk-55" style="display: block; margin: auto;" /></a>
 </div>
 </div>
 </div></li>
@@ -5652,7 +6366,7 @@ For this exercise we choose arbitrarily 3 ranges for the different phases and pe
 <div class="row">
 <div class="row">
 <div class="col-md-offset-3 col-md-6">
-<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-52-1.png" title="plot of chunk unnamed-chunk-52" alt="plot of chunk unnamed-chunk-52" style="display: block; margin: auto;" /></a>
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-56-1.png" title="plot of chunk unnamed-chunk-56" alt="plot of chunk unnamed-chunk-56" style="display: block; margin: auto;" /></a>
 </div>
 </div>
 </div>
@@ -5671,7 +6385,7 @@ The relation can explicitly be written out as <br /><span class="math display">$
   geom_raster()+guides(fill=F,alpha=F)+theme_bw(20)+facet_wrap(~th.label)</code></pre>
 <div class="row">
 <div class="col-md-offset-3 col-md-6">
-<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-53-1.png" title="Segmented Images" alt="Segmented Images" style="display: block; margin: auto;" /></a>
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-57-1.png" title="Segmented Images" alt="Segmented Images" style="display: block; margin: auto;" /></a>
 </div>
 </div>
 </div>
@@ -5747,7 +6461,7 @@ ggplot(sph.list,aes(x=x,y=y,fill=val))+
   theme_bw(20)+guides(fill=F)</code></pre>
 <div class="row">
 <div class="col-md-offset-3 col-md-6">
-<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-54-1.png" title="Partial Volume Effect" alt="Partial Volume Effect" style="display: block; margin: auto;" /></a>
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-58-1.png" title="Partial Volume Effect" alt="Partial Volume Effect" style="display: block; margin: auto;" /></a>
 </div>
 </div>
 </div>
@@ -5771,7 +6485,7 @@ ggplot(sph.list,aes(x=x,y=y,fill=val))+
   theme_bw(20)+labs(x="Intensity",fill="Frequency",y="Radius")</code></pre>
 <div class="row">
 <div class="col-md-offset-3 col-md-6">
-<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-55-1.png" title="Partial Volume Effect" alt="Partial Volume Effect" style="display: block; margin: auto;" /></a>
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-59-1.png" title="Partial Volume Effect" alt="Partial Volume Effect" style="display: block; margin: auto;" /></a>
 </div>
 </div>
 </div></li>
@@ -5852,7 +6566,7 @@ ggplot(cross.im,aes(x=x,y=y))+
   theme_bw(20)</code></pre>
 <div class="row">
 <div class="col-md-offset-3 col-md-6">
-<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-57-1.png" title="Cross With Threshold Overlay" alt="Cross With Threshold Overlay" style="display: block; margin: auto;" /></a>
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-61-1.png" title="Cross With Threshold Overlay" alt="Cross With Threshold Overlay" style="display: block; margin: auto;" /></a>
 </div>
 </div>
 </div>
@@ -5900,7 +6614,7 @@ ggplot(morph.2d,aes(x=x,y=y))+
   theme_bw(20)</code></pre>
 <div class="row">
 <div class="col-md-offset-3 col-md-6">
-<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-58-1.png" title="" alt="" style="display: block; margin: auto;" /></a>
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-62-1.png" title="" alt="" style="display: block; margin: auto;" /></a>
 </div>
 </div>
 </div>
@@ -5928,7 +6642,7 @@ ggplot(morph.2d,aes(x=x,y=y))+
   theme_bw(20)</code></pre>
 <div class="row">
 <div class="col-md-offset-3 col-md-6">
-<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-59-1.png" title="" alt="" style="display: block; margin: auto;" /></a>
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-63-1.png" title="" alt="" style="display: block; margin: auto;" /></a>
 </div>
 </div>
 </div>
@@ -5952,7 +6666,7 @@ ggplot(morph.2d,aes(x=x,y=y))+
   theme_bw(20)</code></pre>
 <div class="row">
 <div class="col-md-offset-3 col-md-6">
-<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-60-1.png" title="" alt="" style="display: block; margin: auto;" /></a>
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-64-1.png" title="" alt="" style="display: block; margin: auto;" /></a>
 </div>
 </div>
 </div></li>
@@ -5994,7 +6708,7 @@ ggplot(morph.3d,aes(x=x,y=y))+
   theme_bw(20)</code></pre>
 <div class="row">
 <div class="col-md-offset-3 col-md-6">
-<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-61-1.png" title="" alt="" style="display: block; margin: auto;" /></a>
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-65-1.png" title="" alt="" style="display: block; margin: auto;" /></a>
 </div>
 </div>
 </div>
@@ -6017,7 +6731,7 @@ ggplot(morph.3d,aes(x=x,y=y))+
   theme_bw(14)</code></pre>
 <div class="row">
 <div class="col-md-offset-3 col-md-6">
-<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-62-1.png" title="" alt="" style="display: block; margin: auto;" /></a>
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-66-1.png" title="" alt="" style="display: block; margin: auto;" /></a>
 </div>
 </div>
 </div></li>
@@ -6045,13 +6759,14 @@ Taking an image of the cross at a too-high threshold, we show how dilation can b
 
 cross.mat<-df.to.im(cross.im,"thresh",inv=T)
 cross.df<-im.to.df(cross.mat)
+
 ggplot(cross.df,aes(x=x,y=y))+
   geom_tile(data=subset(cross.df,val==0),aes(fill="original"),color="black",alpha=0.7)+
   labs(fill="Type")+
   theme_bw(20)</code></pre>
 <div class="row">
 <div class="col-md-offset-3 col-md-6">
-<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-63-1.png" title="Dilation Example" alt="Dilation Example" style="display: block; margin: auto;" /></a>
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-67-1.png" title="Dilation Example" alt="Dilation Example" style="display: block; margin: auto;" /></a>
 </div>
 </div>
 </div>
@@ -6059,34 +6774,19 @@ ggplot(cross.df,aes(x=x,y=y))+
 <button class="source R toggle btn btn-xs btn-primary">
 <span class="glyphicon glyphicon-chevron-down"></span> R source
 </button>
-<pre style=""><code class="source r">cross.dil.mat<-imgStdBinaryDilation(cross.mat)</code></pre>
-<button class="error R toggle btn btn-xs btn-danger">
-<span class="glyphicon glyphicon-chevron-down"></span> R error
-</button>
-<pre style=""><code class="error r">## Error in eval(expr, envir, enclos): could not find function "imgStdBinaryDilation"
-</code></pre>
-<button class="source R toggle btn btn-xs btn-primary">
-<span class="glyphicon glyphicon-chevron-down"></span> R source
-</button>
-<pre style=""><code class="source r">cross.dil.df<-im.to.df(cross.dil.mat)</code></pre>
-<button class="error R toggle btn btn-xs btn-danger">
-<span class="glyphicon glyphicon-chevron-down"></span> R error
-</button>
-<pre style=""><code class="error r">## Error in nrow(in.img): object 'cross.dil.mat' not found
-</code></pre>
-<button class="source R toggle btn btn-xs btn-primary">
-<span class="glyphicon glyphicon-chevron-down"></span> R source
-</button>
-<pre style=""><code class="source r">ggplot(cross.df,aes(x=x,y=y))+
+<pre style=""><code class="source r">cross.dil.mat<-erode(cross.mat,makeBrush(3,shape = 'box'))
+cross.dil.df<-im.to.df(cross.dil.mat)
+
+ggplot(cross.df,aes(x=x,y=y))+
   geom_tile(data=subset(cross.df,val==0),aes(fill="original"),color="black",alpha=0.7)+
   geom_tile(data=subset(cross.dil.df,val==0),aes(fill="post dilation"),color="black",alpha=0.3)+
   labs(fill="Type")+
   theme_bw(20)</code></pre>
-<button class="error R toggle btn btn-xs btn-danger">
-<span class="glyphicon glyphicon-chevron-down"></span> R error
-</button>
-<pre style=""><code class="error r">## Error in subset(cross.dil.df, val == 0): object 'cross.dil.df' not found
-</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-68-1.png" title="Dilation Example" alt="Dilation Example" style="display: block; margin: auto;" /></a>
+</div>
+</div>
 </div>
 <hr />
 <h3 id="erosion-1">Erosion</h3>
@@ -6104,7 +6804,7 @@ ggplot(cross.df,aes(x=x,y=y))+
   theme_bw(20)</code></pre>
 <div class="row">
 <div class="col-md-offset-3 col-md-6">
-<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-65-1.png" title="Erosion Example" alt="Erosion Example" style="display: block; margin: auto;" /></a>
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-69-1.png" title="Erosion Example" alt="Erosion Example" style="display: block; margin: auto;" /></a>
 </div>
 </div>
 </div>
@@ -6112,34 +6812,18 @@ ggplot(cross.df,aes(x=x,y=y))+
 <button class="source R toggle btn btn-xs btn-primary">
 <span class="glyphicon glyphicon-chevron-down"></span> R source
 </button>
-<pre style=""><code class="source r">cross.ero.mat<-imgStdBinaryErosion(cross.mat)</code></pre>
-<button class="error R toggle btn btn-xs btn-danger">
-<span class="glyphicon glyphicon-chevron-down"></span> R error
-</button>
-<pre style=""><code class="error r">## Error in eval(expr, envir, enclos): could not find function "imgStdBinaryErosion"
-</code></pre>
-<button class="source R toggle btn btn-xs btn-primary">
-<span class="glyphicon glyphicon-chevron-down"></span> R source
-</button>
-<pre style=""><code class="source r">cross.ero.df<-im.to.df(cross.ero.mat)</code></pre>
-<button class="error R toggle btn btn-xs btn-danger">
-<span class="glyphicon glyphicon-chevron-down"></span> R error
-</button>
-<pre style=""><code class="error r">## Error in nrow(in.img): object 'cross.ero.mat' not found
-</code></pre>
-<button class="source R toggle btn btn-xs btn-primary">
-<span class="glyphicon glyphicon-chevron-down"></span> R source
-</button>
-<pre style=""><code class="source r">ggplot(cross.df,aes(x=x,y=y))+
+<pre style=""><code class="source r">cross.ero.mat<-dilate(cross.mat,makeBrush(3,shape = 'box'))
+cross.ero.df<-im.to.df(cross.ero.mat)
+ggplot(cross.df,aes(x=x,y=y))+
   geom_tile(data=subset(cross.df,val==0),aes(fill="original"),color="black",alpha=0.7)+
   geom_tile(data=subset(cross.ero.df,val==0),aes(fill="post erosion"),color="black",alpha=0.3)+
   labs(fill="Type")+
   theme_bw(20)</code></pre>
-<button class="error R toggle btn btn-xs btn-danger">
-<span class="glyphicon glyphicon-chevron-down"></span> R error
-</button>
-<pre style=""><code class="error r">## Error in subset(cross.ero.df, val == 0): object 'cross.ero.df' not found
-</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-70-1.png" title="Erosion Example" alt="Erosion Example" style="display: block; margin: auto;" /></a>
+</div>
+</div>
 </div>
 <h1 id="opening-and-closing">Opening and Closing</h1>
 <h3 id="opening">Opening</h3>
@@ -6159,7 +6843,7 @@ ggplot(cross.df,aes(x=x,y=y))+
 </ul>
 <h1 id="applied-opening-and-closing">Applied Opening and Closing</h1>
 <h3 id="opening-1">Opening</h3>
-Taking an image of the cross at a too-low threshold, we show how opening can be used to remove some of the extra pixels
+<p>Taking an image of the cross at a too-low threshold, we show how opening can be used to remove some of the extra pixels</p>
 <div class="row">
 <button class="source R toggle btn btn-xs btn-primary">
 <span class="glyphicon glyphicon-chevron-down"></span> R source
@@ -6173,7 +6857,7 @@ ggplot(cross.df,aes(x=x,y=y))+
   theme_bw(20)</code></pre>
 <div class="row">
 <div class="col-md-offset-3 col-md-6">
-<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-67-1.png" title="Erosion Example" alt="Erosion Example" style="display: block; margin: auto;" /></a>
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-71-1.png" title="Opening Example" alt="Opening Example" style="display: block; margin: auto;" /></a>
 </div>
 </div>
 </div>
@@ -6181,34 +6865,18 @@ ggplot(cross.df,aes(x=x,y=y))+
 <button class="source R toggle btn btn-xs btn-primary">
 <span class="glyphicon glyphicon-chevron-down"></span> R source
 </button>
-<pre style=""><code class="source r">cross.ero.mat<-imgStdBinaryOpening(cross.mat)</code></pre>
-<button class="error R toggle btn btn-xs btn-danger">
-<span class="glyphicon glyphicon-chevron-down"></span> R error
-</button>
-<pre style=""><code class="error r">## Error in eval(expr, envir, enclos): could not find function "imgStdBinaryOpening"
-</code></pre>
-<button class="source R toggle btn btn-xs btn-primary">
-<span class="glyphicon glyphicon-chevron-down"></span> R source
-</button>
-<pre style=""><code class="source r">cross.ero.df<-im.to.df(cross.ero.mat)</code></pre>
-<button class="error R toggle btn btn-xs btn-danger">
-<span class="glyphicon glyphicon-chevron-down"></span> R error
-</button>
-<pre style=""><code class="error r">## Error in nrow(in.img): object 'cross.ero.mat' not found
-</code></pre>
-<button class="source R toggle btn btn-xs btn-primary">
-<span class="glyphicon glyphicon-chevron-down"></span> R source
-</button>
-<pre style=""><code class="source r">ggplot(cross.df,aes(x=x,y=y))+
+<pre style=""><code class="source r">cross.ero.mat<-closing(cross.mat,makeBrush(3,'box'))
+cross.ero.df<-im.to.df(cross.ero.mat)
+ggplot(cross.df,aes(x=x,y=y))+
   geom_tile(data=subset(cross.df,val==0),aes(fill="original"),color="black",alpha=0.7)+
   geom_tile(data=subset(cross.ero.df,val==0),aes(fill="post opening"),color="black",alpha=0.3)+
   labs(fill="Type")+
   theme_bw(20)</code></pre>
-<button class="error R toggle btn btn-xs btn-danger">
-<span class="glyphicon glyphicon-chevron-down"></span> R error
-</button>
-<pre style=""><code class="error r">## Error in subset(cross.ero.df, val == 0): object 'cross.ero.df' not found
-</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-72-1.png" title="Opening Example" alt="Opening Example" style="display: block; margin: auto;" /></a>
+</div>
+</div>
 </div>
 <hr />
 <h3 id="closing-1">Closing</h3>
@@ -6217,7 +6885,7 @@ Taking an image of the cross at a too-high threshold, we show how closing can be
 <button class="source R toggle btn btn-xs btn-primary">
 <span class="glyphicon glyphicon-chevron-down"></span> R source
 </button>
-<pre style=""><code class="source r">cross.im$thresh<-cross.im$col>1.75
+<pre style=""><code class="source r">cross.im$thresh<-cross.im$col>1.6
 
 cross.mat<-df.to.im(cross.im,"thresh",inv=T)
 cross.df<-im.to.df(cross.mat)
@@ -6227,7 +6895,7 @@ ggplot(cross.df,aes(x=x,y=y))+
   theme_bw(20)</code></pre>
 <div class="row">
 <div class="col-md-offset-3 col-md-6">
-<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-69-1.png" title="Dilation Example" alt="Dilation Example" style="display: block; margin: auto;" /></a>
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-73-1.png" title="Dilation Example" alt="Dilation Example" style="display: block; margin: auto;" /></a>
 </div>
 </div>
 </div>
@@ -6235,34 +6903,19 @@ ggplot(cross.df,aes(x=x,y=y))+
 <button class="source R toggle btn btn-xs btn-primary">
 <span class="glyphicon glyphicon-chevron-down"></span> R source
 </button>
-<pre style=""><code class="source r">cross.dil.mat<-imgStdBinaryClosing(cross.mat)</code></pre>
-<button class="error R toggle btn btn-xs btn-danger">
-<span class="glyphicon glyphicon-chevron-down"></span> R error
-</button>
-<pre style=""><code class="error r">## Error in eval(expr, envir, enclos): could not find function "imgStdBinaryClosing"
-</code></pre>
-<button class="source R toggle btn btn-xs btn-primary">
-<span class="glyphicon glyphicon-chevron-down"></span> R source
-</button>
-<pre style=""><code class="source r">cross.dil.df<-im.to.df(cross.dil.mat)</code></pre>
-<button class="error R toggle btn btn-xs btn-danger">
-<span class="glyphicon glyphicon-chevron-down"></span> R error
-</button>
-<pre style=""><code class="error r">## Error in nrow(in.img): object 'cross.dil.mat' not found
-</code></pre>
-<button class="source R toggle btn btn-xs btn-primary">
-<span class="glyphicon glyphicon-chevron-down"></span> R source
-</button>
-<pre style=""><code class="source r">ggplot(cross.df,aes(x=x,y=y))+
+<pre style=""><code class="source r">cross.dil.mat<-opening(cross.mat,makeBrush(3,'box'))
+cross.dil.df<-im.to.df(cross.dil.mat)
+
+ggplot(cross.df,aes(x=x,y=y))+
   geom_tile(data=subset(cross.df,val==0),aes(fill="original"),color="black",alpha=0.7)+
   geom_tile(data=subset(cross.dil.df,val==0),aes(fill="post closing"),color="black",alpha=0.3)+
   labs(fill="Type")+
   theme_bw(20)</code></pre>
-<button class="error R toggle btn btn-xs btn-danger">
-<span class="glyphicon glyphicon-chevron-down"></span> R error
-</button>
-<pre style=""><code class="error r">## Error in subset(cross.dil.df, val == 0): object 'cross.dil.df' not found
-</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-74-1.png" title="Dilation Example" alt="Dilation Example" style="display: block; margin: auto;" /></a>
+</div>
+</div>
 </div>
 <h1 id="applying-morphological-tools">Applying Morphological Tools</h1>
 <ul>
@@ -6281,73 +6934,41 @@ ggplot(cross.df,aes(x=x,y=y))+
 <button class="source R toggle btn btn-xs btn-primary">
 <span class="glyphicon glyphicon-chevron-down"></span> R source
 </button>
-<pre style=""><code class="source r">cortbone.im<-imagedata(t(png::readPNG("ext-figures/bone.png")),"grey")</code></pre>
-<button class="error R toggle btn btn-xs btn-danger">
-<span class="glyphicon glyphicon-chevron-down"></span> R error
-</button>
-<pre style=""><code class="error r">## Error in eval(expr, envir, enclos): could not find function "imagedata"
-</code></pre>
-<button class="source R toggle btn btn-xs btn-primary">
-<span class="glyphicon glyphicon-chevron-down"></span> R source
-</button>
-<pre style=""><code class="source r">cortbone.df<-im.to.df(cortbone.im)</code></pre>
-<button class="error R toggle btn btn-xs btn-danger">
-<span class="glyphicon glyphicon-chevron-down"></span> R error
-</button>
-<pre style=""><code class="error r">## Error in nrow(in.img): object 'cortbone.im' not found
-</code></pre>
-<button class="source R toggle btn btn-xs btn-primary">
-<span class="glyphicon glyphicon-chevron-down"></span> R source
-</button>
-<pre style=""><code class="source r">#cortbone.df$val<-255*(cortbone.df$val>0.5)
-cortbone.close.im<-imgStdBinaryClosing(cortbone.im)</code></pre>
-<button class="error R toggle btn btn-xs btn-danger">
-<span class="glyphicon glyphicon-chevron-down"></span> R error
-</button>
-<pre style=""><code class="error r">## Error in eval(expr, envir, enclos): could not find function "imgStdBinaryClosing"
-</code></pre>
-<button class="source R toggle btn btn-xs btn-primary">
-<span class="glyphicon glyphicon-chevron-down"></span> R source
-</button>
-<pre style=""><code class="source r">ggplot(subset(cortbone.df,val<1),aes(x=x,y=518-y))+
+<pre style=""><code class="source r">cortbone.im<-png::readPNG("ext-figures/bone.png") %>% t
+cortbone.df<-im.to.df(cortbone.im)
+#cortbone.df$val<-255*(cortbone.df$val>0.5)
+cortbone.close.im<-opening(cortbone.im,makeBrush(3,'box'))
+ggplot(subset(cortbone.df,val<1),aes(x=x,y=518-y))+
   geom_raster(data=subset(im.to.df(cortbone.close.im),val<1),
               aes(fill="closing 3x3"),alpha=0.8)+
   geom_raster(aes(fill="before closing"),alpha=0.6)+
   labs(fill="Image",y="y",x="x",title="3x3 Closing")+
   coord_equal()+
   theme_bw(20)</code></pre>
-<button class="error R toggle btn btn-xs btn-danger">
-<span class="glyphicon glyphicon-chevron-down"></span> R error
-</button>
-<pre style=""><code class="error r">## Error in subset(cortbone.df, val < 1): object 'cortbone.df' not found
-</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-75-1.png" title="Cortical Segment closing" alt="Cortical Segment closing" style="display: block; margin: auto;" /></a>
+</div>
+</div>
 </div>
 <hr />
 <div class="row">
 <button class="source R toggle btn btn-xs btn-primary">
 <span class="glyphicon glyphicon-chevron-down"></span> R source
 </button>
-<pre style=""><code class="source r">cortbone.close.im<-imgStdBinaryClosing(cortbone.im,dim=7)</code></pre>
-<button class="error R toggle btn btn-xs btn-danger">
-<span class="glyphicon glyphicon-chevron-down"></span> R error
-</button>
-<pre style=""><code class="error r">## Error in eval(expr, envir, enclos): could not find function "imgStdBinaryClosing"
-</code></pre>
-<button class="source R toggle btn btn-xs btn-primary">
-<span class="glyphicon glyphicon-chevron-down"></span> R source
-</button>
-<pre style=""><code class="source r">ggplot(subset(cortbone.df,val<1),aes(x=x,y=600-y))+
+<pre style=""><code class="source r">cortbone.close.im<-opening(cortbone.im,makeBrush(7,'box'))
+ggplot(subset(cortbone.df,val<1),aes(x=x,y=600-y))+
   geom_raster(data=subset(im.to.df(cortbone.close.im),val<1),
               aes(fill="closing 7x7"),alpha=0.8)+
   geom_raster(aes(fill="before closing"),alpha=0.6)+
   labs(fill="Image",y="y",x="x",title="7x7 Closing")+
   coord_equal()+
   theme_bw(20)</code></pre>
-<button class="error R toggle btn btn-xs btn-danger">
-<span class="glyphicon glyphicon-chevron-down"></span> R error
-</button>
-<pre style=""><code class="error r">## Error in subset(cortbone.df, val < 1): object 'cortbone.df' not found
-</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-76-1.png" title="Cortical Segment closing 7" alt="Cortical Segment closing 7" style="display: block; margin: auto;" /></a>
+</div>
+</div>
 </div>
 <h1 id="filling-holes-creating-masks-1">Filling Holes / Creating Masks</h1>
 <p>Applying the closing with even larger windows will close everything but being to destroy the underlying structure of the mask</p>
@@ -6527,7 +7148,7 @@ ggplot(alz.df,aes(x=x,y=518-y))+
   theme_bw(20)</code></pre>
 <div class="row">
 <div class="col-md-offset-3 col-md-6">
-<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-77-1.png" title="Brain with Threshold" alt="Brain with Threshold" style="display: block; margin: auto;" /></a>
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-81-1.png" title="Brain with Threshold" alt="Brain with Threshold" style="display: block; margin: auto;" /></a>
 </div>
 </div>
 </div></li>
@@ -6547,7 +7168,7 @@ ggplot(alz.df,aes(x=x,y=518-y))+
   theme_bw(20)</code></pre>
 <div class="row">
 <div class="col-md-offset-3 col-md-6">
-<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-78-1.png" title="Brain with Threshold" alt="Brain with Threshold" style="display: block; margin: auto;" /></a>
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-82-1.png" title="Brain with Threshold" alt="Brain with Threshold" style="display: block; margin: auto;" /></a>
 </div>
 </div>
 </div></li>
@@ -6572,7 +7193,7 @@ ggplot(ldply(r.list,function(r) make.circle(10,r)),aes(x=x,y=y,fill=val))+
   theme_bw(20)+guides(fill=F)</code></pre>
 <div class="row">
 <div class="col-md-offset-3 col-md-6">
-<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-79-1.png" title="Surface Area Estimation" alt="Surface Area Estimation" style="display: block; margin: auto;" /></a>
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-83-1.png" title="Surface Area Estimation" alt="Surface Area Estimation" style="display: block; margin: auto;" /></a>
 </div>
 </div>
 </div>
@@ -6603,7 +7224,7 @@ ggplot(r.table,aes(x=r))+
   theme_bw(20)</code></pre>
 <div class="row">
 <div class="col-md-offset-3 col-md-6">
-<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-80-1.png" title="Attenuation to Intensity" alt="Attenuation to Intensity" style="display: block; margin: auto;" /></a>
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-84-1.png" title="Attenuation to Intensity" alt="Attenuation to Intensity" style="display: block; margin: auto;" /></a>
 </div>
 </div>
 </div>
