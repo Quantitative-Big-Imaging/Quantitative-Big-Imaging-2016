@@ -56,6 +56,9 @@ The exercises will be supported by Yannis Vogiatzis, Kevin Mader, and Christian 
   - [Starting Data / Matlab Directory](https://github.com/kmader/Quantitative-Big-Imaging-Course/blob/master/Ex2/matlab.zip?raw=true)
  - For students experienced in Matlab they can be found here [Matlab Exercises](https://github.com/kmader/Quantitative-Big-Imaging-Course/blob/master/Ex2/Exercises_ImageEnhancement.pdf?raw=true)
  - For students experienced in Python there is an Jupyter notebook with the same exercises as Matlab [Jupyter Notebook](https://github.com/kmader/Quantitative-Big-Imaging-2016/blob/master/Exercises/02-files/Exercises1-3.ipynb) or [download](https://github.com/kmader/Quantitative-Big-Imaging-2016/blob/master/Exercises/02-files/Exercises1-3.ipynb?raw=true)
+- 10th March - Basic Segmentation, Discrete Binary Structures
+ - [KNIME Exercises](https://github.com/kmader/Quantitative-Big-Imaging-2016/blob/master/Exercises/03-Description.md)
+ - [Workflows](https://github.com/kmader/Quantitative-Big-Imaging-2016/blob/master/Exercises/03-files/Workflows.zip?raw=true)
  
 
 ### Feedback (as much as possible)
