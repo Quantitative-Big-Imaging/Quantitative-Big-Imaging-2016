@@ -15,8 +15,8 @@ The lectures have been prepared and given by Kevin Mader and guest lecturer Ande
  - [Lecture Handout](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2016/master/Lectures/03-Handout.html) as [Old PDF](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2015/master/Lectures/03-Handout.pdf)
  - Lecture Video: [Part 1](https://www.youtube.com/watch?v=JGW0mS7DJ4E), [Part 2](https://www.youtube.com/watch?v=woR7tAbssLo)
 - 17th March - Advanced Segmentation
- - [Old Lecture Slides](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2015/master/Lectures/04-Slides.html)
- - [Old Lecture Handout](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2015/master/Lectures/04-Handout.html) as [PDF](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2015/master/Lectures/04-Handout.pdf)
+ - [Lecture Slides](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2016/master/Lectures/04-Slides.html)
+ - [Lecture Handout](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2016/master/Lectures/04-Slides_files/04-Handout.html) as [Old PDF](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2015/master/Lectures/04-Handout.pdf)
 - 24th March - Analyzing Single Objects
  - [Old Lecture Slides](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2015/master/Lectures/06-Slides.html)
  - [Old Lecture Handout](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2015/master/Lectures/06-Handout.html) as [PDF](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2015/master/Lectures/06-Handout.pdf)
@@ -43,7 +43,7 @@ The lectures have been prepared and given by Kevin Mader and guest lecturer Ande
 ### Exercises
 #### General Information
 The exercises are based on the lectures and take place in the same room after the lecture completes. The exercises are designed to offer a tiered level of understanding based on the background of the student. We will (for most lectures) take advantage of an open-source tool called KNIME (www.knime.org), with example workflows here (https://www.knime.org/example-workflows).  The basic exercises will require adding blocks in a workflow and adjusting parameters, while more advanced students will be able to write their own snippets, blocks or plugins to accomplish more complex tasks easily. 
-The exercises from last year (available on: kmader.github.io/Quantitative-Big-Imaging-Course/) are done entirely in ImageJ and Matlab for students who would prefer to stay in those environments (not recommended)
+The exercises from last year (available on: kmader.github.io/Quantitative-Big-Imaging-2015/) are done entirely in ImageJ and Matlab for students who would prefer to stay in those environments (not recommended)
 
 #### Assistance
 The exercises will be supported by Yannis Vogiatzis, Kevin Mader, and Christian Dietz. There will be office hours in ETZ H75 on Thursdays between 14-15 or by appointment.
@@ -60,7 +60,9 @@ The exercises will be supported by Yannis Vogiatzis, Kevin Mader, and Christian 
 - 10th March - Basic Segmentation, Discrete Binary Structures
  - [KNIME Exercises](https://github.com/kmader/Quantitative-Big-Imaging-2016/blob/master/Exercises/03-Description.md)
  - [Workflows](https://github.com/kmader/Quantitative-Big-Imaging-2016/blob/master/Exercises/03-files/Workflows.zip?raw=true)
- 
+- 17th March - Advanced Segmentation
+ - [KNIME Exercises](https://github.com/kmader/Quantitative-Big-Imaging-2016/blob/master/Exercises/04-Description.md)
+  
 
 ### Feedback (as much as possible)
  - Create an [issue](https://github.com/kmader/Quantitative-Big-Imaging-2016/issues) (on the group site that everyone can see and respond to, requires a Github account), [issues from last year](https://github.com/kmader/Quantitative-Big-Imaging-2015/issues)
