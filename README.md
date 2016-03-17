@@ -63,6 +63,7 @@ The exercises will be supported by Yannis Vogiatzis, Kevin Mader, and Christian 
  - [Workflows](https://github.com/kmader/Quantitative-Big-Imaging-2016/blob/master/Exercises/03-files/Workflows.zip?raw=true)
 - 17th March - Advanced Segmentation
  - [KNIME Exercises](https://github.com/kmader/Quantitative-Big-Imaging-2016/blob/master/Exercises/04-Description.md)
+ - [IPython Exercises](https://github.com/kmader/Quantitative-Big-Imaging-2016/blob/master/Exercises/04-Exercises.ipynb), these are still incomplete
   
 
 ### Feedback (as much as possible)
