@@ -17,6 +17,7 @@ The lectures have been prepared and given by Kevin Mader and guest lecturer Ande
 - 17th March - Advanced Segmentation
  - [Lecture Slides](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2016/master/Lectures/04-Slides.html)
  - [Lecture Handout](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2016/master/Lectures/04-Slides_files/04-Handout.html) as [Old PDF](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2015/master/Lectures/04-Handout.pdf)
+ - Lecture Video: [Part 1](https://youtu.be/Djdk6LQUmCo), [Part 2](https://youtu.be/c7xdzdJ3G-s)
 - 24th March - Analyzing Single Objects
  - [Old Lecture Slides](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2015/master/Lectures/06-Slides.html)
  - [Old Lecture Handout](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2015/master/Lectures/06-Handout.html) as [PDF](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2015/master/Lectures/06-Handout.pdf)

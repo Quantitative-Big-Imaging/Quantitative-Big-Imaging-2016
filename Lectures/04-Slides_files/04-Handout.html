@@ -643,7 +643,20 @@ So we have an image of a cell and we want to identify the membrane (the ring) fr
 <div class="row"><button class="source R toggle btn btn-xs btn-primary"><span class="glyphicon glyphicon-chevron-down"></span> R source</button><pre style=""><code class="source r">ring.image<-mutate(
   expand.grid(x=c(-10:10),y=c(-10:10)),
   Intensity = abs(cos(sqrt(x^2+y^2)/15*6.28))
-  )</code></pre></div>
+  )
+ring.image.dist<-ddply(ring.image,.(x,y),function(in.pts) {
+  in.pts$Distance<-with(in.pts,sqrt(
+      min(
+        x^2+y^2
+      )
+    ))
+  in.pts
+})
+ring.image.gt<-mutate(ring.image.dist,
+                       Segmented = ifelse(
+                         Intensity>0.5 & Distance>5 & Distance<10,
+                         1,0)
+                       )</code></pre></div>
 
 <div class="row"><button class="source R toggle btn btn-xs btn-primary"><span class="glyphicon glyphicon-chevron-down"></span> R source</button><pre style=""><code class="source r">simple.image<-ggplot(ring.image,aes(x,y,fill=Intensity))+
   geom_tile(color="black")+
@@ -667,14 +680,6 @@ Adding a new feature
 ===
 
 In this case we add a very simple feature to the image, the distance from the center of the image (distance).
-<div class="row"><button class="source R toggle btn btn-xs btn-primary"><span class="glyphicon glyphicon-chevron-down"></span> R source</button><pre style=""><code class="source r">ring.image.dist<-ddply(ring.image,.(x,y),function(in.pts) {
-  in.pts$Distance<-with(in.pts,sqrt(
-      min(
-        x^2+y^2
-      )
-    ))
-  in.pts
-})</code></pre></div>
 
 <div class="row"><button class="source R toggle btn btn-xs btn-primary"><span class="glyphicon glyphicon-chevron-down"></span> R source</button><pre style=""><code class="source r">ggplot(ring.image.dist,aes(x,y,fill=Distance))+
   geom_tile(color="black")+
@@ -712,7 +717,7 @@ Applying two criteria
 
 Now instead of trying to find the intensity for the ring, we can combine density and distance to identify it 
 
-$$ iff (5<\textrm{Distance}<10 \\ \& 0.5<\textrm{Intensity}>1.0) $$
+$$ iff (5<\textrm{Distance}<10 \\ \& 0.3<\textrm{Intensity}>1.0) $$
 
 <div class="row"><button class="source R toggle btn btn-xs btn-primary"><span class="glyphicon glyphicon-chevron-down"></span> R source</button><pre style=""><code class="source r">ggplot(ring.image.dist,aes(y=Distance,x=Intensity))+
   geom_density2d(aes(color="Density"))+
@@ -725,14 +730,132 @@ $$ iff (5<\textrm{Distance}<10 \\ \& 0.5<\textrm{Intensity}>1.0) $$
 
 
 <div class="row"><button class="source R toggle btn btn-xs btn-primary"><span class="glyphicon glyphicon-chevron-down"></span> R source</button><pre style=""><code class="source r">ring.image.seg<-mutate(ring.image.dist,
-                       Segmented = Intensity>0.5 & Distance>5 & Distance<10)
-ggplot(ring.image,aes(x,y,fill=Intensity))+
-  geom_tile(color="black")+
-  geom_tile(data=subset(ring.image.seg,Segmented),
-            aes(color="Threshold"),fill="red",alpha=0.5)+
+                       Segmented = Intensity>0.35 & Distance>5 & Distance<10)
+
+ggplot(ring.image.seg,aes(x,y,fill=Segmented,alpha=Intensity))+
+  geom_raster()+
   coord_equal()+
-  labs(color="")+
-  theme_bw(15)</code></pre><div class="row"><div class="col-md-offset-3 col-md-6"><a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-25-1.png" title="plot of chunk unnamed-chunk-25" alt="plot of chunk unnamed-chunk-25" style="display: block; margin: auto;" /></a></div></div></div>
+  guides(alpha=F)+
+  theme_bw(20)</code></pre><div class="row"><div class="col-md-offset-3 col-md-6"><a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-25-1.png" title="plot of chunk unnamed-chunk-25" alt="plot of chunk unnamed-chunk-25" style="display: block; margin: auto;" /></a></div></div></div>
+
+Back to Ground Truth / ROC Curves
+===
+
+<div class="row"><button class="source R toggle btn btn-xs btn-primary"><span class="glyphicon glyphicon-chevron-down"></span> R source</button><pre style=""><code class="source r">score.img<-mutate(
+    merge(ring.image.seg[,c("x","y","Segmented")],
+          ring.image.gt[,c("x","y","Segmented")],
+          by=c("x","y"),suffixes=c("C","GT")),
+  Match=(SegmentedC==SegmentedGT),
+  Category=
+    ifelse(Match,
+           ifelse(SegmentedC==1,"True Positive","True Negative"),
+           ifelse(SegmentedC==1,"False Positive","False Negative")
+      )
+  )
+
+ggplot(score.img,
+       aes(x,y,fill=as.factor(SegmentedGT)))+
+  geom_tile()+
+  facet_grid(Category~.)+
+  coord_equal()+
+  scale_colour_manual(values=c("green","black"))+
+  scale_fill_manual(values=c("red","blue"))+
+  labs(fill="Ground\nTruth")+
+  theme_bw(20)</code></pre><div class="row"><div class="col-md-offset-3 col-md-6"><a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-26-1.png" title="plot of chunk unnamed-chunk-26" alt="plot of chunk unnamed-chunk-26" style="display: block; margin: auto;" /></a></div></div></div>
+
+Examining the ROC Curve
+===
+
+<div class="row"><button class="source R toggle btn btn-xs btn-primary"><span class="glyphicon glyphicon-chevron-down"></span> R source</button><pre style=""><code class="source r">mk.th.img<-function(in.img,stepseq) ldply(stepseq,function(c.thresh) {
+  mutate(in.img,
+         Segmented = ifelse(
+                         Intensity>c.thresh,
+                         1,0),
+         Thresh = c.thresh
+        )
+})
+
+mk.stat.table<-function(in.img,stepseq) 
+  ddply(mk.th.img(in.img,stepseq),.(Thresh),function(c.img) {
+  in.df<-merge(c.img[,c("x","y","Segmented")],
+               ring.image.gt[,c("x","y","Segmented")],
+               by=c("x","y"),suffixes=c("C","GT"))
+  in.df<-mutate(in.df,Match=(SegmentedC==SegmentedGT))
+  data.frame(TP=nrow(subset(in.df,(SegmentedGT==1) & Match)),
+             TN=nrow(subset(in.df,(SegmentedGT==0) & Match)),
+             FP=nrow(subset(in.df,SegmentedC & !Match)),
+             FN=nrow(subset(in.df,(SegmentedC==0) & !Match))
+             )
+})
+
+step.fcn<-function(vals,n) quantile(vals,seq(0,1,length.out=n+2)[-c(1,n+2)])
+abs.steps<-step.fcn(ring.image.dist$Intensity,6)
+tp.table<-mk.stat.table(ring.image.dist,abs.steps)</code></pre></div>
+
+<div class="row"><button class="source R toggle btn btn-xs btn-primary"><span class="glyphicon glyphicon-chevron-down"></span> R source</button><pre style=""><code class="source r">prec.table<-mutate(tp.table,
+                   Thresh=round(100*Thresh),
+                   Recall=round(100*TP/(TP+FN)),
+                   Precision=round(100*TP/(TP+FP))
+                   )
+kable(prec.table)</code></pre>
+
+| Thresh|  TP|  TN|  FP|  FN| Recall| Precision|
+|------:|---:|---:|---:|---:|------:|---------:|
+|     20| 224|  64| 153|   0|    100|        59|
+|     39| 224| 132|  85|   0|    100|        72|
+|     56| 204| 172|  45|  20|     91|        82|
+|     75| 160| 196|  21|  64|     71|        88|
+|     88| 112| 208|   9| 112|     50|        93|
+|     97|  52| 216|   1| 172|     23|        98|
+
+</div>
+
+
+<div class="row"><button class="source R toggle btn btn-xs btn-primary"><span class="glyphicon glyphicon-chevron-down"></span> R source</button><pre style=""><code class="source r">abs.steps<-step.fcn(ring.image.dist$Intensity,15)
+tp.table<-mk.stat.table(ring.image.dist,abs.steps)
+ggplot(melt(tp.table,id.vars=c("Thresh")),
+       aes(x=Thresh*100,y=value,color=variable))+
+  geom_point()+
+  geom_path()+
+  labs(color="",y="Pixel Count",x="Threshold Value (%)")+
+  scale_y_sqrt()+
+  theme_bw(20)</code></pre><div class="row"><div class="col-md-offset-3 col-md-6"><a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-28-1.png" title="plot of chunk unnamed-chunk-28" alt="plot of chunk unnamed-chunk-28" style="display: block; margin: auto;" /></a></div></div></div>
+
+***
+
+<div class="row"><button class="source R toggle btn btn-xs btn-primary"><span class="glyphicon glyphicon-chevron-down"></span> R source</button><pre style=""><code class="source r">prec.table<-mutate(tp.table,
+                   Recall=TP/(TP+FN),
+                  Precision=TP/(TP+FP)
+                   )
+
+ggplot(prec.table,aes(x=Recall,y=Precision))+
+  geom_point(aes(color=Thresh,shape="Image"),size=5)+
+  geom_point(data=data.frame(Recall=1,Precision=1),
+             aes(shape="Ideal"),size=5,color="red")+
+  geom_path()+
+  scale_color_gradientn(colours=rainbow(6))+
+  scale_x_sqrt()+
+  labs(shape="")+
+  theme_bw(20)</code></pre><div class="row"><div class="col-md-offset-3 col-md-6"><a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-29-1.png" title="plot of chunk unnamed-chunk-29" alt="plot of chunk unnamed-chunk-29" style="display: block; margin: auto;" /></a></div></div></div>
+
+ROC: True Positive Rate vs False Positive
+===
+
+<div class="row"><button class="source R toggle btn btn-xs btn-primary"><span class="glyphicon glyphicon-chevron-down"></span> R source</button><pre style=""><code class="source r">tpr.table<-mutate(tp.table,
+                   TPRate=TP/(TP+FN),
+                   FPRate=FP/(FP+TN)
+                   )
+ggplot(tpr.table,aes(x=FPRate,y=TPRate))+
+  geom_point(aes(shape="Image"),size=2)+
+  geom_point(data=data.frame(TPRate=1,FPRate=0),
+             aes(shape="Ideal"),size=5,color="red")+
+  geom_path()+
+  geom_segment(x=0,xend=1,y=0,yend=1,aes(color="Random Guess"))+
+  xlim(0,1)+ylim(0,1)+coord_equal()+
+  labs(shape="",x="False Positive Rate",y="True Positive Rate",linetype="")+
+  theme_bw(20)</code></pre><div class="row"><div class="col-md-offset-3 col-md-6"><a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-30-1.png" title="plot of chunk unnamed-chunk-30" alt="plot of chunk unnamed-chunk-30" style="display: block; margin: auto;" /></a></div></div></div>
+
+
 
 Common Features
 ===
@@ -773,7 +896,7 @@ ggplot(mfeat.vec,
   coord_equal()+
   labs(fill="")+
   facet_grid(variable~.)+
-  theme_bw(20)</code></pre><div class="row"><div class="col-md-offset-3 col-md-6"><a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-27-1.png" title="plot of chunk unnamed-chunk-27" alt="plot of chunk unnamed-chunk-27" style="display: block; margin: auto;" /></a></div></div></div>
+  theme_bw(20)</code></pre><div class="row"><div class="col-md-offset-3 col-md-6"><a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-32-1.png" title="plot of chunk unnamed-chunk-32" alt="plot of chunk unnamed-chunk-32" style="display: block; margin: auto;" /></a></div></div></div>
 
 Analyzing the feature vector
 ===
@@ -784,7 +907,7 @@ The distributions of the features appear very different and can thus likely be u
   geom_density()+
   scale_y_sqrt()+
   labs(x="Feature Value",color="Feature")+
-  theme_bw(20)</code></pre><div class="row"><div class="col-md-offset-3 col-md-6"><a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-28-1.png" title="plot of chunk unnamed-chunk-28" alt="plot of chunk unnamed-chunk-28" style="display: block; margin: auto;" /></a></div></div></div>
+  theme_bw(20)</code></pre><div class="row"><div class="col-md-offset-3 col-md-6"><a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-33-1.png" title="plot of chunk unnamed-chunk-33" alt="plot of chunk unnamed-chunk-33" style="display: block; margin: auto;" /></a></div></div></div>
 
 ***
 
@@ -795,7 +918,7 @@ Combine this with our _a priori_ information (called supervised analysis)
   geom_density()+
   labs(x="Feature Value",color="Structure")+
   facet_grid(variable~.,scales="free")+
-  theme_bw(12)</code></pre><div class="row"><div class="col-md-offset-3 col-md-6"><a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-29-1.png" title="plot of chunk unnamed-chunk-29" alt="plot of chunk unnamed-chunk-29" style="display: block; margin: auto;" /></a></div></div></div>
+  theme_bw(12)</code></pre><div class="row"><div class="col-md-offset-3 col-md-6"><a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-34-1.png" title="plot of chunk unnamed-chunk-34" alt="plot of chunk unnamed-chunk-34" style="display: block; margin: auto;" /></a></div></div></div>
 
 <div class="row"><button class="source R toggle btn btn-xs btn-primary"><span class="glyphicon glyphicon-chevron-down"></span> R source</button><pre style=""><code class="source r">splom(merged.ring.image[,c("Intensity","Sobel","Gaussian")],groups=merged.ring.image$Segmented,pch=16)</code></pre><button class="error R toggle btn btn-xs btn-danger"><span class="glyphicon glyphicon-chevron-down"></span> R error</button><pre style=""><code class="error r">## Error in eval(expr, envir, enclos): object 'merged.ring.image' not found
 </code></pre></div>
@@ -896,7 +1019,7 @@ ggplot(sring.vec,
   coord_equal()+
   labs(fill="",color="Cluster")+
   facet_grid(~variable)+
-  theme_bw(10)</code></pre><div class="row"><div class="col-md-offset-3 col-md-6"><a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-34-1.png" title="KMeans" alt="KMeans" style="display: block; margin: auto;" /></a></div></div></div>
+  theme_bw(10)</code></pre><div class="row"><div class="col-md-offset-3 col-md-6"><a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-39-1.png" title="KMeans" alt="KMeans" style="display: block; margin: auto;" /></a></div></div></div>
 
 <div class="row"><button class="source R toggle btn btn-xs btn-primary"><span class="glyphicon glyphicon-chevron-down"></span> R source</button><pre style=""><code class="source r">splom(sring.image[,c("Intensity","Sobel","Gaussian")],groups=sring.image$km.cluster,pch=16)</code></pre><button class="error R toggle btn btn-xs btn-danger"><span class="glyphicon glyphicon-chevron-down"></span> R error</button><pre style=""><code class="error r">## Error in eval(expr, envir, enclos): object 'sring.image' not found
 </code></pre></div>
@@ -913,7 +1036,7 @@ ggplot(sring.vec,
   coord_equal()+
   labs(fill="",color="Cluster")+
   facet_grid(~variable)+
-  theme_bw(10)</code></pre><div class="row"><div class="col-md-offset-3 col-md-6"><a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-36-1.png" title="KMeans" alt="KMeans" style="display: block; margin: auto;" /></a></div></div></div>
+  theme_bw(10)</code></pre><div class="row"><div class="col-md-offset-3 col-md-6"><a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-41-1.png" title="KMeans" alt="KMeans" style="display: block; margin: auto;" /></a></div></div></div>
 
 <div class="row"><button class="source R toggle btn btn-xs btn-primary"><span class="glyphicon glyphicon-chevron-down"></span> R source</button><pre style=""><code class="source r">splom(sring.image[,c("Intensity","Sobel","Gaussian")],groups=sring.image$km.cluster,pch=16)</code></pre><button class="error R toggle btn btn-xs btn-danger"><span class="glyphicon glyphicon-chevron-down"></span> R error</button><pre style=""><code class="error r">## Error in eval(expr, envir, enclos): object 'sring.image' not found
 </code></pre></div>
@@ -931,7 +1054,7 @@ ggplot(sring.vec,
   coord_equal()+
   labs(fill="",color="Cluster")+
   facet_grid(variable~.)+
-  theme_bw(10)</code></pre><div class="row"><div class="col-md-offset-3 col-md-6"><a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-38-1.png" title="KMeans" alt="KMeans" style="display: block; margin: auto;" /></a></div></div></div>
+  theme_bw(10)</code></pre><div class="row"><div class="col-md-offset-3 col-md-6"><a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-43-1.png" title="KMeans" alt="KMeans" style="display: block; margin: auto;" /></a></div></div></div>
 
 ***
 
@@ -956,7 +1079,7 @@ ggplot(sring.vec,
   coord_equal()+
   labs(fill="",color="Cluster")+
   facet_grid(~variable)+
-  theme_bw(10)</code></pre><div class="row"><div class="col-md-offset-3 col-md-6"><a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-40-1.png" title="KMeans" alt="KMeans" style="display: block; margin: auto;" /></a></div></div></div>
+  theme_bw(10)</code></pre><div class="row"><div class="col-md-offset-3 col-md-6"><a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-45-1.png" title="KMeans" alt="KMeans" style="display: block; margin: auto;" /></a></div></div></div>
 
 ***
 
@@ -968,12 +1091,14 @@ Super-pixels
 An approach for simplifying images by performing a clustering and forming super-pixels from groups of similar pixels.
 
 <div class="row"><button class="source R toggle btn btn-xs btn-primary"><span class="glyphicon glyphicon-chevron-down"></span> R source</button><pre style=""><code class="source r">shale.array<-tiff::readTIFF(qbi.file("shale-slice.tiff"))
-shale.image<-im.to.df(shale.array,out.col="Intensity")
+shale.image<-im.to.df(shale.array,out.col="Intensity") %>%
+  mutate(Intensity = Intensity * 255)
+
 ggplot(shale.image,aes(x,y,fill=Intensity))+
   geom_tile()+
   coord_equal()+
   labs(fill="")+
-  theme_bw(10)</code></pre><div class="row"><div class="col-md-offset-3 col-md-6"><a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-42-1.png" title="plot of chunk unnamed-chunk-42" alt="plot of chunk unnamed-chunk-42" style="display: block; margin: auto;" /></a></div></div></div>
+  theme_bw(10)</code></pre><div class="row"><div class="col-md-offset-3 col-md-6"><a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-47-1.png" title="plot of chunk unnamed-chunk-47" alt="plot of chunk unnamed-chunk-47" style="display: block; margin: auto;" /></a></div></div></div>
 
 ***
 
@@ -993,6 +1118,7 @@ shale.kmeans<-kmeans(shale.kmeans.data,
                                centers=shale.superpixels.centers,
                                iter.max=50
   )
+
 shale.image$km.cluster<-shale.kmeans$cluster</code></pre></div>
 
 
@@ -1003,7 +1129,7 @@ shale.image$km.cluster<-shale.kmeans$cluster</code></pre></div>
   guides(fill=F)+
   coord_equal()+
   labs(fill="")+
-  theme_bw(10)</code></pre><div class="row"><div class="col-md-offset-3 col-md-6"><a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-44-1.png" title="KMeans" alt="KMeans" style="display: block; margin: auto;" /></a></div></div></div>
+  theme_bw(10)</code></pre><div class="row"><div class="col-md-offset-3 col-md-6"><a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-49-1.png" title="KMeans" alt="KMeans" style="display: block; margin: auto;" /></a></div></div></div>
 
 Why use superpixels
 ===
@@ -1016,7 +1142,7 @@ ggplot(shale.centers,
   scale_color_gradientn(colours=rainbow(5))+
   labs(x="X",y="Y")+
   coord_equal()+
-  theme_bw(20)</code></pre><div class="row"><div class="col-md-offset-3 col-md-6"><a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-45-1.png" title="plot of chunk unnamed-chunk-45" alt="plot of chunk unnamed-chunk-45" style="display: block; margin: auto;" /></a></div></div></div>
+  theme_bw(20)</code></pre><div class="row"><div class="col-md-offset-3 col-md-6"><a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-50-1.png" title="plot of chunk unnamed-chunk-50" alt="plot of chunk unnamed-chunk-50" style="display: block; margin: auto;" /></a></div></div></div>
 
 ***
 
@@ -1026,13 +1152,13 @@ ggplot(shale.centers,
   geom_density(aes(y=..count..))+
   geom_vline(aes(color="Threshold"),color="red",xintercept=c(130,180))+
   labs(y="Number of Superpixels")+
-  theme_bw(20)</code></pre><div class="row"><div class="col-md-offset-3 col-md-6"><a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-46-1.png" title="plot of chunk unnamed-chunk-46" alt="plot of chunk unnamed-chunk-46" style="display: block; margin: auto;" /></a></div></div></div>
+  theme_bw(20)</code></pre><div class="row"><div class="col-md-offset-3 col-md-6"><a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-51-1.png" title="plot of chunk unnamed-chunk-51" alt="plot of chunk unnamed-chunk-51" style="display: block; margin: auto;" /></a></div></div></div>
 
 Segment the superpixels and apply them to the whole image (only a fraction of the data and much smaller datasets)
 
 <div class="row"><button class="source R toggle btn btn-xs btn-primary"><span class="glyphicon glyphicon-chevron-down"></span> R source</button><pre style=""><code class="source r">shale.centers<-mutate(shale.centers,
                       cluster=1:nrow(shale.centers),
-                      group=as.factor(ifelse(Intensity<130,"Dark",
+                      group=as.factor(ifelse(Intensity<130.0,"Dark",
                                    ifelse(Intensity<180,"Medium","Light")))
                       )
 grp.image<-merge(shale.image,shale.centers[,c("cluster","group")],by.x="km.cluster",by.y="cluster")</code></pre></div>
@@ -1043,7 +1169,7 @@ grp.image<-merge(shale.image,shale.centers[,c("cluster","group")],by.x="km.clust
   scale_alpha_continuous(range=c(0.5,1))+
   coord_equal()+
   labs(fill="")+
-  theme_bw(10)</code></pre><div class="row"><div class="col-md-offset-3 col-md-6"><a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-48-1.png" title="plot of chunk unnamed-chunk-48" alt="plot of chunk unnamed-chunk-48" style="display: block; margin: auto;" /></a></div></div></div>
+  theme_bw(10)</code></pre><div class="row"><div class="col-md-offset-3 col-md-6"><a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-53-1.png" title="plot of chunk unnamed-chunk-53" alt="plot of chunk unnamed-chunk-53" style="display: block; margin: auto;" /></a></div></div></div>
 
 Superpixels vs Standard Segmentation
 ===
@@ -1056,7 +1182,7 @@ Superpixels vs Standard Segmentation
   scale_alpha_continuous(range=c(0.5,1))+
   coord_equal()+
   labs(fill="")+
-  theme_bw(10)</code></pre><div class="row"><div class="col-md-offset-3 col-md-6"><a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-49-1.png" title="plot of chunk unnamed-chunk-49" alt="plot of chunk unnamed-chunk-49" style="display: block; margin: auto;" /></a></div></div></div>
+  theme_bw(10)</code></pre><div class="row"><div class="col-md-offset-3 col-md-6"><a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-54-1.png" title="plot of chunk unnamed-chunk-54" alt="plot of chunk unnamed-chunk-54" style="display: block; margin: auto;" /></a></div></div></div>
 
 ***
 
@@ -1070,7 +1196,7 @@ Superpixels vs Standard Segmentation
   scale_alpha_continuous(range=c(0.5,1))+
   coord_equal()+
   labs(fill="")+
-  theme_bw(10)</code></pre><div class="row"><div class="col-md-offset-3 col-md-6"><a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-50-1.png" title="plot of chunk unnamed-chunk-50" alt="plot of chunk unnamed-chunk-50" style="display: block; margin: auto;" /></a></div></div></div>
+  theme_bw(10)</code></pre><div class="row"><div class="col-md-offset-3 col-md-6"><a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-55-1.png" title="plot of chunk unnamed-chunk-55" alt="plot of chunk unnamed-chunk-55" style="display: block; margin: auto;" /></a></div></div></div>
 
 Probabilistic Models of Segmentation
 ===
@@ -1121,7 +1247,7 @@ ggplot(subset(test.imgs,src=="pts"),aes(x,y))+
   geom_point()+
   labs(fill="")+
   facet_wrap(~n)+
-  theme_bw(20)</code></pre><div class="row"><div class="col-md-offset-3 col-md-6"><a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-51-1.png" title="plot of chunk unnamed-chunk-51" alt="plot of chunk unnamed-chunk-51" style="display: block; margin: auto;" /></a></div></div></div>
+  theme_bw(20)</code></pre><div class="row"><div class="col-md-offset-3 col-md-6"><a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-56-1.png" title="plot of chunk unnamed-chunk-56" alt="plot of chunk unnamed-chunk-56" style="display: block; margin: auto;" /></a></div></div></div>
 
 ***
 
@@ -1131,7 +1257,7 @@ ggplot(test.img,aes(x,y))+
   geom_polygon(data=pthull(test.img),aes(fill="convex\nhull"),alpha=0.5)+
   geom_point()+
   labs(fill="")+
-  theme_bw(20)</code></pre><div class="row"><div class="col-md-offset-3 col-md-6"><a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-52-1.png" title="plot of chunk unnamed-chunk-52" alt="plot of chunk unnamed-chunk-52" style="display: block; margin: auto;" /></a></div></div></div>
+  theme_bw(20)</code></pre><div class="row"><div class="col-md-offset-3 col-md-6"><a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-57-1.png" title="plot of chunk unnamed-chunk-57" alt="plot of chunk unnamed-chunk-57" style="display: block; margin: auto;" /></a></div></div></div>
 
 The critical short coming is it is very sensitive to single outlier points. 
  
@@ -1140,7 +1266,7 @@ ggplot(test.img,aes(x,y))+
   geom_polygon(data=pthull(test.img),aes(fill="convex\nhull"),alpha=0.5)+
   geom_point()+
   labs(fill="")+
-  theme_bw(20)</code></pre><div class="row"><div class="col-md-offset-3 col-md-6"><a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-53-1.png" title="plot of chunk unnamed-chunk-53" alt="plot of chunk unnamed-chunk-53" style="display: block; margin: auto;" /></a></div></div></div>
+  theme_bw(20)</code></pre><div class="row"><div class="col-md-offset-3 col-md-6"><a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-58-1.png" title="plot of chunk unnamed-chunk-58" alt="plot of chunk unnamed-chunk-58" style="display: block; margin: auto;" /></a></div></div></div>
 
 Convex Hull Example
 ===
@@ -1159,7 +1285,7 @@ ggplot(subset(cortbone.df,val>0.5),aes(x=x,y=518-y))+
   geom_raster(aes(fill="original"),alpha=0.8)+
   labs(fill="Image",y="y",x="x",title="Convex Hull Creation")+
   coord_equal()+
-  theme_bw(20)</code></pre><div class="row"><div class="col-md-offset-3 col-md-6"><a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-54-1.png" title="Cortical Segment Convex Hull" alt="Cortical Segment Convex Hull" style="display: block; margin: auto;" /></a></div></div></div>
+  theme_bw(20)</code></pre><div class="row"><div class="col-md-offset-3 col-md-6"><a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-59-1.png" title="Cortical Segment Convex Hull" alt="Cortical Segment Convex Hull" style="display: block; margin: auto;" /></a></div></div></div>
 
 ***
 
@@ -1177,7 +1303,7 @@ ggplot(subset(cortbone.df,val<1),aes(x=x,y=518-y))+
   geom_raster(aes(fill="original"),alpha=0.8)+
   labs(fill="Image",y="y",x="x",title="Convex Hull Creation")+
   coord_equal()+
-  theme_bw(20)</code></pre><div class="row"><div class="col-md-offset-3 col-md-6"><a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-55-1.png" title="Cortical Segment Convex Hull" alt="Cortical Segment Convex Hull" style="display: block; margin: auto;" /></a></div></div></div>
+  theme_bw(20)</code></pre><div class="row"><div class="col-md-offset-3 col-md-6"><a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-60-1.png" title="Cortical Segment Convex Hull" alt="Cortical Segment Convex Hull" style="display: block; margin: auto;" /></a></div></div></div>
 
 ***
 
@@ -1211,7 +1337,7 @@ Useful for a variety of samples (needn't be radially symmetric) and offers more 
   geom_raster(aes(fill="original"),alpha=0.8)+
   labs(fill="Image",y="y",x="x")+
   coord_equal()+
-  theme_bw(20)</code></pre><div class="row"><div class="col-md-offset-3 col-md-6"><a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-56-1.png" title="First Rubber Bands" alt="First Rubber Bands" style="display: block; margin: auto;" /></a></div></div></div>
+  theme_bw(20)</code></pre><div class="row"><div class="col-md-offset-3 col-md-6"><a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-61-1.png" title="First Rubber Bands" alt="First Rubber Bands" style="display: block; margin: auto;" /></a></div></div></div>
 
 ***
 
@@ -1221,7 +1347,7 @@ Useful for a variety of samples (needn't be radially symmetric) and offers more 
   geom_raster(aes(fill="original"),alpha=0.8)+
   labs(fill="Image",y="y",x="x")+
   coord_equal()+
-  theme_bw(20)</code></pre><div class="row"><div class="col-md-offset-3 col-md-6"><a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-57-1.png" title="Better Rubber Bands" alt="Better Rubber Bands" style="display: block; margin: auto;" /></a></div></div></div>
+  theme_bw(20)</code></pre><div class="row"><div class="col-md-offset-3 col-md-6"><a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-62-1.png" title="Better Rubber Bands" alt="Better Rubber Bands" style="display: block; margin: auto;" /></a></div></div></div>
 
 <div class="row"><button class="source R toggle btn btn-xs btn-primary"><span class="glyphicon glyphicon-chevron-down"></span> R source</button><pre style=""><code class="source r">ggplot(subset(cortbone.df,val<1),aes(x=x,y=518-y))+
   geom_polygon(data=rubber.band.data(subset(cortbone.df,val<1),180),aes(fill="rubber band 180pts"),alpha=0.5)+
@@ -1229,7 +1355,7 @@ Useful for a variety of samples (needn't be radially symmetric) and offers more 
   geom_raster(aes(fill="original"),alpha=0.8)+
   labs(fill="Image",y="y",x="x")+
   coord_equal()+xlim(50,150)+ylim(-100,50)+
-  theme_bw(20)</code></pre><div class="row"><div class="col-md-offset-3 col-md-6"><a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-58-1.png" title="In Detail" alt="In Detail" style="display: block; margin: auto;" /></a></div></div></div>
+  theme_bw(20)</code></pre><div class="row"><div class="col-md-offset-3 col-md-6"><a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-63-1.png" title="In Detail" alt="In Detail" style="display: block; margin: auto;" /></a></div></div></div>
 
 
 Rubber Band: More flexible constraints
@@ -1247,7 +1373,7 @@ If we use quartiles or the average instead of the maximum value we can make the 
 
   labs(fill="Image",y="y",x="x")+
   coord_equal()+
-  theme_bw(20)</code></pre><div class="row"><div class="col-md-offset-3 col-md-6"><a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-59-1.png" title="In Detail" alt="In Detail" style="display: block; margin: auto;" /></a></div></div></div>
+  theme_bw(20)</code></pre><div class="row"><div class="col-md-offset-3 col-md-6"><a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-64-1.png" title="In Detail" alt="In Detail" style="display: block; margin: auto;" /></a></div></div></div>
 
 Contouring: Manual - Guided Methods
 ===
@@ -1305,6 +1431,7 @@ which encompass aspects of filtering, thresholding, and morphological operations
 <b class="caret"></b></a>
 <ul class="dropdown-menu"><li class="dropdown-header">Type</li>
 <li class="active"><a href="#" class="toggle-global message" type="message">message</a></li>
+<li class="active"><a href="#" class="toggle-global error" type="error">error</a></li>
 <li ><a href="#" type="all-output" class="toggle-global">All</a></li></ul></li>
 <li class="active"><a href="#" type="figure" class="toggle-global">Figures</a></li></ul></div></div></div></div>
 <div id="push"></div>
