@@ -1,0 +1,3111 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title></title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- jQuery -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+  
+  <!-- bootstrap -->
+  <!--<link href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet"  id="style">-->
+  <script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+  
+  <!-- highlight.js -->
+  <!--<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/7.3/styles/default.min.css" rel="stylesheet" id="code-style">-->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/7.3/highlight.min.js"></script>
+  <script>
+  hljs.LANGUAGES.r=function(a){var b="([a-zA-Z]|\\.[a-zA-Z.])[a-zA-Z0-9._]*";return{c:[a.HCM,{b:b,l:b,k:{keyword:"function if in break next repeat else for return switch while try tryCatch|10 stop warning require library attach detach source setMethod setGeneric setGroupGeneric setClass ...|10",literal:"NULL NA TRUE FALSE T F Inf NaN NA_integer_|10 NA_real_|10 NA_character_|10 NA_complex_|10"},r:0},{cN:"number",b:"0[xX][0-9a-fA-F]+[Li]?\\b",r:0},{cN:"number",b:"\\d+(?:[eE][+\\-]?\\d*)?L\\b",r:0},{cN:"number",b:"\\d+\\.(?!\\d)(?:i\\b)?",r:0},{cN:"number",b:"\\d+(?:\\.\\d*)?(?:[eE][+\\-]?\\d*)?i?\\b",r:0},{cN:"number",b:"\\.\\d+(?:[eE][+\\-]?\\d*)?i?\\b",r:0},{b:"`",e:"`",r:0},{cN:"string",b:'"',e:'"',c:[a.BE],r:0},{cN:"string",b:"'",e:"'",c:[a.BE],r:0}]}}(hljs); </script>
+  <!--<script type="text/javascript", src="https://yandex.st/highlightjs/7.3/languages/r.min.js"></script>-->
+  
+  <!-- Manific Popup -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/0.8.9/jquery.magnific-popup.min.js"></script>
+  
+  <script type="text/javascript"
+    src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+  </script>
+  <script defer="defer">
+  // Function to generate the dynamic table of contents
+  jQuery.fn.generate_TOC = function () {
+    var base = $(this[0]);
+  
+    var selectors = ['h1', 'h2', 'h3', 'h4'];
+  
+    var last_ptr = [{}, {}, {}, {}];
+  
+    var anchors = {};
+  
+    generate_anchor = function (text) {
+      var test = text.replace(/\W/g, '_');
+  
+      while(test in anchors){
+        //if no suffix, add one
+        if(test.match(/_\d+$/) === null){
+          test = test + "_2";
+        }
+        //else generate unique id for duplicates by adding one to the suffix
+        else {
+          test = test.replace(/_(\d+)$/, function(match, number){ var num=+number+1; return("_" + num) });
+        }
+      }
+      anchors[test]=1;
+      return(test);
+    }
+  
+    $(selectors.join(',')).filter(function(index) { return $(this).parent().attr("id") != 'header'; }).each(function () {
+  
+      var heading = $(this);
+      var idx = selectors.indexOf(heading.prop('tagName').toLowerCase());
+      var itr = 0;
+  
+      while (itr <= idx) {
+        if (jQuery.isEmptyObject(last_ptr[itr])) {
+          last_ptr[itr] = $('<ul>').addClass('nav');
+          if (itr === 0) {
+            base.append(last_ptr[itr])
+          } else {
+            if(last_ptr[itr-1].children('li').length === 0){
+              last_ptr[itr-1].append(last_ptr[itr]);
+            }
+            else {
+              last_ptr[itr - 1].children('li').last().append(last_ptr[itr]);
+            }
+          }
+        }
+        itr++;
+      }
+      var anchor = generate_anchor(heading.text());
+      heading.attr('id', anchor);
+      var a = $('<a>')
+      .text(heading.text())
+      .attr('href', '#' + anchor);
+  
+    var li = $('<li>')
+      .append(a);
+  
+    last_ptr[idx].append(li);
+    for (i = idx + 1; i < last_ptr.length; i++) {
+      last_ptr[i] = {};
+    }
+    });
+  }
+  /* run scripts when document is ready */
+  $(function() {
+    "use strict";
+  
+    var $window = $(window);
+    var $body = $(document.body);
+  
+    /* size of thumbnails */
+  
+    var hidden_types = ['source']
+    var output_types = ['output', 'message', 'warning', 'error']
+  
+    /* style tables */
+    $('table').addClass('table table-striped table-bordered table-hover table-condensed');
+  
+    $('pre code').each(function(i, e) {
+      hljs.highlightBlock(e);
+    });
+  
+    /* Magnific Popup */
+    $(".thumbnail").each(function(){
+      $(this).magnificPopup({
+        disableOn: 768,
+        closeOnContentClick: true,
+  
+        type: 'image',
+        items: {
+          src: $(this).find('img').attr('src'),
+        }
+      });
+    });
+  
+    function toggle_block(obj, show) {
+      var span = obj.find('span');
+      if(show === true){
+        span.removeClass('glyphicon-chevron-up').addClass('glyphicon-chevron-down');
+        obj.next('pre').slideDown();
+      }
+      else {
+        span.removeClass('glyphicon-chevron-down').addClass('glyphicon-chevron-up');
+        obj.next('pre').slideUp();
+      }
+    }
+  
+    function toggle_thumbnails(imgs, show){
+      if(show === true){
+        imgs.parents().show()
+        imgs.slideDown();
+      }
+      else {
+        imgs.slideUp(400, function(){ $(this).parent().hide(); });
+      }
+    }
+  
+    function global_toggle(obj){
+      var type = obj.attr('type');
+      var show = !obj.parent('li').hasClass('active');
+      if(show === true){
+        obj.parent('li').addClass('active');
+      }
+      else{
+        obj.parent('li').removeClass('active');
+      }
+      if(type == 'figure'){
+        toggle_thumbnails($('.thumbnail img'), show);
+      }
+      else {
+        $('.toggle.' + type).each(function() { toggle_block($(this), show); });
+      }
+    }
+  
+    /* onclick toggle next code block */
+    $('.toggle').click(function() {
+      var span = $(this).find('span');
+      toggle_block($(this), !span.hasClass('glyphicon-chevron-down'));
+      return false
+    })
+  
+    // global toggles
+    $('.toggle-global').click(function(){
+      var type = $(this).attr('type');
+      if(type === 'all-source'){
+          $('li a.source').each(function() {
+            global_toggle($(this));
+          });
+        }
+      else if(type === 'all-output'){
+        $.each(output_types, function(i, val){
+          console.log(val);
+          global_toggle($('li a.' + val));
+        });
+      }
+      else {
+        console.log($(this));
+        global_toggle($(this));
+      }
+      return false;
+    });
+    /* table of contents */
+    if($(['h1', 'h2', 'h3', 'h4'].join(',')).length > 0){
+      $('body > #wrap > .container > .row').append('<div class="col-md-2"><div id="toc" class="well sidebar sidenav affix hidden-print"/></div>');
+      $('#toc').generate_TOC();
+    }
+  
+    $.each(hidden_types, function(i, type) {
+      $('li[type=' + type + ']').each(function(){ global_toggle($(this)); });
+    });
+  
+    /* remove paragraphs with no content */
+    $('p:empty').remove();
+  
+    $body.scrollspy({
+      target: '.sidebar',
+    });
+  
+    /* theme switch */
+    $('.theme-switch').click(function(){
+      var css = $('link[title=' + $(this).attr('title') + ']');
+      $('#theme[rel=stylesheet]').attr('href', css.attr('href'));
+      $('.theme-switch').closest('li').removeClass('active');
+      $(this).closest('li').addClass('active');
+      return false;
+    });
+    /* code style switch */ //TODO use same function for both of these?
+    $('.highlight-switch').click(function(){
+      var css = $('link[title="' + $(this).attr('title') + '"]');
+      $('#highlight[rel=stylesheet]').attr('href', css.attr('href'));
+      $('.highlight-switch').closest('li').removeClass('active');
+      $(this).closest('li').addClass('active');
+      return false;
+    });
+  
+    //TODO refresh on show/hide
+    $window.on('load', function () {
+      $body.scrollspy('refresh');
+    })
+  
+  });
+  
+  </script>
+  <style>
+  /* Knitr_bootstrap styles */
+  #header {
+    display: none !important;
+    visibility: hidden !important;
+  }
+  #wrap .container-fluid {
+    padding: 0;
+    overflow: hidden;
+  }
+  .toggle{
+    text-transform: capitalize;
+  }
+  
+  .toggle-global{
+    text-transform: capitalize;
+  }
+  
+  /* Sticky footer styles */
+  * {
+    margin:0;
+  }
+  html,
+  body {
+      height: 100%;
+      padding:0 !important;
+      /* The html and body elements cannot have any padding or margin. */
+      /*overflow-x: hidden;*/
+  }
+  
+  /* Wrapper for page content to push down footer */
+  #wrap {
+      min-height: 100%;
+      height: auto !important;
+      height: 100%;
+      /* Negative indent footer by it's height */
+      margin: 0 auto -120px;
+  }
+  
+  /* Set the fixed height of the footer here */
+  #push,
+  #footer {
+      height: 120px;
+  }
+  
+  #footer {
+    text-align: center;
+  }
+  
+  /* Top level subheader elements.  These are the first nested items underneath a header element. */
+  .header li {
+    font-size: 20px;
+  }
+  
+  /* Makes the font smaller for all subheader elements. */
+  .sub-header li {
+      font-size: 12px;
+  }
+  
+  button.thumbnails {
+    margin-left:0px;
+  }
+  
+  /*
+   * Side navigation
+   *
+   * Scrollspy and affixed enhanced navigation to highlight sections and secondary
+   * sections of docs content.
+   */
+  
+  /* By default it's not affixed in mobile views, so undo that */
+  .sidebar.affix {
+    position: static;
+  }
+  
+  /* First level of nav */
+  .sidenav {
+    margin-top: 30px;
+    margin-bottom: 30px;
+    padding-top:    10px;
+    padding-bottom: 10px;
+    border-radius: 5px;
+  }
+  
+  /* All levels of nav */
+  .sidebar .nav > li > a {
+    display: block;
+    padding: 5px 20px;
+  }
+  .sidebar .nav > li > a:hover,
+  .sidebar .nav > li > a:focus {
+    text-decoration: none;
+    border-right: 1px solid;
+  }
+  .sidebar .nav > .active > a,
+  .sidebar .nav > .active:hover > a,
+  .sidebar .nav > .active:focus > a {
+    font-weight: bold;
+    background-color: transparent;
+    border-right: 1px solid;
+  }
+  
+  /* Nav: second level (shown on .active) */
+  .sidebar .nav .nav {
+    display: none; /* Hide by default, but at >768px, show it */
+    margin-bottom: 8px;
+  }
+  .sidebar .nav .nav > li > a {
+    padding-top:    3px;
+    padding-bottom: 3px;
+    padding-left: 30px;
+    font-size: 90%;
+  }
+  
+  .sidebar .nav .nav .nav > li > a {
+    padding-left: 40px;
+  }
+  .sidebar .nav .nav .nav .nav > li > a {
+    padding-left: 50px;
+  }
+  
+  /* Show and affix the side nav when space allows it */
+  @media screen and (min-width: 992px) {
+    .sidebar .nav > .active > ul {
+      display: block;
+    }
+    /* Widen the fixed sidebar */
+    .sidebar.affix,
+    .sidebar.affix-bottom {
+      width: 213px;
+    }
+    .sidebar.affix-top,
+    .sidebar.affix {
+      position: fixed; /* Undo the static from mobile first approach */
+      top: 30px;
+    }
+    .sidebar.affix-bottom {
+      position: absolute; /* Undo the static from mobile first approach */
+    }
+    .sidebar.affix-bottom .sidenav,
+    .sidebar.affix .sidenav {
+      margin-top: 0;
+      margin-bottom: 0;
+    }
+  }
+  @media screen and (min-width: 1200px) {
+    /* Widen the fixed sidebar again */
+    .sidebar.affix-bottom,
+    .sidebar.affix {
+      width: 263px;
+    }
+  }
+  
+  #toc {
+    padding: 10px 0px;
+    margin:0;
+    border:0;
+  }
+  
+  
+  .panel pre {
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+  button + pre {
+    margin: 0;
+    padding: 0;
+  }
+  pre code {
+    border-radius: 0;
+  }
+  /* Magnific Popup CSS */
+  .mfp-bg {
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1042;
+    overflow: hidden;
+    position: fixed;
+    background: #0b0b0b;
+    opacity: 0.8;
+    filter: alpha(opacity=80); }
+  
+  .mfp-wrap {
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1043;
+    position: fixed;
+    outline: none !important;
+    -webkit-backface-visibility: hidden; }
+  
+  .mfp-container {
+    text-align: center;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    padding: 0 8px;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box; }
+  
+  .mfp-container:before {
+    content: '';
+    display: inline-block;
+    height: 100%;
+    vertical-align: middle; }
+  
+  .mfp-align-top .mfp-container:before {
+    display: none; }
+  
+  .mfp-content {
+    position: relative;
+    display: inline-block;
+    vertical-align: middle;
+    margin: 0 auto;
+    text-align: left;
+    z-index: 1045; }
+  
+  .mfp-inline-holder .mfp-content,
+  .mfp-ajax-holder .mfp-content {
+    width: 100%;
+    cursor: auto; }
+  
+  .mfp-ajax-cur {
+    cursor: progress; }
+  
+  .mfp-zoom-out-cur,
+  .mfp-zoom-out-cur .mfp-image-holder .mfp-close {
+    cursor: -moz-zoom-out;
+    cursor: -webkit-zoom-out;
+    cursor: zoom-out; }
+  
+  .mfp-zoom {
+    cursor: pointer;
+    cursor: -webkit-zoom-in;
+    cursor: -moz-zoom-in;
+    cursor: zoom-in; }
+  
+  .mfp-auto-cursor .mfp-content {
+    cursor: auto; }
+  
+  .mfp-close,
+  .mfp-arrow,
+  .mfp-preloader,
+  .mfp-counter {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none; }
+  
+  .mfp-loading.mfp-figure {
+    display: none; }
+  
+  .mfp-hide {
+    display: none !important; }
+  
+  .mfp-preloader {
+    color: #cccccc;
+    position: absolute;
+    top: 50%;
+    width: auto;
+    text-align: center;
+    margin-top: -0.8em;
+    left: 8px;
+    right: 8px;
+    z-index: 1044; }
+  
+  .mfp-preloader a {
+    color: #cccccc; }
+  
+  .mfp-preloader a:hover {
+    color: white; }
+  
+  .mfp-s-ready .mfp-preloader {
+    display: none; }
+  
+  .mfp-s-error .mfp-content {
+    display: none; }
+  
+  button.mfp-close,
+  button.mfp-arrow {
+    overflow: visible;
+    cursor: pointer;
+    background: transparent;
+    border: 0;
+    -webkit-appearance: none;
+    display: block;
+    padding: 0;
+    z-index: 1046;
+    -webkit-box-shadow: none;
+    box-shadow: none; }
+  
+  button::-moz-focus-inner {
+    padding: 0;
+    border: 0; }
+  
+  .mfp-close {
+    width: 44px;
+    height: 44px;
+    line-height: 44px;
+    position: absolute;
+    right: 0;
+    top: 0;
+    text-decoration: none;
+    text-align: center;
+    opacity: 0.65;
+    padding: 0 0 18px 10px;
+    color: white;
+    font-style: normal;
+    font-size: 28px;
+    font-family: Arial, Baskerville, monospace; }
+    .mfp-close:hover, .mfp-close:focus {
+      opacity: 1; }
+    .mfp-close:active {
+      top: 1px; }
+  
+  .mfp-close-btn-in .mfp-close {
+    color: #333333; }
+  
+  .mfp-image-holder .mfp-close,
+  .mfp-iframe-holder .mfp-close {
+    color: white;
+    right: -6px;
+    text-align: right;
+    padding-right: 6px;
+    width: 100%; }
+  
+  .mfp-counter {
+    position: absolute;
+    top: 0;
+    right: 0;
+    color: #cccccc;
+    font-size: 12px;
+    line-height: 18px; }
+  
+  .mfp-arrow {
+    position: absolute;
+    opacity: 0.65;
+    margin: 0;
+    top: 50%;
+    margin-top: -55px;
+    padding: 0;
+    width: 90px;
+    height: 110px;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0); }
+  
+  .mfp-arrow:active {
+    margin-top: -54px; }
+  
+  .mfp-arrow:hover,
+  .mfp-arrow:focus {
+    opacity: 1; }
+  
+  .mfp-arrow:before, .mfp-arrow:after,
+  .mfp-arrow .mfp-b,
+  .mfp-arrow .mfp-a {
+    content: '';
+    display: block;
+    width: 0;
+    height: 0;
+    position: absolute;
+    left: 0;
+    top: 0;
+    margin-top: 35px;
+    margin-left: 35px;
+    border: medium inset transparent; }
+  .mfp-arrow:after,
+  .mfp-arrow .mfp-a {
+    border-top-width: 13px;
+    border-bottom-width: 13px;
+    top: 8px; }
+  .mfp-arrow:before,
+  .mfp-arrow .mfp-b {
+    border-top-width: 21px;
+    border-bottom-width: 21px; }
+  
+  .mfp-arrow-left {
+    left: 0; }
+    .mfp-arrow-left:after,
+    .mfp-arrow-left .mfp-a {
+      border-right: 17px solid white;
+      margin-left: 31px; }
+    .mfp-arrow-left:before,
+    .mfp-arrow-left .mfp-b {
+      margin-left: 25px;
+      border-right: 27px solid #3f3f3f; }
+  
+  .mfp-arrow-right {
+    right: 0; }
+    .mfp-arrow-right:after,
+    .mfp-arrow-right .mfp-a {
+      border-left: 17px solid white;
+      margin-left: 39px; }
+    .mfp-arrow-right:before,
+    .mfp-arrow-right .mfp-b {
+      border-left: 27px solid #3f3f3f; }
+  
+  .mfp-iframe-holder {
+    padding-top: 40px;
+    padding-bottom: 40px; }
+  
+  .mfp-iframe-holder .mfp-content {
+    line-height: 0;
+    width: 100%;
+    max-width: 900px; }
+  
+  .mfp-iframe-scaler {
+    width: 100%;
+    height: 0;
+    overflow: hidden;
+    padding-top: 56.25%; }
+  
+  .mfp-iframe-scaler iframe {
+    position: absolute;
+    display: block;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.6);
+    background: black; }
+  
+  .mfp-iframe-holder .mfp-close {
+    top: -40px; }
+  
+  /* Main image in popup */
+  img.mfp-img {
+    width: auto;
+    max-width: 100%;
+    height: auto;
+    display: block;
+    line-height: 0;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    padding: 40px 0 40px;
+    margin: 0 auto; }
+  
+  /* The shadow behind the image */
+  .mfp-figure:after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 40px;
+    bottom: 40px;
+    display: block;
+    right: 0;
+    width: auto;
+    height: auto;
+    z-index: -1;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.6);
+    background: #444444; }
+  
+  .mfp-figure {
+    line-height: 0; }
+  
+  .mfp-bottom-bar {
+    margin-top: -36px;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    cursor: auto; }
+  
+  .mfp-title {
+    text-align: left;
+    line-height: 18px;
+    color: #f3f3f3;
+    word-wrap: break-word;
+    padding-right: 36px; }
+  
+  .mfp-figure small {
+    color: #bdbdbd;
+    display: block;
+    font-size: 12px;
+    line-height: 14px; }
+  
+  .mfp-image-holder .mfp-content {
+    max-width: 100%; }
+  
+  .mfp-gallery .mfp-image-holder .mfp-figure {
+    cursor: pointer; }
+  
+  @media screen and (max-width: 800px) and (orientation: landscape), screen and (max-height: 300px) {
+    /**
+     * Remove all paddings around the image on small screen
+     */
+    .mfp-img-mobile .mfp-image-holder {
+      padding-left: 0;
+      padding-right: 0; }
+  
+    .mfp-img-mobile img.mfp-img {
+      padding: 0; }
+  
+    /* The shadow behind the image */
+    .mfp-img-mobile .mfp-figure:after {
+      top: 0;
+      bottom: 0; }
+  
+    .mfp-img-mobile .mfp-bottom-bar {
+      background: rgba(0, 0, 0, 0.6);
+      bottom: 0;
+      margin: 0;
+      top: auto;
+      padding: 3px 5px;
+      position: fixed;
+      -webkit-box-sizing: border-box;
+      -moz-box-sizing: border-box;
+      box-sizing: border-box; }
+  
+    .mfp-img-mobile .mfp-bottom-bar:empty {
+      padding: 0; }
+  
+    .mfp-img-mobile .mfp-counter {
+      right: 5px;
+      top: 3px; }
+  
+    .mfp-img-mobile .mfp-close {
+      top: 0;
+      right: 0;
+      width: 35px;
+      height: 35px;
+      line-height: 35px;
+      background: rgba(0, 0, 0, 0.6);
+      position: fixed;
+      text-align: center;
+      padding: 0; }
+  
+    .mfp-img-mobile .mfp-figure small {
+      display: inline;
+      margin-left: 5px; } }
+  @media all and (max-width: 900px) {
+    .mfp-arrow {
+      -webkit-transform: scale(0.75);
+      transform: scale(0.75); }
+  
+    .mfp-arrow-left {
+      -webkit-transform-origin: 0;
+      transform-origin: 0; }
+  
+    .mfp-arrow-right {
+      -webkit-transform-origin: 100%;
+      transform-origin: 100%; }
+  
+    .mfp-container {
+      padding-left: 6px;
+      padding-right: 6px; } }
+  .mfp-ie7 .mfp-img {
+    padding: 0; }
+  .mfp-ie7 .mfp-bottom-bar {
+    width: 600px;
+    left: 50%;
+    margin-left: -300px;
+    margin-top: 5px;
+    padding-bottom: 5px; }
+  .mfp-ie7 .mfp-container {
+    padding: 0; }
+  .mfp-ie7 .mfp-content {
+    padding-top: 44px; }
+  .mfp-ie7 .mfp-close {
+    top: 0;
+    right: 0;
+    padding-top: 0; }
+  
+  //Magnific overrides
+  .mfp-image img{
+    background: white;
+  }
+  .mfp-figure:after {
+    background: white;
+  }
+  
+  /*
+   * Off Canvas navbar toggle right
+   * --------------------------------------------------
+   */
+  
+  @media screen and (max-width: 768px) {
+    .row-offcanvas .collapsing {
+    -webkit-transition: none 0;
+      -moz-transition: none 0;
+      transition: none 0;
+    }
+   .row-offcanvas .navbar {
+    position: absolute;
+    z-index: 2;
+      right:0;
+      height:100%;
+      width:55px;
+      border:0;
+      background-color:transparent;
+    }
+    .row-offcanvas .navbar-toggle {
+      margin-right: 5px;
+      margin-left: 5px;
+    }
+    .row-offcanvas {
+      position: relative;
+    }
+    .row-offcanvas-right.active .navbar {
+    position: absolute;
+    z-index: 2;
+      right: -28.4%;
+      width:40%;
+      background-color:#eee;
+      border:0 solid #ddd;
+      border-left-width:1px;
+    }
+    .row-offcanvas-right.active {
+      left: -30%;
+    }
+    .row-offcanvas-right.active .navbar-collapse {
+      position: relative;
+      width: 100%;
+    }
+    .row-offcanvas .content {
+    /*width:calc(100% - 60px);*/
+    }
+  }
+  </style>
+</head>
+<body>
+<div id="wrap">
+<div class="container">
+<div class="row row-offcanvas row-offcanvas-right">
+<div class="contents col-xs-12 col-md-10">
+<div class="row">
+<button class="message R toggle btn btn-xs btn-info">
+<span class="glyphicon glyphicon-chevron-down"></span> R message
+</button>
+<pre style=""><code class="message r">## Loading required package: knitr
+</code></pre>
+</div>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">## The basic files and libraries needed for most presentations
+# creates the libraries and common-functions sections
+read_chunk("../common/utility_functions.R")</code></pre>
+</div>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">require(ggplot2) #for plots
+require(lattice) # nicer scatter plots
+require(plyr) # for processing data.frames
+library(dplyr)
+require(grid) # contains the arrow function
+require(jpeg)
+require(doMC) # for parallel code
+require(png) # for reading png images
+require(gridExtra)
+
+require(reshape2) # for the melt function
+#if (!require("biOps")) {
+#  # for basic image processing
+#  devtools::install_github("cran/biOps")
+#  library("biOps")
+#}
+## To install EBImage
+if (!require("EBImage")) { # for more image processing
+  source("http://bioconductor.org/biocLite.R")
+  biocLite("EBImage")
+}
+
+used.libraries<-c("ggplot2","lattice","plyr","reshape2","grid","gridExtra","biOps","png","EBImage")</code></pre>
+</div>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r"># start parallel environment
+registerDoMC()
+# functions for converting images back and forth
+im.to.df<-function(in.img,out.col="val") {
+  out.im<-expand.grid(x=1:nrow(in.img),y=1:ncol(in.img))
+  out.im[,out.col]<-as.vector(in.img)
+  out.im
+}
+df.to.im<-function(in.df,val.col="val",inv=F) {
+  in.vals<-in.df[[val.col]]
+  if(class(in.vals[1])=="logical") in.vals<-as.integer(in.vals*255)
+  if(inv) in.vals<-255-in.vals
+  out.mat<-matrix(in.vals,nrow=length(unique(in.df$x)),byrow=F)
+  attr(out.mat,"type")<-"grey"
+  out.mat
+}
+ddply.cutcols<-function(...,cols=1) {
+  # run standard ddply command 
+  cur.table<-ddply(...)
+  cutlabel.fixer<-function(oVal) {
+    sapply(oVal,function(x) {
+      cnv<-as.character(x)
+      mean(as.numeric(strsplit(substr(cnv,2,nchar(cnv)-1),",")[[1]]))
+    })
+  }
+  cutname.fixer<-function(c.str) {
+    s.str<-strsplit(c.str,"(",fixed=T)[[1]]
+    t.str<-strsplit(paste(s.str[c(2:length(s.str))],collapse="("),",")[[1]]
+    paste(t.str[c(1:length(t.str)-1)],collapse=",")
+  }
+  for(i in c(1:cols)) {
+    cur.table[,i]<-cutlabel.fixer(cur.table[,i])
+    names(cur.table)[i]<-cutname.fixer(names(cur.table)[i])
+  }
+  cur.table
+}
+
+# since biOps isn't available use a EBImage based version
+imgSobel<-function(img) {
+  kern<-makeBrush(3)*(-1)
+  kern[2,2]<-8
+  filter2(img,kern)
+}
+
+
+show.pngs.as.grid<-function(file.list,title.fun,zoom=1) {
+  preparePng<-function(x) rasterGrob(readPNG(x,native=T,info=T),width=unit(zoom,"npc"),interp=F)
+  labelPng<-function(x,title="junk") (qplot(1:300, 1:300, geom="blank",xlab=NULL,ylab=NULL,asp=1)+
+                                        annotation_custom(preparePng(x))+
+                                        labs(title=title)+theme_bw(24)+
+                                        theme(axis.text.x = element_blank(),
+                                              axis.text.y = element_blank()))
+  imgList<-llply(file.list,function(x) labelPng(x,title.fun(x)) )
+  do.call(grid.arrange,imgList)
+}
+## Standard image processing tools which I use for visualizing the examples in the script
+commean.fun<-function(in.df) {
+  ddply(in.df,.(val), function(c.cell) {
+    weight.sum<-sum(c.cell$weight)
+    data.frame(xv=mean(c.cell$x),
+               yv=mean(c.cell$y),
+               xm=with(c.cell,sum(x*weight)/weight.sum),
+               ym=with(c.cell,sum(y*weight)/weight.sum)
+    )
+  })
+}
+
+colMeans.df<-function(x,...) as.data.frame(t(colMeans(x,...)))
+
+pca.fun<-function(in.df) {
+  ddply(in.df,.(val), function(c.cell) {
+    c.cell.cov<-cov(c.cell[,c("x","y")])
+    c.cell.eigen<-eigen(c.cell.cov)
+    
+    c.cell.mean<-colMeans.df(c.cell[,c("x","y")])
+    out.df<-cbind(c.cell.mean,
+                  data.frame(vx=c.cell.eigen$vectors[1,],
+                             vy=c.cell.eigen$vectors[2,],
+                             vw=sqrt(c.cell.eigen$values),
+                             th.off=atan2(c.cell.eigen$vectors[2,],c.cell.eigen$vectors[1,]))
+    )
+  })
+}
+vec.to.ellipse<-function(pca.df) {
+  ddply(pca.df,.(val),function(cur.pca) {
+    # assume there are two vectors now
+    create.ellipse.points(x.off=cur.pca[1,"x"],y.off=cur.pca[1,"y"],
+                          b=sqrt(5)*cur.pca[1,"vw"],a=sqrt(5)*cur.pca[2,"vw"],
+                          th.off=pi/2-atan2(cur.pca[1,"vy"],cur.pca[1,"vx"]),
+                          x.cent=cur.pca[1,"x"],y.cent=cur.pca[1,"y"])
+  })
+}
+
+# test function for ellipse generation
+# ggplot(ldply(seq(-pi,pi,length.out=100),function(th) create.ellipse.points(a=1,b=2,th.off=th,th.val=th)),aes(x=x,y=y))+geom_path()+facet_wrap(~th.val)+coord_equal()
+create.ellipse.points<-function(x.off=0,y.off=0,a=1,b=NULL,th.off=0,th.max=2*pi,pts=36,...) {
+  if (is.null(b)) b<-a
+  th<-seq(0,th.max,length.out=pts)
+  data.frame(x=a*cos(th.off)*cos(th)+b*sin(th.off)*sin(th)+x.off,
+             y=-1*a*sin(th.off)*cos(th)+b*cos(th.off)*sin(th)+y.off,
+             id=as.factor(paste(x.off,y.off,a,b,th.off,pts,sep=":")),...)
+}
+deform.ellipse.draw<-function(c.box) {
+  create.ellipse.points(x.off=c.box$x[1],
+                        y.off=c.box$y[1],
+                        a=c.box$a[1],
+                        b=c.box$b[1],
+                        th.off=c.box$th[1],
+                        col=c.box$col[1])                    
+}
+bbox.fun<-function(in.df) {
+  ddply(in.df,.(val), function(c.cell) {
+    c.cell.mean<-colMeans.df(c.cell[,c("x","y")])
+    xmn<-emin(c.cell$x)
+    xmx<-emax(c.cell$x)
+    ymn<-emin(c.cell$y)
+    ymx<-emax(c.cell$y)
+    out.df<-cbind(c.cell.mean,
+                  data.frame(xi=c(xmn,xmn,xmx,xmx,xmn),
+                             yi=c(ymn,ymx,ymx,ymn,ymn),
+                             xw=xmx-xmn,
+                             yw=ymx-ymn
+                  ))
+  })
+}
+
+# since the edge of the pixel is 0.5 away from the middle of the pixel
+emin<-function(...) min(...)-0.5
+emax<-function(...) max(...)+0.5
+extents.fun<-function(in.df) {
+  ddply(in.df,.(val), function(c.cell) {
+    c.cell.mean<-colMeans.df(c.cell[,c("x","y")])
+    out.df<-cbind(c.cell.mean,data.frame(xmin=c(c.cell.mean$x,emin(c.cell$x)),
+                                         xmax=c(c.cell.mean$x,emax(c.cell$x)),
+                                         ymin=c(emin(c.cell$y),c.cell.mean$y),
+                                         ymax=c(emax(c.cell$y),c.cell.mean$y)))
+  })
+}
+
+common.image.path<-"../common"
+qbi.file<-function(file.name) file.path(common.image.path,"figures",file.name)
+qbi.data<-function(file.name) file.path(common.image.path,"data",file.name)
+
+th_fillmap.fn<-function(max.val) scale_fill_gradientn(colours=rainbow(10),limits=c(0,max.val))</code></pre>
+</div>
+<h1 id="quantitative-big-imaging">Quantitative Big Imaging</h1>
+<p>author: Kevin Mader date: 17 March 2016 width: 1440 height: 900 css: ../common/template.css transition: rotate</p>
+<p>ETHZ: 227-0966-00L</p>
+<h1 id="analysis-of-single-objects">Analysis of Single Objects</h1>
+<h1 id="course-outline">Course Outline</h1>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">source('../common/schedule.R')</code></pre>
+<ul>
+<li>25th February - Introduction and Workflows</li>
+<li>3rd March - Image Enhancement (A. Kaestner)</li>
+<li>10th March - Basic Segmentation, Discrete Binary Structures</li>
+<li>17th March - Advanced Segmentation</li>
+<li>24th March - Analyzing Single Objects</li>
+<li>7th April - Analyzing Complex Objects</li>
+<li>14th April - Spatial Distribution</li>
+<li>21st April - Statistics and Reproducibility</li>
+<li>28th April - Dynamic Experiments</li>
+<li>12th May - Scaling Up / Big Data</li>
+<li>19th May - Guest Lecture - High Content Screening</li>
+<li>26th May - Guest Lecture - Machine Learning / Deep Learning and More Advanced Approaches</li>
+<li>2nd June - Project Presentations
+</div></li>
+</ul>
+<h1 id="literature-useful-references">Literature / Useful References</h1>
+<ul>
+<li>Jean Claude, Morphometry with R</li>
+<li><a href="http://link.springer.com/book/10.1007%2F978-0-387-77789-4">Online</a> through ETHZ</li>
+<li><a href="http://www.amazon.com/Morphometrics-R-Use-Julien-Claude/dp/038777789X">Buy it</a></li>
+<li>John C. Russ, “The Image Processing Handbook”,(Boca Raton, CRC Press)</li>
+<li>Available <a href="http://dx.doi.org/10.1201/9780203881095">online</a> within domain ethz.ch (or proxy.ethz.ch / public VPN)</li>
+<li>Principal Component Analysis</li>
+<li>Venables, W. N. and B. D. Ripley (2002). Modern Applied Statistics with S, Springer-Verlag</li>
+<li>Shape Tensors</li>
+<li><a href="http://www.cs.utah.edu/~gk/papers/vissym04/" class="uri">http://www.cs.utah.edu/~gk/papers/vissym04/</a></li>
+<li>Doube, M.,et al. (2010). BoneJ: Free and extensible bone image analysis in ImageJ. Bone, 47, 1076–9. <a href="doi:10.1016/j.bone.2010.08.023" class="uri">doi:10.1016/j.bone.2010.08.023</a></li>
+<li>Mader, K. , et al. (2013). A quantitative framework for the 3D characterization of the osteocyte lacunar system. Bone, 57(1), 142–154. <a href="doi:10.1016/j.bone.2013.06.026" class="uri">doi:10.1016/j.bone.2013.06.026</a></li>
+</ul>
+<hr />
+<h3 id="models-roc-curves">Models / ROC Curves</h3>
+<ul>
+<li><a href="https://www.youtube.com/watch?v=ryZL4XNUmwo">Julia Evans - Recalling with Precision</a></li>
+<li><a href="https://github.com/stripe/topmodel">Stripe’s Next Top Model</a></li>
+</ul>
+<h1 id="previously-on-qbi">Previously on QBI …</h1>
+<ul>
+<li>Image Enhancment</li>
+<li>Highlighting the contrast of interest in images</li>
+<li>Minimizing Noise</li>
+<li>Segmentation</li>
+<li>Understanding value histograms</li>
+<li>Dealing with multi-valued data</li>
+<li>Automatic Methods</li>
+<li>Hysteresis Method, K-Means Analysis</li>
+<li>Regions of Interest</li>
+<li>Contouring</li>
+<li>Machine Learning</li>
+</ul>
+<h1 id="review-of-roc">Review of ROC</h1>
+<ul>
+<li><strong>True Positive</strong> values in the ring that are classified as <em>Foreground</em></li>
+<li><strong>True Negative</strong> values outside the ring that are classified as <em>Background</em></li>
+<li><strong>False Positive</strong> values outside the ring that are classified as <em>Foreground</em></li>
+<li><strong>False Negative</strong> values in the ring that are classified as <em>Background</em></li>
+</ul>
+<hr />
+<h3 id="roc-curve">ROC Curve</h3>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">mk.th.img<-function(in.img,steps,smin=0.3,smax=0.7) ldply(seq(smin,smax,length.out=steps),function(c.thresh) {
+  mutate(in.img,
+         Segmented = ifelse(
+                         Intensity>c.thresh*255,
+                         "Foreground","Background"),
+         Thresh = c.thresh
+        )
+})</code></pre>
+</div>
+<ul>
+<li><strong>Recall</strong> (sensitivity)= <span class="math inline"><em>T</em><em>P</em>/(<em>T</em><em>P</em> + <em>F</em><em>N</em>)</span></li>
+<li><strong>Precision</strong> = <span class="math inline"><em>T</em><em>P</em>/(<em>T</em><em>P</em> + <em>F</em><em>P</em>)</span></li>
+</ul>
+<p>Reciever Operating Characteristic (first developed for WW2 soldiers detecting objects in battlefields using radar). The ideal is the top-right (identify everything and miss nothing)</p>
+<h1 id="evaluating-models">Evaluating Models</h1>
+<ul>
+<li><a href="https://github.com/jvns/talks/blob/master/pydatanyc2014/slides.md" class="uri">https://github.com/jvns/talks/blob/master/pydatanyc2014/slides.md</a></li>
+<li><a href="http://mathbabe.org/2012/03/06/the-value-added-teacher-model-sucks/" class="uri">http://mathbabe.org/2012/03/06/the-value-added-teacher-model-sucks/</a></li>
+</ul>
+<h1 id="practical-example-calcifications-in-breast-tissue">Practical Example: Calcifications in Breast Tissue</h1>
+<p>While finding a ring might be didactic, it is not really a relevant problem and these terms are much more meaningful when applied to medical images where every False Positives and False Negative can be mean life-threatening surgery or the lack thereof. (Data courtesy of Zhentian Wang)</p>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r"># image data
+breast.abs<-im.to.df(readPNG(qbi.data("breastabs_0.png")))
+breast.dci<-im.to.df(readPNG(qbi.data("breastdci_0.png")))
+breast.img<-cbind(breast.abs[,c("x","y")],
+                  abs=breast.abs[,c("val")],
+                  dci=breast.dci[,c("val")])
+# ground truth
+breast.cal<-
+  mutate(
+    im.to.df(readPNG(qbi.data("breastcal_0.png"))),
+    Segmented=ifelse(val>0.25,"Calcification","Tissue")
+    )</code></pre>
+</div>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">scale.f<-3
+ggplot(rbind(cbind(breast.abs,type="Absorption"),
+             cbind(mutate(breast.dci,
+                          sval=scale.f*val,
+                          val=ifelse(sval>1,1,sval))[,c("x","y","val")],
+                   type="Scattering")),
+       aes(x,y,fill=val))+
+  geom_raster()+
+  coord_equal()+
+  facet_grid(type~.)+
+  scale_fill_gradientn(colours=rainbow(8))+
+  guides(fill=F)+
+  theme_bw(20)</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-3-1.png" title="plot of chunk unnamed-chunk-3" alt="plot of chunk unnamed-chunk-3" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<hr />
+<p>From these images, an expert labeled the calcifications by hand, so we have ground truth data on where they are:</p>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">ggplot(breast.cal,aes(x,y,fill=Segmented,alpha=val))+
+  geom_raster()+
+  coord_equal()+
+  guides(alpha=F)+
+  theme_bw(20)</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-4-1.png" title="plot of chunk unnamed-chunk-4" alt="plot of chunk unnamed-chunk-4" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<h1 id="applying-a-threshold">Applying a threshold</h1>
+<p>We can perform the same analysis on an image like this one, again using a simple threshold to evalulate how accurately we identify the calcifications</p>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">tr.breast<-mutate(breast.abs,
+                 Segmented=ifelse(val>0.6,"Calcification","Tissue")
+                 )
+ggplot(tr.breast,aes(x,y,fill=Segmented,alpha=val))+
+  geom_raster()+
+  coord_equal()+
+  guides(alpha=F)+
+  theme_bw(20)</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-5-1.png" title="plot of chunk unnamed-chunk-5" alt="plot of chunk unnamed-chunk-5" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<hr />
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">score.img<-mutate(
+    merge(tr.breast[,c("x","y","Segmented")]
+          ,
+          breast.cal[,c("x","y","Segmented")],
+          by=c("x","y"),suffixes=c("C","GT")),
+  Match=(SegmentedC==SegmentedGT),
+  Category=
+    ifelse(Match,
+           ifelse(SegmentedC=="Calcification","True Positive","True Negative"),
+           ifelse(SegmentedC=="Calcification","False Positive","False Negative")
+      )
+  )
+
+ggplot(score.img,
+       aes(x,y,fill=SegmentedGT))+
+  geom_tile()+
+  facet_wrap(~Category)+
+  coord_equal()+
+  scale_colour_manual(values=c("green","black"))+
+  scale_fill_manual(values=c("red","blue"))+
+  labs(fill="Ground\nTruth")+
+  theme_bw(20)</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-6-1.png" title="plot of chunk unnamed-chunk-6" alt="plot of chunk unnamed-chunk-6" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<h1 id="examining-the-roc-curve">Examining the ROC Curve</h1>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">mk.th.img<-function(in.img,stepseq) ldply(stepseq,function(c.thresh) {
+  mutate(in.img,
+         Segmented = ifelse(
+                         val>c.thresh,
+                         "Calcification","Tissue"),
+         Thresh = c.thresh
+        )
+})
+
+mk.stat.table<-function(in.img,stepseq) 
+  ddply(mk.th.img(in.img,stepseq),.(Thresh),function(c.img) {
+  in.df<-merge(c.img[,c("x","y","Segmented")],
+               breast.cal[,c("x","y","Segmented")],
+               by=c("x","y"),suffixes=c("C","GT"))
+  in.df<-mutate(in.df,Match=(SegmentedC==SegmentedGT))
+  data.frame(TP=nrow(subset(in.df,SegmentedGT=="Calcification" & Match)),
+             TN=nrow(subset(in.df,SegmentedGT=="Tissue" & Match)),
+             FP=nrow(subset(in.df,SegmentedC=="Calcification" & !Match)),
+             FN=nrow(subset(in.df,SegmentedC=="Tissue" & !Match))
+             )
+})
+step.fcn<-function(vals,n) quantile(vals,seq(0,1,length.out=n+2)[-c(1,n+2)])
+abs.steps<-step.fcn(breast.abs$val,6)
+tp.table<-mk.stat.table(breast.abs,abs.steps)</code></pre>
+</div>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">prec.table<-mutate(tp.table,
+                   Thresh=round(100*Thresh),
+                   Recall=round(100*TP/(TP+FN)),
+                   Precision=round(100*TP/(TP+FP))
+                   )
+kable(prec.table)</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="right">Thresh</th>
+<th align="right">TP</th>
+<th align="right">TN</th>
+<th align="right">FP</th>
+<th align="right">FN</th>
+<th align="right">Recall</th>
+<th align="right">Precision</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">7</td>
+<td align="right">2056</td>
+<td align="right">13461</td>
+<td align="right">74483</td>
+<td align="right">0</td>
+<td align="right">100</td>
+<td align="right">3</td>
+</tr>
+<tr class="even">
+<td align="right">23</td>
+<td align="right">2030</td>
+<td align="right">25806</td>
+<td align="right">62138</td>
+<td align="right">26</td>
+<td align="right">99</td>
+<td align="right">3</td>
+</tr>
+<tr class="odd">
+<td align="right">34</td>
+<td align="right">1950</td>
+<td align="right">38744</td>
+<td align="right">49200</td>
+<td align="right">106</td>
+<td align="right">95</td>
+<td align="right">4</td>
+</tr>
+<tr class="even">
+<td align="right">42</td>
+<td align="right">1726</td>
+<td align="right">51676</td>
+<td align="right">36268</td>
+<td align="right">330</td>
+<td align="right">84</td>
+<td align="right">5</td>
+</tr>
+<tr class="odd">
+<td align="right">48</td>
+<td align="right">1435</td>
+<td align="right">64161</td>
+<td align="right">23783</td>
+<td align="right">621</td>
+<td align="right">70</td>
+<td align="right">6</td>
+</tr>
+<tr class="even">
+<td align="right">54</td>
+<td align="right">1043</td>
+<td align="right">76363</td>
+<td align="right">11581</td>
+<td align="right">1013</td>
+<td align="right">51</td>
+<td align="right">8</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">ggplot(melt(tp.table,id.vars=c("Thresh")),
+       aes(x=Thresh*100,y=value,color=variable))+
+  geom_point()+
+  geom_path()+
+  labs(color="",y="Pixel Count",x="Threshold Value (%)")+
+  scale_y_sqrt()+
+  theme_bw(20)</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-8-1.png" title="plot of chunk unnamed-chunk-8" alt="plot of chunk unnamed-chunk-8" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<hr />
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">abs.steps<-step.fcn(breast.abs$val,12)
+tp.table<-mk.stat.table(breast.abs,abs.steps)
+prec.table<-mutate(tp.table,
+                   Recall=TP/(TP+FN),
+                  Precision=TP/(TP+FP)
+                   )
+
+ggplot(prec.table,aes(x=Recall,y=Precision))+
+  geom_point(aes(color=Thresh,shape="Image"),size=5)+
+  geom_point(data=data.frame(Recall=1,Precision=1),
+             aes(shape="Ideal"),size=5,color="red")+
+  geom_path()+
+  #coord_equal()+
+  scale_color_gradientn(colours=rainbow(6))+
+  scale_x_sqrt()+
+  labs(shape="")+
+  theme_bw(20)</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-9-1.png" title="plot of chunk unnamed-chunk-9" alt="plot of chunk unnamed-chunk-9" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<h1 id="comparing-absorption-and-scattering-channels">Comparing Absorption and Scattering Channels</h1>
+<p>Since our image has two channels we can examine both of them (Recall is not on a linear scale so the differences can more easily be seen). It is clear that scattering provides more useful information than absorption except for very high recall and meaninglessly low precision.</p>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r"># flip the contrast since the dark values are calcifications
+breast.dci.flip<-mutate(breast.dci,val=-1*val)
+
+dci.steps<-step.fcn(breast.dci.flip$val,12)
+dci.table<-mk.stat.table(breast.dci.flip,dci.steps)
+prec.dci.table<-mutate(dci.table,
+                   Recall=TP/(TP+FN),
+                  Precision=TP/(TP+FP)
+                   )</code></pre>
+</div>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">ggplot(rbind(cbind(prec.table,Channel="Absorption"),
+             cbind(prec.dci.table,Channel="Scattering")),
+             aes(x=Recall,y=Precision))+
+  geom_point(aes(shape="Image"),size=5)+
+  geom_point(data=data.frame(Recall=1,Precision=1),
+             aes(shape="Ideal"),size=5,color="red")+
+  geom_path(aes(group=Channel,color=Channel))+
+  scale_x_sqrt()+
+  labs(shape="")+
+  
+  theme_bw(20)</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-11-1.png" title="plot of chunk unnamed-chunk-11" alt="plot of chunk unnamed-chunk-11" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<h1 id="combining-both-channels">Combining both channels</h1>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">abs.steps<-step.fcn(breast.img$abs,12)
+dci.steps<-step.fcn(breast.img$dci,12)
+abs.dci.scan<-ldply(
+  abs.steps,function(abs.thresh)
+    ldply(dci.steps,function(dci.thresh) {
+      mutate(breast.img,
+         Segmented = ifelse(
+                         (abs>abs.thresh) & (dci<dci.thresh),
+                         "Calcification","Tissue"),
+         abs.thresh=abs.thresh,
+         dci.thresh=dci.thresh
+        )
+    })
+)
+abs.dci.stats<-ddply(abs.dci.scan,.(abs.thresh,dci.thresh),
+                     function(c.img) {
+                  in.df<-merge(c.img[,c("x","y","Segmented")],
+                  breast.cal[,c("x","y","Segmented")],
+               by=c("x","y"),suffixes=c("C","GT"))
+  in.df<-mutate(in.df,Match=(SegmentedC==SegmentedGT))
+  data.frame(TP=nrow(subset(in.df,SegmentedGT=="Calcification" & Match)),
+             TN=nrow(subset(in.df,SegmentedGT=="Tissue" & Match)),
+             FP=nrow(subset(in.df,SegmentedC=="Calcification" & !Match)),
+             FN=nrow(subset(in.df,SegmentedC=="Tissue" & !Match))
+             )
+})</code></pre>
+</div>
+<p>We can get even better results by using a combination of both absorption and scattering to find the calcifications</p>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">abs.dci.prec<-mutate(abs.dci.stats,
+                   Recall=TP/(TP+FN),
+                  Precision=TP/(TP+FP)
+                   )
+ggplot(melt(abs.dci.prec,measure.vars=c("Recall","Precision")),
+             aes(x=abs.thresh,y=dci.thresh,fill=100*value))+
+  geom_tile()+
+  scale_fill_gradientn(colours=topo.colors(5))+
+  facet_grid(variable~.)+
+  labs(x="Absorption Threshold",y="Scattering Threshold",fill="(%) Score")+
+  theme_bw(20)</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-12-1.png" title="plot of chunk unnamed-chunk-12" alt="plot of chunk unnamed-chunk-12" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<hr />
+<p>This can then be represented as a pseudo-ROC curve by showing all of the points and finding the maximum value.</p>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">nice.fit<-ddply.cutcols(abs.dci.prec,.(cut_interval(Recall,10)),function(in.df) 
+    data.frame(Precision=max(in.df$Precision))
+  )
+
+ggplot(abs.dci.prec,
+             aes(x=Recall,y=Precision))+
+  geom_point(aes(shape="Image",color=dci.thresh,size=abs.thresh))+
+  geom_point(data=data.frame(Recall=1,Precision=1),
+             aes(shape="Ideal"),size=5,color="red")+
+  geom_path(data=nice.fit)+
+  scale_color_gradientn(colours=topo.colors(5))+
+  labs(color="Scattering Threshold",size="Absorption Threshold",
+       fill="(%) Score",shape="")+
+  theme_bw(20)</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-13-1.png" title="plot of chunk unnamed-chunk-13" alt="plot of chunk unnamed-chunk-13" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<h1 id="learning-objectives">Learning Objectives</h1>
+<h3 id="motivation-why-and-how">Motivation (Why and How?)</h3>
+<ul>
+<li>How do we quantify where and how big our objects are?</li>
+<li>How can we say something about the shape?</li>
+<li>How can we compare objects of different sizes?</li>
+<li>How can we compare two images on the basis of the shape as calculated from the images?</li>
+<li>How can we put objects into an finite element simulation? or make pretty renderings?</li>
+</ul>
+<h1 id="outline">Outline</h1>
+<ul>
+<li>Motivation (Why and How?)</li>
+<li>Object Characterization</li>
+<li>Volume</li>
+<li>Center and Extents</li>
+<li>Anisotropy</li>
+</ul>
+<hr />
+<ul>
+<li>Shape Tensor</li>
+<li>Principal Component Analysis</li>
+<li>Ellipsoid Representation</li>
+<li>Scale-free metrics</li>
+<li>Anisotropy, Oblateness</li>
+<li>Meshing</li>
+<li>Marching Cubes</li>
+<li>Isosurfaces</li>
+<li>Surface Area</li>
+</ul>
+<h1 id="motivation">Motivation</h1>
+<p>We have dramatically simplified our data, but there is still too much.</p>
+<ul>
+<li>We perform an experiment bone to see how big the cells are inside the tissue <br /><span class="math display">↓</span><br /> <img src="ext-figures/tomoimage.png" alt="Bone Measurement" /></li>
+</ul>
+<h3 id="x-2560-x-2160-x-32-bit">2560 x 2560 x 2160 x 32 bit</h3>
+<p><em>56GB / sample</em></p>
+<ul>
+<li>Filtering and Enhancement!<br />
+<br /><span class="math display">↓</span><br /></li>
+<li>56GB of less noisy data</li>
+</ul>
+<hr />
+<ul>
+<li><strong>Segmentation</strong></li>
+</ul>
+<p><br /><span class="math display">↓</span><br /></p>
+<h3 id="x-2560-x-2160-x-1-bit">2560 x 2560 x 2160 x 1 bit</h3>
+<p>(1.75GB / sample)</p>
+<ul>
+<li>Still an aweful lot of data</li>
+</ul>
+<h1 id="what-did-we-want-in-the-first-place">What did we want in the first place</h1>
+<h3 id="single-number"><em>Single number</em>:</h3>
+<ul>
+<li>volume fraction,</li>
+<li>cell count,</li>
+<li>average cell stretch,</li>
+<li>cell volume variability</li>
+</ul>
+<h1 id="component-labeling">Component Labeling</h1>
+<p>Once we have a clearly segmented image, it is often helpful to identify the sub-components of this image. The easist method for identifying these subcomponents is called component labeling which again uses the neighborhood <span class="math inline">𝒩</span> as a criterion for connectivity, resulting in pixels which are touching being part of the same object.</p>
+<p>In general, the approach works well since usually when different regions are touching, they are related. It runs into issues when you have multiple regions which agglomerate together, for example a continuous pore network (1 object) or a cluster of touching cells</p>
+<hr />
+<p>The more general formulation of the problem is for networks (roads, computers, social). Are the points start and finish connected?</p>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">nx<-5
+ny<-10
+cross.im<-expand.grid(x=c(-nx:nx),y=c(-ny:ny))
+max.nodes.fn<-function(x,y) 1+round(abs(x+y/2)) # non-homogenous network connectivity
+cross.im<-ddply(cross.im,.(x,y), function(in.pt) {
+    out.df<-data.frame(xv=c(),yv=c())
+    max.nodes<-max.nodes.fn(in.pt[1,"x"],in.pt[1,"y"])
+    for(i in 1:round(runif(1,max=max.nodes))) {
+      c.angle<-runif(1,max=pi)
+      out.df<-rbind(out.df,data.frame(
+        xv=round(cos(c.angle)),
+        yv=round(sin(c.angle))
+        ))
+    }
+    out.df
+  })
+id.fn<-function(x,y) (y*100+x)
+cross.im$id<-with(cross.im,id.fn(x,y))
+
+cross.lab.im<-cbind(cross.im,label="Normal")
+cross.lab.im$label<-as.character(cross.lab.im$label)
+cross.lab.im[which(cross.lab.im$id==cross.lab.im[1,]$id),"label"]<-"Begin"
+cross.lab.im[which(cross.lab.im$id==cross.lab.im[nrow(cross.lab.im),]$id),"label"]<-"End"
+cross.lab.im$label<-as.factor(cross.lab.im$label)
+ggplot(cross.lab.im,aes(x=x,y=y,xend=x+xv,yend=y+yv))+
+  geom_point(aes(color=label),size=5)+geom_segment()+
+  theme_bw(20)+labs(color="Goal")</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-14-1.png" title="Network connectivity" alt="Network connectivity" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<h1 id="component-labeling-algorithm">Component Labeling: Algorithm</h1>
+<p>We start out with the network and we <em>grow</em> <strong>Begin</strong> to its connections. In a <a href="http://www.sciencedirect.com/science/article/pii/S0921889007000966">brushfire</a>-style algorithm</p>
+<ul>
+<li>For each point <span class="math inline">(<em>x</em>, <em>y</em>)∈{Begin, Pixels Grown}</span></li>
+<li>For each point <span class="math inline">(<em>x</em><sup>′</sup>, <em>y</em><sup>′</sup>)∈𝒩(<em>x</em>, <em>y</em>)</span></li>
+<li>Set the label to <em>Pixels Grown</em></li>
+<li>Repeat until no more labels have been changed</li>
+</ul>
+<hr />
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r"># Network traversing algorithm
+iter.grow<-function(ncross.lab.im,iter.cnt=10,source.phase="Begin",target.phase=NA,grow.into.phase="Normal") {
+  if(is.na(target.phase)) target.phase<-source.phase
+  
+  for(iters in 1:iter.cnt) {
+    begin.pts<-subset(ncross.lab.im,label==source.phase | label==target.phase)
+    begin.ids<-unique(begin.pts$id)
+    begin.pts.term<-subset(ncross.lab.im,id.fn(x+xv,y+yv) %in% begin.ids)  
+    begin.pts<-rbind(begin.pts,
+                     begin.pts.term
+                     )
+    ncross.lab.im$label<-as.character(ncross.lab.im$label)
+    for(i in 1:nrow(begin.pts)) {
+      cur.pt<-begin.pts[i,]
+      child.id<-id.fn(cur.pt$x+cur.pt$xv,cur.pt$y+cur.pt$yv)
+      switch.pixs<-which(ncross.lab.im$id==child.id & 
+                            ncross.lab.im$label == grow.into.phase)
+      if(length(switch.pixs)>1) ncross.lab.im[switch.pixs ,"label"]<-target.phase
+      }
+    switch.pixs<-which(ncross.lab.im$id %in% begin.pts.term$id &
+                          ncross.lab.im$label == grow.into.phase)
+    
+    if(length(switch.pixs)>1) ncross.lab.im[switch.pixs,"label"]<-target.phase
+    }
+  ncross.lab.im$label<-as.factor(ncross.lab.im$label)
+  ncross.lab.im
+  }</code></pre>
+</div>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">ggplot(iter.grow(cross.lab.im,1,target.phase="Pixels Grown"),aes(x=x,y=y,xend=x+xv,yend=y+yv))+
+  geom_point(aes(color=label),size=5)+geom_segment()+
+  theme_bw(20)+labs(color="Type",title="1 Iteration from Begin")</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-15-1.png" title="One Growth Step" alt="One Growth Step" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<h1 id="component-labeling-algorithm-steps">Component Labeling: Algorithm Steps</h1>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">ggplot(iter.grow(cross.lab.im,10,target.phase="Pixels Grown"),aes(x=x,y=y,xend=x+xv,yend=y+yv))+
+  geom_point(aes(color=label),size=3)+geom_segment()+coord_equal()+
+  theme_bw(20)+labs(color="Type",title="10 iterations from Begin")</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-16-1.png" title="10 Growth Steps" alt="10 Growth Steps" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">ggplot(iter.grow(cross.lab.im,10,source.phase="End",target.phase="Pixels Grown"),aes(x=x,y=y,xend=x+xv,yend=y+yv))+
+  geom_point(aes(color=label),size=3)+geom_segment()+coord_equal()+
+  theme_bw(20)+labs(color="Type",title="10 iterations from End")</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-17-1.png" title="10 Growth Steps" alt="10 Growth Steps" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<hr />
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">ggplot(iter.grow(cross.lab.im,round(2*sqrt(20^2+10^2)),target.phase="Pixels Grown"),aes(x=x,y=y,xend=x+xv,yend=y+yv))+
+  geom_point(aes(color=label),size=5)+geom_segment()+coord_equal()+
+  theme_bw(20)+labs(color="Type",title="Diagonal iterations from Begin")</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-18-1.png" title="Diagonal Growth Steps" alt="Diagonal Growth Steps" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<h1 id="component-labeling-images-algorithm">Component Labeling: Images Algorithm</h1>
+<p>Same as for networks but the neighborhood is defined with a kernel (circular, full, line, etc) and labels must be generate for the image</p>
+<ul>
+<li><p>Assign a unique label to each point in the image <br /><span class="math display"><em>L</em>(<em>x</em>, <em>y</em>)=<em>y</em> * Im<sub><em>w</em><em>i</em><em>d</em><em>t</em><em>h</em></sub> + <em>x</em></span><br /></p></li>
+<li>For each point <span class="math inline">(<em>x</em>, <em>y</em>)</span></li>
+<li>Check each point <span class="math inline">(<em>x</em><sup>′</sup>, <em>y</em><sup>′</sup>)∈𝒩(<em>x</em>, <em>y</em>)</span></li>
+<li>Set <br /><span class="math display"><em>L</em>(<em>x</em>, <em>y</em>)=min(<em>L</em>(<em>x</em>, <em>y</em>),<em>L</em>(<em>x</em><sup>′</sup>, <em>y</em><sup>′</sup>))</span><br /> <br /><span class="math display"><em>L</em>(<em>x</em><sup>′</sup>, <em>y</em><sup>′</sup>)=<em>L</em>(<em>x</em>, <em>y</em>)</span><br /></li>
+<li><p>Repeat until no more <span class="math inline"><em>L</em></span> values are changed</p></li>
+</ul>
+<hr />
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">nx<-10
+ny<-5
+ang.vals<-seq(0,pi/2,length.out=2)
+cross.im<-expand.grid(x=c(-nx:nx),y=c(-ny:ny))
+cross.im<-ddply(cross.im,.(x,y), function(in.pt) {
+    out.df<-data.frame(xv=c(),yv=c())
+    
+    for(i in 1:length(ang.vals)) {
+      c.angle<-ang.vals[i]
+      out.df<-rbind(out.df,data.frame(
+        xv=round(cos(c.angle)),
+        yv=round(sin(c.angle))
+        ))
+    }
+    out.df
+  })
+
+id.fn<-function(x,y) (y*100+x)
+cross.im$id<-with(cross.im,id.fn(x,y))
+cross.im<-subset(cross.im,x!=0 & y!=0)
+ggplot(cross.im,aes(x=x,y=y,xend=x+xv,yend=y+yv))+
+  geom_point(aes(color=as.factor(id)),size=5)+geom_segment()+
+  guides(color = "none")+
+  theme_bw(20)</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-19-1.png" title="Image as Network" alt="Image as Network" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<h1 id="component-labeling-image-algorithm">Component Labeling: Image Algorithm</h1>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r"># Component labeling algorithm
+im.iter.grow<-function(icross.im,iter.cnt=10) {
+  ncross.im<-icross.im
+  for(iters in 1:iter.cnt) {
+    
+    begin.pts<-ncross.im
+    for(i in 1:nrow(begin.pts)) {
+      cur.pt<-begin.pts[i,]
+      child.id<-id.fn(cur.pt$x+cur.pt$xv,cur.pt$y+cur.pt$yv)
+      # fill into lower points
+      switch.pixs<-which(icross.im$id==child.id & 
+                            icross.im$id > cur.pt$id)
+      if(length(switch.pixs)>1) ncross.im[switch.pixs ,"id"]<-cur.pt$id
+      }
+    icross.im<-ncross.im
+    }
+  ncross.im
+  }</code></pre>
+</div>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">ggplot(im.iter.grow(cross.im,2),aes(x=x,y=y,xend=x+xv,yend=y+yv))+
+  geom_point(aes(color=as.factor(id)),size=3)+geom_segment()+coord_equal()+
+  theme_bw(20)+labs(color="Type",title="2 Iterations")</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-20-1.png" title="One Growth Step" alt="One Growth Step" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">ggplot(im.iter.grow(cross.im,3),aes(x=x,y=y,xend=x+xv,yend=y+yv))+
+  geom_point(aes(color=as.factor(id)),size=3)+geom_segment()+
+  coord_equal()+
+  theme_bw(20)+labs(color="Type",title="3 Iterations")</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-21-1.png" title="One Growth Step" alt="One Growth Step" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<hr />
+<p>The image very quickly converges and after 4 iterations the task is complete. For larger more complicated images with thousands of components this task can take longer, but there exist much more efficient <a href="https://www.cs.princeton.edu/~rs/AlgsDS07/01UnionFind.pdf">algorithms</a> for labeling components which alleviate this issue.</p>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">ggplot(im.iter.grow(cross.im,4),aes(x=x,y=y,xend=x+xv,yend=y+yv))+
+  geom_point(aes(color=as.factor(id)),size=5)+geom_segment()+coord_equal()+
+  theme_bw(20)+labs(color="Type",title="4 iterations")</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-22-1.png" title="One Growth Step" alt="One Growth Step" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<h1 id="component-labeling-image-algorithm-1">Component Labeling: Image Algorithm</h1>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">cell.im<-jpeg::readJPEG("ext-figures/Cell_Colony.jpg")
+cell.lab.df<-im.to.df(bwlabel(cell.im<.6))
+ggplot(subset(cell.lab.df,val>0),aes(x=x,y=y,fill=val))+
+  geom_raster()+
+  labs(fill="Label",title="Labeled Image")+
+  theme_bw(20)+coord_equal()</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-23-1.png" title="Cell Colony" alt="Cell Colony" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">size.histogram<-ddply(subset(cell.lab.df,val>0),.(val),function(c.label) data.frame(count=nrow(c.label)))
+keep.vals<-subset(size.histogram,count>25)
+ggplot(size.histogram,aes(x=count))+
+  geom_density(aes(color="Entire Labeled Images"))+
+  geom_density(data=keep.vals,aes(color="Larger Cells"))+
+  labs(x="Cell Volume",y="Frequency of Cells",title="Size Distribution",color="Distribution")+
+  scale_y_sqrt()+
+  theme_bw(20)</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-24-1.png" title="Cell Colony" alt="Cell Colony" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<hr />
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">ggplot(subset(cell.lab.df,val %in% keep.vals$val),aes(x=x,y=y,fill=as.factor(val)))+
+  geom_raster()+
+  labs(fill="Intensity",title="Larger Cells (>25px)")+
+  theme_bw(20)+coord_equal()</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-25-1.png" title="Cell Colony" alt="Cell Colony" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<h1 id="component-labeling-beyond">Component Labeling: Beyond</h1>
+<p>Now all the voxels which are connected have the same label. We can then perform simple metrics like</p>
+<ul>
+<li>counting the number of voxels in each label to estimate volume.</li>
+<li>looking at the change in volume during erosion or dilation to estimate surface area</li>
+</ul>
+<h1 id="from-the-labels">From the labels</h1>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">cell.im<-jpeg::readJPEG("ext-figures/Cell_Colony.jpg")
+cell.lab.df<-im.to.df(bwlabel(cell.im<.6))
+size.histogram<-ddply(subset(cell.lab.df,val>0),.(val),function(c.label) data.frame(count=nrow(c.label)))
+keep.vals<-subset(size.histogram,count>25)
+cur.cell.id<-subset(cell.lab.df,val %in% keep.vals$val)$val[1]
+cur.cell.df<-subset(cell.lab.df,val==cur.cell.id)
+ggplot(subset(cell.lab.df,val %in% keep.vals$val),aes(x=x,y=y,fill=as.numeric(as.factor(val))))+
+  geom_raster()+
+  geom_tile(data=cur.cell.df,fill="red",alpha=0.5)+
+  labs(fill="Label",title="Larger Cells (>25px)")+
+  theme_bw(20)+coord_equal()</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-26-1.png" title="Cell Colony" alt="Cell Colony" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<hr />
+<h3 id="what-we-would-like-to-to-do">What we would like to to do</h3>
+<ul>
+<li>Count the cells</li>
+<li>Say something about the cells</li>
+<li>Compare the cells in this image to another image</li>
+<li>But where do we start?</li>
+</ul>
+<h1 id="cov-with-a-single-object">COV: With a single object</h1>
+<p><br /><span class="math display">$$ I_{id}(x,y) = 
+\begin{cases}
+1, &amp; L(x,y) = id \\
+0, &amp; \text{otherwise}
+\end{cases}$$</span><br /></p>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">mean.df<-colMeans.df(cur.cell.df[,c("x","y")])
+ggplot(cur.cell.df,aes(x=x,y=y))+
+  geom_tile(color="black",fill="grey")+
+  geom_point(data=mean.df,color="red",pch=3,size=20)+
+  labs(title="Single Cell")+
+  theme_bw(20)+coord_equal()+guides(fill=F)</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-27-1.png" title="Single Cell" alt="Single Cell" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<hr />
+<h3 id="define-a-center">Define a center</h3>
+<p><br /><span class="math display">$$ \bar{x} = \frac{1}{N} \sum_{\vec{v}\in I_{id}} \vec{v}\cdot\vec{i} $$</span><br /> <br /><span class="math display">$$ \bar{y} = \frac{1}{N} \sum_{\vec{v}\in I_{id}} \vec{v}\cdot\vec{j} $$</span><br /> <br /><span class="math display">$$ \bar{z} = \frac{1}{N} \sum_{\vec{v}\in I_{id}} \vec{v}\cdot\vec{k} $$</span><br /></p>
+<h1 id="com-with-a-single-object">COM: With a single object</h1>
+<p>If the gray values are kept (or other meaningful ones are used), this can be seen as a weighted center of volume or center of mass (using <span class="math inline"><em>I</em><sub><em>g</em><em>y</em></sub></span> to distinguish it from the labels)</p>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">commean.fun<-function(in.df) {
+  ddply(in.df,.(val), function(c.cell) {
+    weight.sum<-sum(c.cell$weight)
+    data.frame(xv=mean(c.cell$x),
+               yv=mean(c.cell$y),
+               xm=with(c.cell,sum(x*weight)/weight.sum),
+               ym=with(c.cell,sum(y*weight)/weight.sum)
+               )
+    })
+  }
+cur.cell.df.weight<-cbind(cur.cell.df,weight=with(cur.cell.df,(x-17)^2+(y-9)^2))
+commean.df<-commean.fun(cur.cell.df.weight)
+ggplot(cur.cell.df.weight,aes(x=x,y=y))+
+  geom_tile(aes(fill=weight),color="black")+
+  geom_point(data=commean.df,aes(x=xv,y=yv,color="COV"),pch=16,size=20)+
+  geom_point(data=commean.df,aes(x=xm,y=ym,color="COM"),pch=16,size=20)+
+  labs(title="Single Cell",color="Center",fill="Igy")+
+  theme_bw(20)+coord_equal()#+guides(fill=T)</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-28-1.png" title="Single Cell" alt="Single Cell" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<hr />
+<h3 id="define-a-center-1">Define a center</h3>
+<p><br /><span class="math display">$$ \Sigma I_{gy} = \frac{1}{N} \sum_{\vec{v}\in I_{id}} I_{gy}(\vec{v}) $$</span><br /> <br /><span class="math display">$$ \bar{x} = \frac{1}{\Sigma I_{gy}} \sum_{\vec{v}\in I_{id}} (\vec{v}\cdot\vec{i}) I_{gy}(\vec{v}) $$</span><br /> <br /><span class="math display">$$ \bar{y} = \frac{1}{\Sigma I_{gy}} \sum_{\vec{v}\in I_{id}} (\vec{v}\cdot\vec{j}) I_{gy}(\vec{v}) $$</span><br /> <br /><span class="math display">$$ \bar{z} = \frac{1}{\Sigma I_{gy}} \sum_{\vec{v}\in I_{id}} (\vec{v}\cdot\vec{k}) I_{gy}(\vec{v}) $$</span><br /></p>
+<h1 id="extents-with-a-single-object">Extents: With a single object</h1>
+Exents or caliper lenghts are the size of the object in a given direction. Since the coordinates of our image our <span class="math inline"><em>x</em></span> and <span class="math inline"><em>y</em></span> the extents are calculated in these directions
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r"># since the edge of the pixel is 0.5 away from the middle of the pixel
+emin<-function(...) min(...)-0.5
+emax<-function(...) max(...)+0.5
+extents.fun<-function(in.df) {
+  ddply(in.df,.(val), function(c.cell) {
+    c.cell.mean<-colMeans.df(c.cell[,c("x","y")])
+    out.df<-cbind(c.cell.mean,data.frame(xmin=c(c.cell.mean$x,emin(c.cell$x)),
+                                         xmax=c(c.cell.mean$x,emax(c.cell$x)),
+                                         ymin=c(emin(c.cell$y),c.cell.mean$y),
+                                         ymax=c(emax(c.cell$y),c.cell.mean$y)))
+    })
+  }
+cell.extents<-extents.fun(cur.cell.df)
+ggplot(cur.cell.df,aes(x=x,y=y))+
+  geom_tile(color="black",fill="grey")+
+  geom_segment(data=cell.extents,aes(x=xmin,y=ymin, xend=xmax,yend=ymax),color="red",size=2,lineend="square")+
+  labs(title="Single Cell")+
+  theme_bw(20)+coord_equal()+guides(fill=F)</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-29-1.png" title="Single Cell" alt="Single Cell" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<hr />
+<p>Define extents as the minimum and maximum values along the projection of the shape in each direction <br /><span class="math display">$$ \text{Ext}_x = \left\{ \forall \vec{v}\in I_{id}: max(\vec{v}\cdot\vec{i})-min(\vec{v}\cdot\vec{i})  \right\} $$</span><br /> <br /><span class="math display">$$ \text{Ext}_y = \left\{ \forall \vec{v}\in I_{id}: max(\vec{v}\cdot\vec{j})-min(\vec{v}\cdot\vec{j})  \right\} $$</span><br /> <br /><span class="math display">$$ \text{Ext}_z = \left\{ \forall \vec{}\in I_{id}: max(\vec{v}\cdot\vec{k})-min(\vec{v}\cdot\vec{k})  \right\} $$</span><br /></p>
+<ul>
+<li>Lots of information about each object now</li>
+<li>But, I don’t think a biologist has ever asked “How long is a cell in the <span class="math inline"><em>x</em></span> direction? how about <span class="math inline"><em>y</em></span>?”</li>
+</ul>
+<h1 id="anisotropy-what-is-it">Anisotropy: What is it?</h1>
+<p>By definition (New Oxford American): <del>varying in magnitude according to the direction of measurement.</del></p>
+<ul>
+<li>It allows us to define metrics in respect to one another and thereby characterize shape.</li>
+<li>Is it tall and skinny, short and fat, or perfectly round</li>
+</ul>
+<hr />
+<p>Due to its very vague definition, it can be mathematically characterized in many different very much unequal ways (in all cases 0 represents a sphere)</p>
+<p><br /><span class="math display">$$ Aiso1 = \frac{\text{Longest Side}}{\text{Shortest Side}} - 1 $$</span><br /></p>
+<p><br /><span class="math display">$$ Aiso2 = \frac{\text{Longest Side}-\text{Shortest Side}}{\text{Longest Side}} $$</span><br /></p>
+<p><br /><span class="math display">$$ Aiso3 = \frac{\text{Longest Side}}{\text{Average Side Length}} - 1 $$</span><br /></p>
+<p><br /><span class="math display">$$ Aiso4 = \frac{\text{Longest Side}-\text{Shortest Side}}{\text{Average Side Length}} $$</span><br /></p>
+<p><br /><span class="math display">⋯ →  ad nauseum</span><br /></p>
+<h1 id="anisotropy-which-definition-makes-sense">Anisotropy: Which definition makes sense?</h1>
+Let’s take some sample objects
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r"># test function for ellipse generation
+# ggplot(ldply(seq(-pi,pi,length.out=100),function(th) create.ellipse.points(a=1,b=2,th.off=th,th.val=th)),aes(x=x,y=y))+geom_path()+facet_wrap(~th.val)+coord_equal()
+create.ellipse.points<-function(x.off=0,y.off=0,a=1,b=NULL,th.off=0,th.max=2*pi,pts=36,...) {
+  if (is.null(b)) b<-a
+  th<-seq(0,th.max,length.out=pts)
+  data.frame(x=a*cos(th.off)*cos(th)+b*sin(th.off)*sin(th)+x.off,
+             y=-1*a*sin(th.off)*cos(th)+b*cos(th.off)*sin(th)+y.off,
+             id=as.factor(paste(x.off,y.off,a,b,th.off,pts,sep=":")),...)
+  }
+deform.ellipse.draw<-function(c.box) {
+  create.ellipse.points(x.off=c.box$x[1],
+                        y.off=c.box$y[1],
+                        a=c.box$a[1],
+                        b=c.box$b[1],
+                        th.off=c.box$th[1],
+                        col=c.box$col[1])                    
+  }
+test.objs<-data.frame(x=0,y=0,th.off=0,a=5,b=rev(c(1e-3,1e-2,1e-1,1,2,3,4,5)))
+test.objs$col<-1:nrow(test.objs)
+test.objs$x.extents<-2*test.objs$a
+test.objs$y.extents<-2*test.objs$b
+ggplot(ddply(test.objs,.(col),deform.ellipse.draw),
+       aes(x=x,y=y,group=as.factor(id)))+
+  geom_polygon(color="black",fill="blue")+coord_equal()+
+  facet_grid(col~.)+theme_bw(15)</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-30-1.png" title="Sample Objects" alt="Sample Objects" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<hr />
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">s.aiso<-function(lside,sside) (lside/sside-1)
+aiso<-function(lside,sside) ((lside-sside)/lside)
+a.aiso<-function(lside,sside) (2*lside/(lside+sside)-1)
+as.aiso<-function(lside,sside) (2*(lside-sside)/(lside+sside))
+awrap<-function(c.fun) function(in.ell.dim) c.fun(pmax(2*in.ell.dim$a,2*in.ell.dim$b),pmin(2*in.ell.dim$a,2*in.ell.dim$b))
+aiso.table.fn<-function(in.objs) {
+  ddply(in.objs,.(b),function(c.ell) {
+    data.frame(Aiso1=awrap(s.aiso)(c.ell),
+               Aiso2=awrap(aiso)(c.ell),
+               Aiso3=awrap(a.aiso)(c.ell),
+               Aiso4=awrap(as.aiso)(c.ell))
+    })
+  }
+aiso.table<-aiso.table.fn(test.objs)
+names(aiso.table)[1]<-"Y Extent"
+kable(aiso.table,digits=2)</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="right">Y Extent</th>
+<th align="right">Aiso1</th>
+<th align="right">Aiso2</th>
+<th align="right">Aiso3</th>
+<th align="right">Aiso4</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">0.00</td>
+<td align="right">4999.00</td>
+<td align="right">1.00</td>
+<td align="right">1.00</td>
+<td align="right">2.00</td>
+</tr>
+<tr class="even">
+<td align="right">0.01</td>
+<td align="right">499.00</td>
+<td align="right">1.00</td>
+<td align="right">1.00</td>
+<td align="right">1.99</td>
+</tr>
+<tr class="odd">
+<td align="right">0.10</td>
+<td align="right">49.00</td>
+<td align="right">0.98</td>
+<td align="right">0.96</td>
+<td align="right">1.92</td>
+</tr>
+<tr class="even">
+<td align="right">1.00</td>
+<td align="right">4.00</td>
+<td align="right">0.80</td>
+<td align="right">0.67</td>
+<td align="right">1.33</td>
+</tr>
+<tr class="odd">
+<td align="right">2.00</td>
+<td align="right">1.50</td>
+<td align="right">0.60</td>
+<td align="right">0.43</td>
+<td align="right">0.86</td>
+</tr>
+<tr class="even">
+<td align="right">3.00</td>
+<td align="right">0.67</td>
+<td align="right">0.40</td>
+<td align="right">0.25</td>
+<td align="right">0.50</td>
+</tr>
+<tr class="odd">
+<td align="right">4.00</td>
+<td align="right">0.25</td>
+<td align="right">0.20</td>
+<td align="right">0.11</td>
+<td align="right">0.22</td>
+</tr>
+<tr class="even">
+<td align="right">5.00</td>
+<td align="right">0.00</td>
+<td align="right">0.00</td>
+<td align="right">0.00</td>
+<td align="right">0.00</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h1 id="anisotropy-which-definition-makes-sense-1">Anisotropy: Which definition makes sense?</h1>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">ggplot(ddply(test.objs,.(col),deform.ellipse.draw),
+       aes(x=x,y=y,group=as.factor(id)))+
+  geom_polygon(color="black",fill="blue")+coord_equal()+
+  facet_wrap(~col)+theme_bw(15)</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-32-1.png" title="Sample Objects" alt="Sample Objects" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<hr />
+<h3 id="anisotropy-vs-x-extents">Anisotropy vs <span class="math inline"><em>x</em></span> extents</h3>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">names(aiso.table)[1]<-"y.extent"
+ggplot(aiso.table,aes(x=y.extent))+
+  geom_line(aes(y=Aiso1,color="Aiso1"))+
+  geom_line(aes(y=Aiso2,color="Aiso2"))+
+  geom_line(aes(y=Aiso3,color="Aiso3"))+
+  geom_line(aes(y=Aiso4,color="Aiso4"))+
+  scale_y_log10()+
+  labs(x="Y extents",y="Anisotropy",color="Metric")+
+  theme_bw(20)</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-33-1.png" title="Anisotropy Formulas" alt="Anisotropy Formulas" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<h1 id="distributions-randomly-sized-objects">Distributions: Randomly Sized Objects</h1>
+<p>Objects with uniformally distributed, independent <span class="math inline"><em>x</em></span> and <span class="math inline"><em>y</em></span> extents</p>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">m.count<-5000
+many.objs<-data.frame(x=0,y=0,th.off=0,a=runif(m.count,0,20),b=runif(m.count,0,20))
+many.objs$col<-1:nrow(many.objs)
+many.objs$x.extents<-2*many.objs$a
+many.objs$y.extents<-2*many.objs$b
+maiso.table<-aiso.table.fn(many.objs)
+ggplot(ddply(subset(many.objs,col<16),.(col),deform.ellipse.draw),
+       aes(x=x,y=y,group=as.factor(id)))+
+  geom_polygon(color="black",fill="blue")+coord_equal()+
+  facet_wrap(~col,ncol=5)+theme_bw(15)</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-34-1.png" title="Sample Objects" alt="Sample Objects" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">ggplot(many.objs)+
+  geom_density(aes(x=x.extents,color="X"),size=2)+
+  geom_density(aes(x=y.extents,color="Y"),size=2)+
+  #scale_x_log10()+
+  labs(x="Extent Length (pixels)",color="Axis")+
+  guides(fill=F)+
+  xlim(0,80)+
+  theme_bw(20)</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-35-1.png" title="Anisotropy Formulas" alt="Anisotropy Formulas" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<hr />
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">splom(subset(maiso.table,Aiso1<10)[,c("Aiso1","Aiso2","Aiso3","Aiso4")],pch=16)</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-36-1.png" title="Anisotropy Formulas" alt="Anisotropy Formulas" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">ggplot(maiso.table)+
+  geom_density(aes(x=Aiso1,color="Aiso1"),size=2)+
+  geom_density(aes(x=Aiso2,color="Aiso2"),fill="green",alpha=0.5)+
+  geom_density(aes(x=Aiso3,color="Aiso3"),size=2)+
+  geom_density(aes(x=Aiso4,color="Aiso4"),size=2)+
+  #scale_x_log10()+
+  labs(x="Anisotropy",color="Metric")+
+  xlim(0,2)+guides(fill=F)+
+  theme_bw(20)</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-37-1.png" title="Anisotropy Formulas" alt="Anisotropy Formulas" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<h1 id="extents-with-all-objects">Extents: With all objects</h1>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">ggplot(subset(cell.lab.df,val %in% keep.vals$val),aes(x=x,y=y,
+                                                      fill=as.numeric(as.factor(val))))+
+  geom_raster()+
+  geom_tile(data=cur.cell.df,fill="red",alpha=0.5)+
+  labs(fill="Label",title="Labeled Cells")+
+  theme_bw(20)#+coord_equal()</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-38-1.png" title="All Cells Labeled" alt="All Cells Labeled" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<hr />
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">cell.extents.all<-extents.fun(subset(cell.lab.df,val %in% keep.vals$val))
+ggplot(cell.extents.all,aes(x=x,y=y))+
+  geom_segment(aes(x=xmin,y=ymin, xend=xmax,yend=ymax),color="red",lineend="square")+
+  geom_point(aes(color=as.numeric(as.factor(val))),size=2)+
+  labs(title="COM and Extents",color="Label")+
+  theme_bw(20)#+coord_equal()</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-39-1.png" title="All Cells" alt="All Cells" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<h1 id="cov-and-extents-all-cells">COV and Extents: All Cells</h1>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">mean.pos.subfun<-function(in.df) {
+  ddply(in.df,.(val),function(c.cell) {
+    c.mean<-colMeans.df(c.cell)
+    data.frame(x=c.cell$x-c.mean$x,y=c.cell$y-c.mean$y)
+    })
+  }
+mean.sub.df<-mean.pos.subfun(subset(cell.lab.df,val %in% keep.vals$val))
+
+ggplot(cell.extents.all,aes(x=x-x,y=y-y))+
+  geom_raster(data=mean.sub.df,aes(x=x,y=y))+
+  geom_segment(aes(x=xmin-x,y=ymin-y, xend=xmax-x,yend=ymax-y),
+               color="red")+
+  geom_point(color="red",size=2)+
+  facet_wrap(~val,ncol=14)+
+  labs(x="x - COM",y="y - COM")+
+  theme_bw(15)+coord_equal()</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-40-1.png" title="All Cells" alt="All Cells" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<h1 id="bounding-box-all-cells">Bounding Box: All Cells</h1>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">bbox.fun<-function(in.df) {
+  ddply(in.df,.(val), function(c.cell) {
+    c.cell.mean<-colMeans.df(c.cell[,c("x","y")])
+    xmn<-emin(c.cell$x)
+    xmx<-emax(c.cell$x)
+    ymn<-emin(c.cell$y)
+    ymx<-emax(c.cell$y)
+    out.df<-cbind(c.cell.mean,
+                  data.frame(xi=c(xmn,xmn,xmx,xmx,xmn),
+                             yi=c(ymn,ymx,ymx,ymn,ymn),
+                             xw=xmx-xmn,
+                             yw=ymx-ymn
+                             ))
+    })
+  }
+cell.bbox.all<-bbox.fun(subset(cell.lab.df,val %in% keep.vals$val))
+ggplot(cell.bbox.all,aes(x=x-x,y=y-y))+
+  geom_raster(data=mean.sub.df,aes(x=x,y=y))+
+  geom_path(aes(x=xi-x,y=yi-y),
+            color="red")+
+  geom_point(color="red",size=2)+
+  facet_wrap(~val,ncol=14)+
+  labs(x="x - COM",y="y - COM")+
+  theme_bw(15)+coord_equal()</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-41-1.png" title="All Cells Bounding Box" alt="All Cells Bounding Box" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<h1 id="sorted-by-anisotropy">Sorted by Anisotropy</h1>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">cell.bbox.all$aiso<-with(cell.bbox.all,(pmax(xw,yw)-pmin(xw,yw))/pmax(xw,yw)+val/1e5)
+
+ggplot(cell.bbox.all,aes(x=x-x,y=y-y))+
+  #geom_raster(data=mean.sub.df,aes(x=x,y=y))+
+  geom_path(aes(x=xi-x,y=yi-y,group=val),
+            color="red")+
+  geom_point(color="red",size=2)+
+  facet_wrap(~aiso,ncol=14)+
+  labs(x="x - COM",y="y - COM")+
+  theme_bw(15)+coord_equal()</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-42-1.png" title="All Cells Bounding Box" alt="All Cells Bounding Box" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<h1 id="bounding-box-is-a-poor-approximation">Bounding Box is a Poor Approximation</h1>
+<p>While easy to calculate, the bounding box / extents approach is a very rough approximation for most of the objects in our image. In particular objects which are not parallel to the <span class="math inline"><em>X</em><em>Y</em></span>-axes are misrepresented.</p>
+<h3 id="possible-solutions">Possible Solutions</h3>
+<ul>
+<li>Orient the boxes so there is the least amount of empty space or it best fits the data</li>
+<li>Assume the object is an ellipse and do some sort of curve fitting to find the object</li>
+<li>Don’t worry about height and width and focus instead on more general characteristics like curvature, thickness (next lecture)</li>
+</ul>
+<h1 id="useful-statistical-tools-principal-component-analysis">Useful Statistical Tools: Principal Component Analysis</h1>
+<p>While many of the topics covered in Linear Algebra and Statistics courses might not seem very applicable to real problems at first glance, at least a few of them come in handy for dealing distributions of pixels <del>(they will only be briefly covered, for more detailed review look at some of the suggested material)</del></p>
+<h3 id="principal-component-analysis">Principal Component Analysis</h3>
+<p>Similar to K-Means insofar as we start with a series of points in a vector space and want to condense the information. With PCA instead of searching for distinct groups, we try to find a linear combination of components which best explain the variance in the system.</p>
+<hr />
+As an example we will use a very simple example of corn and chicken prices vs time
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">n.pts<-20
+test.pca<-data.frame(time=c(1:n.pts),
+                     corn.price=0.01*runif(n.pts)+0.05)
+test.pca$chicken.price<-with(test.pca,corn.price+0.01*runif(n.pts))
+ggplot(test.pca,aes(x=time))+
+  geom_line(aes(y=corn.price,color="Corn Price ($/kg)"))+
+  geom_line(aes(y=chicken.price,color="Chicken Price ($/g)"))+
+  labs(x="Time (days)",y="Price",color="Commodity")+
+  theme_bw(20)</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-43-1.png" title="Corn and Chicken" alt="Corn and Chicken" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">test.pca.princomp<-princomp(test.pca[,-1])
+test.pca$pca1<-test.pca.princomp$scores[,1]
+test.pca$pca2<-test.pca.princomp$scores[,2]
+ggplot(test.pca,aes(x=time))+
+  geom_line(aes(y=pca1,color="Principal Component #1"))+
+  geom_line(aes(y=pca2,color="Principal Component #2"))+
+  geom_line(aes(y=corn.price,color="Corn Price ($/kg)"))+
+  geom_line(aes(y=chicken.price,color="Chicken Price ($/g)"))+
+  labs(x="Time (days)",y="Price",color="Commodity")+
+  theme_bw(20)</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-44-1.png" title="PCA Example" alt="PCA Example" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<h1 id="useful-statistical-tools-principal-component-analysis-1">Useful Statistical Tools: Principal Component Analysis</h1>
+<p>The first principal component condenses the correlated information in both the chicken and corn prices (perhaps the underlying cost of fuel) since it explains the most variance in the final table of corn and chicken prices.</p>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">ggplot(test.pca,aes(x=pca1))+
+  geom_point(aes(y=corn.price,color="Corn Price ($/kg)"))+
+  geom_point(aes(y=chicken.price,color="Chicken Price ($/g)"))+
+  labs(x="Principal Component #1",y="Price",color="Commodity")+
+  theme_bw(20)</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-45-1.png" title="PCA Example" alt="PCA Example" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<hr />
+The second principal component is then related to the unique information seperating chicken from corn prices but neither indices directly themselves (maybe the cost of antibiotics)
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">ggplot(test.pca,aes(x=pca2))+
+  geom_point(aes(y=corn.price,color="Corn Price ($/kg)"))+
+  geom_point(aes(y=chicken.price,color="Chicken Price ($/g)"))+
+  geom_point(aes(y=5*(chicken.price-corn.price),color="Difference in Chicken-Corn"))+
+  labs(x="Principal Component #2",y="Price",color="Commodity")+
+  theme_bw(20)</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-46-1.png" title="PCA Example" alt="PCA Example" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<h1 id="applied-pca-shape-tensor">Applied PCA: Shape Tensor</h1>
+<h3 id="how-do-these-statistical-analyses-help-us">How do these statistical analyses help us?</h3>
+<p>Going back to a single cell, we have the a distribution of <span class="math inline"><em>x</em></span> and <span class="math inline"><em>y</em></span> values.</p>
+<ul>
+<li>are not however completely independent</li>
+<li>greatest variance does not normally lie in either x nor y alone.</li>
+</ul>
+<p>A principal component analysis of the voxel positions, will calculate two new principal components (the components themselves are the relationships between the input variables and the scores are the final values.)</p>
+<ul>
+<li>An optimal rotation of the coordinate system</li>
+</ul>
+<hr />
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">pca.fun<-function(in.df) {
+  ddply(in.df,.(val), function(c.cell) {
+    c.cell.cov<-cov(c.cell[,c("x","y")])
+    c.cell.eigen<-eigen(c.cell.cov)
+    
+    c.cell.mean<-colMeans.df(c.cell[,c("x","y")])
+    out.df<-cbind(c.cell.mean,
+                  data.frame(vx=c.cell.eigen$vectors[1,],
+                             vy=c.cell.eigen$vectors[2,],
+                             vw=sqrt(c.cell.eigen$values),
+                             th.off=atan2(c.cell.eigen$vectors[2,],c.cell.eigen$vectors[1,]))
+                  )
+    })
+  }
+
+cur.cell.id<-subset(cell.lab.df,val %in% keep.vals$val)$val[100]
+cur.cell.id<-58
+cur.cell.df<-subset(cell.lab.df,val==cur.cell.id)
+
+cell.pca<-pca.fun(cur.cell.df)
+
+ggplot(cur.cell.df,aes(x=x,y=y))+
+  geom_tile(color="black",fill="grey")+
+  geom_segment(data=cell.pca,aes(x=x,y=y,xend=x+vx*vw,yend=y+vy*vw,
+                                 color=as.factor(round(vw*10)/10)),
+               arrow=arrow(length = unit(0.3,"cm")),size=2)+
+  labs(title="Single Cell (Original)",color="Score /\nEigenvalue")+
+  theme_bw(20)+coord_equal()+guides(fill=F)</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-47-1.png" title="Single Cell" alt="Single Cell" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">x1<-cell.pca[1,"x"]
+y1<-cell.pca[1,"y"]
+vx1<-cell.pca[1,"vx"]
+vy1<-cell.pca[1,"vy"]
+vx2<-cell.pca[2,"vx"]
+vy2<-cell.pca[2,"vy"]
+# these functions are evidently not the same
+n.cell.df<-plyr::mutate(
+  cur.cell.df,
+  xd = vx1*(x-x1)+vy1*(y-y1)+x1,
+  yd = vx2*(x-x1)+vy2*(y-y1)+y1,
+  )
+cur.cell.df %>% kable</code></pre>
+</div>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">ggplot(n.cell.df,
+       aes(x=xd,y=yd))+
+  geom_tile(aes(width=1,height=1),color="black",fill="grey")+
+  geom_segment(data=mutate(cell.pca,vx=c(1,0),vy=c(0,1)),
+               aes(x=x,y=y,xend=x+vx*vw,yend=y+vy*vw,
+                                 color=as.factor(round(vw*10)/10)),
+               arrow=arrow(length = unit(0.3,"cm")),size=2)+
+  labs(title="Single Cell (PCA Transformed)",color="Score /\nEigenvalue")+
+  theme_bw(20)+coord_equal()+guides(fill=F)</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-48-1.png" title="plot of chunk unnamed-chunk-48" alt="plot of chunk unnamed-chunk-48" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<h1 id="how-did-we-calculate-that">How did we calculate that?</h1>
+<p>We start off by calculating the covariance matrix from the list of <span class="math inline"><em>x</em></span>, <span class="math inline"><em>y</em></span>, and <span class="math inline"><em>z</em></span> points that make up our object of interest.</p>
+<p><br /><span class="math display">$$ COV(I_{id}) = \frac{1}{N} \sum_{\forall\vec{v}\in I_{id}} \begin{bmatrix}
+\vec{v}_x\vec{v}_x &amp; \vec{v}_x\vec{v}_y &amp; \vec{v}_x\vec{v}_z\\
+\vec{v}_y\vec{v}_x &amp; \vec{v}_y\vec{v}_y &amp; \vec{v}_y\vec{v}_z\\
+\vec{v}_z\vec{v}_x &amp; \vec{v}_z\vec{v}_y &amp; \vec{v}_z\vec{v}_z
+\end{bmatrix} $$</span><br /></p>
+<p>We then take the eigentransform of this array to obtain the eigenvectors (principal components, <span class="math inline">$\vec{\Lambda}_{1\cdots 3}$</span>) and eigenvalues (scores, <span class="math inline"><em>λ</em><sub>1⋯3</sub></span>)</p>
+<p><br /><span class="math display">$$ COV(I_{id}) \longrightarrow \underbrace{\begin{bmatrix}
+\vec{\Lambda}_{1x} &amp; \vec{\Lambda}_{1y} &amp; \vec{\Lambda}_{1z} \\
+\vec{\Lambda}_{2x} &amp; \vec{\Lambda}_{2y} &amp; \vec{\Lambda}_{2z} \\
+\vec{\Lambda}_{3x} &amp; \vec{\Lambda}_{3y} &amp; \vec{\Lambda}_{3z} 
+\end{bmatrix}}_{\textrm{Eigenvectors}} * \underbrace{\begin{bmatrix} 
+\lambda_1 &amp; 0 &amp; 0 \\ 
+0 &amp; \lambda_2 &amp; 0 \\
+0 &amp; 0 &amp; \lambda_3
+\end{bmatrix}}_{\textrm{Eigenvalues}} * \underbrace{\begin{bmatrix}
+\vec{\Lambda}_{1x} &amp; \vec{\Lambda}_{1y} &amp; \vec{\Lambda}_{1z} \\
+\vec{\Lambda}_{2x} &amp; \vec{\Lambda}_{2y} &amp; \vec{\Lambda}_{2z} \\
+\vec{\Lambda}_{3x} &amp; \vec{\Lambda}_{3y} &amp; \vec{\Lambda}_{3z} 
+\end{bmatrix}^{T}}_{\textrm{Eigenvectors}} $$</span><br /> The principal components tell us about the orientation of the object and the scores tell us about the corresponding magnitude (or length) in that direction.</p>
+<h1 id="principal-component-analysis-take-home-message">Principal Component Analysis: Take home message</h1>
+<ul>
+<li>We calculate the statistical distribution individually for <span class="math inline"><em>x</em></span>, <span class="math inline"><em>y</em></span>, and <span class="math inline"><em>z</em></span> and the ‘correlations’ between them.</li>
+<li>From these values we can estimate the orientation in the direction of largest variance</li>
+<li>We can also estimate magnitude</li>
+<li>These functions are implemented as <code>princomp</code> or <code>pca</code> in various languages and scale well to very large datasets.</li>
+</ul>
+<h1 id="principal-component-analysis-elliptical-model">Principal Component Analysis: Elliptical Model</h1>
+<p>While the eigenvalues and eigenvectors are in their own right useful</p>
+<ul>
+<li>Not obvious how to visually represent these tensor objects</li>
+<li>Ellipsoidal (Ellipse in 2D) representation alleviates this issue</li>
+</ul>
+<h3 id="ellipsoidal-representation">Ellipsoidal Representation</h3>
+<ol>
+<li>Center of Volume is calculated normally</li>
+<li>Eigenvectors represent the unit vectors for the semiaxes of the ellipsoid</li>
+<li><span class="math inline">$\sqrt{\text{Eigenvalues}}$</span> is proportional to the length of the semiaxis (<span class="math inline">$\mathcal{l}=\sqrt{5\lambda_i}$</span>), derivation similar to moment of inertia tensor for ellipsoids.</li>
+</ol>
+<hr />
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">vec.to.ellipse<-function(pca.df) {
+  ddply(pca.df,.(val),function(cur.pca) {
+    # assume there are two vectors now
+    create.ellipse.points(x.off=cur.pca[1,"x"],y.off=cur.pca[1,"y"],
+                          b=sqrt(5)*cur.pca[1,"vw"],a=sqrt(5)*cur.pca[2,"vw"],
+                          th.off=pi/2-atan2(cur.pca[1,"vy"],cur.pca[1,"vx"]),
+                          x.cent=cur.pca[1,"x"],y.cent=cur.pca[1,"y"])
+    })
+  }
+
+cell.ellipse<-vec.to.ellipse(cell.pca)
+ggplot(cur.cell.df,aes(x=x,y=y))+
+  geom_tile(color="black",fill="grey")+
+  geom_segment(data=cell.pca,aes(x=x,y=y,xend=x+vx*vw,yend=y+vy*vw,
+                                 color=as.factor(round(vw*10)/10)),
+               arrow=arrow(length = unit(0.3,"cm")),size=2)+
+  geom_path(data=cell.ellipse)+
+  labs(title="Single Cell",color="Score /\nEigenvalue")+
+  theme_bw(20)+coord_equal()+guides(fill=F)</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-49-1.png" title="Single Cell" alt="Single Cell" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<h1 id="elliptical-model-vs-bounding-box">Elliptical Model vs Bounding Box</h1>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">ggplot(cur.cell.df,aes(x=x,y=y))+
+  geom_tile(color="black",fill="grey")+
+  geom_path(data=bbox.fun(cur.cell.df),aes(x=xi,y=yi,color="Bounding\nBox"))+
+  geom_path(data=cell.ellipse,aes(color="Ellipse"))+
+  labs(title="Single Cell",color="Shape\nAnalysis\nMethod")+
+  theme_bw(20)+coord_equal()+guides(fill=F)</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-50-1.png" title="Single Cell" alt="Single Cell" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<hr />
+<ul>
+<li>The bounding box matches boundaries better</li>
+<li>The ellipse captures the dimensions and shape better</li>
+<li>Extents can be calculated from either method</li>
+<li>Anisotropy can also be calculated from either method</li>
+</ul>
+<h1 id="elliptical-model-for-all-samples">Elliptical Model for All Samples</h1>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">cell.pca.all<-pca.fun(subset(cell.lab.df,val %in% keep.vals$val))
+cell.ell.all<-vec.to.ellipse(cell.pca.all)
+ggplot(cell.bbox.all,aes(x=x-x,y=y-y))+
+  geom_raster(data=mean.sub.df,aes(x=x,y=y))+
+  geom_path(data=cell.ell.all,aes(x=x-x.cent,y=y-y.cent),color="red")+
+  geom_point(color="red",size=2)+
+  geom_segment(data=cell.pca.all,aes(xend=vx*vw,yend=vy*vw),
+               arrow=arrow(length = unit(0.3,"cm")),color="red")+
+  facet_wrap(~val,ncol=14)+
+  labs(x="x - COM",y="y - COM")+
+  theme_bw(15)+coord_equal()</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-51-1.png" title="All Cells Elliptical Model" alt="All Cells Elliptical Model" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<h1 id="comparison-between-anisotropy-for-both-models">Comparison between Anisotropy for both models</h1>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">pca.aiso.all<-ddply(cell.pca.all,.(val),function(cur.pca) {
+  lon.ax<-max(cur.pca$vw)
+  sho.ax<-min(cur.pca$vw)
+  data.frame(e.aiso=(lon.ax-sho.ax)/lon.ax)
+  })
+both.aiso<-merge(pca.aiso.all,cell.bbox.all,by="val")
+no.aiso.vals<-subset(both.aiso,aiso<0.01 & e.aiso>0.2)$val
+ggplot(both.aiso,aes(x=aiso,y=e.aiso))+
+  geom_point(aes(color=ifelse(aiso<0.01,"lost information","normal")))+
+  geom_smooth()+
+  labs(x="Extents / BB Anisotropy",y="Elliptical Anisotropy",color="Points")+
+  coord_equal()+theme_bw(20)</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-52-1.png" title="All Cells Elliptical Model" alt="All Cells Elliptical Model" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<hr />
+<p>We see that there seems to be a general, albeit weak, correlation between the two measures. The most concerning portion is however the left side where the extents or bounding box method reports 0 anisotropy and the elliptical method reports substancial amounts of it.</p>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">ggplot(subset(cell.bbox.all,val %in% no.aiso.vals),aes(x=x-x,y=y-y))+
+  geom_raster(data=subset(mean.sub.df,val %in% no.aiso.vals),aes(x=x,y=y))+
+  geom_path(aes(x=xi-x,y=yi-y,color="BB"))+
+  geom_path(data=subset(cell.ell.all,val %in% no.aiso.vals),
+            aes(x=x-x.cent,y=y-y.cent,color="Ellipse"))+
+  geom_point(color="red",size=2)+
+  geom_segment(data=subset(cell.pca.all,val %in% no.aiso.vals),
+               aes(xend=vx*vw,yend=vy*vw),
+               arrow=arrow(length = unit(0.3,"cm")),color="red")+
+  facet_wrap(~val)+
+  labs(x="x - COM",y="y - COM",color="Model")+
+  theme_bw(15)+coord_equal()</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-53-1.png" title="All Cells Elliptical Model" alt="All Cells Elliptical Model" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<h1 id="d-shape-analysis">3D Shape Analysis</h1>
+<p>The models we have done are all applicable to both 2D and 3D images. The primary difference is when looking at 3D images there is an extra dimension to consider.</p>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">xg<-seq(-10,10,length.out=41)
+make.ellipse.3d<-function(a,b,c,xg) {
+  ell.3d<-expand.grid(x=xg,y=xg,z=xg)
+  ell.3d$val<-with(ell.3d,(x/a)^2+(y/b)^2+(z/c)^2 < 1)
+  ell.3d
+  }
+cloud(z~x*y,data=subset(make.ellipse.3d(9,3,10,xg),val),xlim=c(-10,10),ylim=c(-10,10),zlim=c(-10,10))</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-54-1.png" title="3D Ellipse" alt="3D Ellipse" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<hr />
+<p>It can also be shown as a series of 2D slices.</p>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">ggplot(subset(make.ellipse.3d(9,3,10,xg),val),aes(x=x,y=y))+
+  geom_tile(color="blue")+
+  facet_wrap(~z)+
+  coord_equal()+
+  xlim(c(-10,10))+ylim(c(-10,10))+
+  theme_bw(10)</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-55-1.png" title="3D Ellipse" alt="3D Ellipse" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<p>Anisotropy applies to these samples as well but it only gives us information about the shortest and the longest dimensions. Is that enough?</p>
+<h1 id="pancakeness">Pancakeness</h1>
+Each of these images has the exact same anisotropy because the shortest semiaxis length remains
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">xg<-seq(-10,10,length.out=41)
+b.vals<-seq(3,10,length.out=4)
+cloud(z~x*y | as.factor(b), data=ldply(b.vals,function(b) 
+  cbind(subset(make.ellipse.3d(b,10,3,xg),val),b=b)),
+  xlim=c(-10,10),ylim=c(-10,10),zlim=c(-10,10))</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-56-1.png" title="Oblateness" alt="Oblateness" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<hr />
+<p>If we take a slice through the image we can image the final shape looking like a very small thin rod in the case where the second dimension is equal to 3 (short in two directions and long in the other) and a pankcake (short in one direction and long in the other two).</p>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">ggplot(ldply(rev(b.vals),function(b) 
+  cbind(subset(make.ellipse.3d(b,10,3,xg),val & z==0),b=b)),
+  aes(x=x,y=y))+
+  geom_tile(aes(fill=as.factor(round(b*10)/10)),alpha=1)+
+  facet_wrap(~z)+
+  coord_equal()+
+  xlim(c(-10,10))+ylim(c(-10,10))+
+  labs(title="Profile Cut-through of Ellipse",fill="Second\nDimension\nLength")+
+  theme_bw(20)</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-57-1.png" title="Oblateness Slices" alt="Oblateness Slices" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<h1 id="oblateness">Oblateness</h1>
+<p>We can thus introduce a new metric for assessing the second-degree anisotropy in the object and this we shall somewhat more formally call <strong>Oblateness</strong>.</p>
+<p><br /><span class="math display">$$ \textrm{Ob} = 2\frac{\lambda_{2}-\lambda_{1}}{\lambda_{3}-\lambda_{1}}-1 $$</span><br /></p>
+<p>The value like in anisotropy is bound between -1 and 1.</p>
+<ul>
+<li>-1 indicates the middle semiaxis is the same length of the shortest semiaxis <span class="math inline"><em>λ</em><sub>2</sub> = <em>λ</em><sub>1</sub></span> and thus the structure is rod-like <span class="math inline">→</span> <strong>prolate</strong></li>
+<li>+1 indicates the middle axis is the same length as the longest semiaxis <span class="math inline"><em>λ</em><sub>2</sub> = <em>λ</em><sub>3</sub></span> and thus the structure is pancake-like <span class="math inline">→</span> <strong>oblate</strong></li>
+</ul>
+<hr />
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">ggplot(ldply(rev(b.vals),function(b) 
+  cbind(subset(make.ellipse.3d(b,10,3,xg),val & z==0),b=b)),
+  aes(x=x,y=y))+
+  geom_tile(aes(fill=as.factor(round(b*10)/10)),alpha=1)+
+  facet_wrap(~z)+
+  coord_equal()+
+  xlim(c(-10,10))+ylim(c(-10,10))+
+  labs(title="Profile Cut-through of Ellipse",fill="Second\nDimension\nLength")+
+  theme_bw(20)</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-58-1.png" title="Oblateness Slices" alt="Oblateness Slices" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">ob.vals<-data.frame(b=b.vals,obl=2*(b.vals-3)/(10-3)-1
+                    )
+ggplot(ob.vals,aes(x=b,y=obl))+
+  geom_line()+
+  labs(x="Second Dimension Length",y="Oblateness")+
+  theme_bw(20)</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-59-1.png" title="Oblateness Slices" alt="Oblateness Slices" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<h1 id="interfaces-surfaces">Interfaces / Surfaces</h1>
+<p>Many physical and chemical processes occur at surfaces and interfaces and consequently these structures are important in material science and biology. For this lecture surface and interface will be used interchangebly and refers to the boundary between two different materials (calcified bone and soft tissue, magma and water, liquid and gas) Through segmentation we have identified the unique phases in the sample under investigation.</p>
+<ul>
+<li>Segmentation identifying volumes (3D) or areas (2D)</li>
+<li>Interfaces are one dimension lower corresponding to surface area (3D) or perimeter (2D)</li>
+<li>Interfaces are important for</li>
+<li>connectivity of cell networks, particularly neurons</li>
+<li>material science processes like coarsening or rheological behavior</li>
+<li>chemical processes (surface-bound diffusion, catalyst action)</li>
+</ul>
+<h1 id="surface-area-perimeter">Surface Area / Perimeter</h1>
+<p>We see that the dilation and erosion affects are strongly related to the surface area of an object: the more surface area the larger the affect of a single dilation or erosion step.</p>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">make.circle<-function(nx,r,nscale=1) {
+  ny<-nx
+  grad.im<-expand.grid(x=c(-nx:nx)/nscale,y=c(-ny:ny)/nscale)
+  grad.im$val<-with(grad.im,(x^2+y^2)<r^2)
+  grad.im$nx<-nx
+  grad.im$r<-r
+  grad.im
+}
+r.list<-seq(0.5,5,length.out=9)
+ggplot(ldply(r.list,function(r) make.circle(10,r)),aes(x=x,y=y,fill=val))+
+  geom_raster()+scale_fill_grey()+facet_wrap(~r)+
+  theme_bw(20)+guides(fill=F)</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-60-1.png" title="Surface Area Estimation" alt="Surface Area Estimation" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<hr />
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">calc.eros.cnt<-function(nx,r,nscale=1,im.fun=make.circle) {
+  in.cir<-im.fun(nx,r,nscale=nscale)
+  cir.im<-df.to.im(in.cir)
+  data.frame(nx=nx,r=r,nscale=nscale,
+             dvolume=sum(dilate(cir.im>0,makeBrush(3,"diamond"))>0),
+             evolume=sum(erode(cir.im>0,makeBrush(3,"diamond"))>0),
+             volume=sum(cir.im>0)
+             )
+}
+max.rad<-20
+r.list<-seq(0.2,max.rad,length.out=20)
+r.table<-ldply(r.list,function(r) calc.eros.cnt(max.rad+1,r,1))
+r.table$model.perimeter<-with(r.table,2*pi*r)
+r.table$estimated.perimeter<-with(r.table,
+                                  ((dvolume-volume)+(volume-evolume))/2)
+ggplot(r.table,aes(x=r))+
+  geom_line(aes(y=estimated.perimeter,color="Morphological Estimation"))+
+  geom_line(aes(y=model.perimeter,color="Model Circumference"))+
+  labs(x="Radius",y="Perimeter",color="Source")+
+  theme_bw(20)</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-61-1.png" title="Attenuation to Intensity" alt="Attenuation to Intensity" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<h1 id="meshing">Meshing</h1>
+<p>Constructing a mesh for an image provides very different information than the image data itself. Most crucially this comes when looking at physical processes like deformation.</p>
+<p>While the images are helpful for visualizing we rarely have models for quantifying how difficult it is to turn a pixel <strong>off</strong></p>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">base.grid<-expand.grid(x=c(-10:10),y=c(-10:10))
+base.shape.undef<-cbind(base.grid,val=with(base.grid,abs(x)<6 & abs(y)<6))
+def.grid<-rbind(
+  cbind(base.shape.undef,type="Before"),
+  cbind(base.grid,val=with(base.grid,abs(x)<10 & abs(y)<4),type="After")
+  )
+ggplot(def.grid,
+       aes(x=x,y=y,fill=ifelse(val,"on","off")))+
+  geom_tile(alpha=0.80,color="black")+
+  coord_equal()+facet_wrap(~type)+
+  xlim(c(-10,10))+ylim(c(-10,10))+
+  labs(title="Pixel-based Deformation",fill="Value")+
+  theme_bw(20)</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-62-1.png" title="Deformation in Pixels" alt="Deformation in Pixels" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<hr />
+<p>If the image is turned into a mesh we now have a list of vertices and edges. For these vertices and edges we can define forces. For example when looking at stress-strain relationships in mechanics using Hooke’s Model <br /><span class="math display">$$ \vec{F}=k (\vec{x}_0-\vec{x}) $$</span><br /> the force needed to stretch one of these edges is proportional to how far it is stretched.</p>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">df.to.mesh<-function(in.df,d.size.x=0.5,d.size.y=0.5,make.seg=F) {
+  corner.pts<-expand.grid(dx=c(-d.size.x,d.size.x),dy=c(-d.size.y,d.size.y))
+  min.x<-min(in.df$x)
+  max.x<-max(in.df$x)
+  min.y<-min(in.df$y)
+  max.y<-max(in.df$y)
+  mesh.pts<-ddply(in.df,.(x,y),function(cur.df) {
+    xy.cols<-c("x","y")
+    pos.data<-cur.df[1,xy.cols]
+    n.data<-cur.df[,!(names(cur.df) %in% xy.cols)]
+    ddply(corner.pts,.(dx,dy),function(c.offset) {
+      cbind(x=pos.data$x+c.offset$dx[1],y=pos.data$y+c.offset$dy[1],n.data)
+      })
+    })
+  if(make.seg) {
+    grid.pts<-expand.grid(dx=c(-d.size.x,0,d.size.x),dy=c(-d.size.y,0,d.size.y))
+    grid.pts$seg.len<-with(grid.pts,sqrt(dx^2+dy^2))
+    
+    subset(
+      ddply(subset(grid.pts,((abs(dx)==0) + (abs(dy)==0))==1),.(dx,dy,seg.len),
+            function(c.offset) {
+              cbind(xend=mesh.pts$x+c.offset$dx[1],yend=mesh.pts$y+c.offset$dy[1],
+                    mesh.pts)
+              }),
+      xend<max.x & xend>min.x & yend<max.y & yend>min.y)
+    } else {
+      mesh.pts
+      }
+  }
+undef.mesh<-df.to.mesh(subset(base.shape.undef,val),make.seg=T)
+base.shape.def<-base.shape.undef
+base.shape.def$x<-base.shape.def$x*10/6
+base.shape.def$y<-base.shape.def$y*4/6
+def.mesh<-df.to.mesh(subset(base.shape.def,val),
+                     d.size.x=0.5*10/6,d.size.y=0.5*4/6,make.seg=T)
+
+ggplot(rbind(cbind(undef.mesh,type="Before"),
+             cbind(def.mesh,type="After")),
+       aes(x=x,y=y))+
+  
+  geom_segment(aes(xend=xend,yend=yend,color=sign(seg.len-0.5)),size=2)+
+  geom_point(size=2,color="green",pch=20)+
+  coord_equal()+facet_wrap(~type)+
+  scale_color_gradient2(mid="black",low="red",high="blue",space="Lab")+
+  #xlim(c(-10,10))+ylim(c(-10,10))+
+  labs(title="Mesh-based Deformation",color="(x-x0)")+
+  theme_bw(20)</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-63-1.png" title="Deformation with Meshes" alt="Deformation with Meshes" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<h1 id="meshing-1">Meshing</h1>
+<p>Since we uses voxels to image and identify the volume we can use the voxels themselves as an approimation for the surface of the structure.</p>
+<ul>
+<li>Each ‘exposed’ face of a voxel belongs to the surface</li>
+</ul>
+<p>From this we can create a mesh by</p>
+<ul>
+<li>adding each exposed voxel face to a list of surface squares.</li>
+<li>adding connectivity information for the different squares (shared edges and vertices)</li>
+</ul>
+<p>A wide variety of methods of which we will only graze the surface (<a href="http://en.wikipedia.org/wiki/Image-based_meshing" class="uri">http://en.wikipedia.org/wiki/Image-based_meshing</a>)</p>
+<h1 id="marching-cubes">Marching Cubes</h1>
+<h3 id="why">Why</h3>
+<p>Voxels are very poor approximations for the surface and are very rough (they are either normal to the x, y, or z axis and nothing between). Because of their inherently orthogonal surface normals, any analysis which utilizes the surface normal to calculate another value (growth, curvature, etc) is going to be very inaccurate at best and very wrong at worst.</p>
+<h3 id="how"><a href="http://en.wikipedia.org/wiki/Marching_cubes">How</a></h3>
+<p>The image is processed one voxel at a time and the neighborhood (not quite the same is the morphological definition) is checked at every voxel. From this configuration of values, faces are added to the mesh to incorporate the most simple surface which would explain the values.</p>
+<p><a href="http://en.wikipedia.org/wiki/Marching_tetrahedra">Marching tetrahedra</a> is for some applications a better suited approach</p>
+<h1 id="next-time-on-qbi">Next Time on QBI</h1>
+<p>So while bounding box and ellipse-based models are useful for many object and cells, they do a very poor job with the sample below.</p>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">cur.cell.df<-subset(cell.lab.df,val==155)
+cell.pca<-pca.fun(cur.cell.df)
+cell.ellipse<-vec.to.ellipse(cell.pca)
+ggplot(cur.cell.df,aes(x=x,y=y))+
+  geom_tile(color="black",fill="grey")+
+  geom_path(data=bbox.fun(cur.cell.df),aes(x=xi,y=yi,color="Bounding\nBox"))+
+  geom_path(data=cell.ellipse,aes(color="Ellipse"))+
+  labs(title="Single Cell",color="Shape\nAnalysis\nMethod")+
+  theme_bw(20)+coord_equal()+guides(fill=F)</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-64-1.png" title="Single Cell" alt="Single Cell" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<hr />
+<h3 id="why-1">Why</h3>
+<ul>
+<li>We assume an entity consists of connected pixels (wrong)</li>
+<li>We assume the objects are well modeled by an ellipse (also wrong)</li>
+</ul>
+<h3 id="what-to-do">What to do?</h3>
+<ul>
+<li>Is it 3 connected objects which should all be analzed seperately?</li>
+<li>If we could <strong>divide it</strong>, we could then analyze each spart as an ellipse</li>
+<li>Is it one network of objects and we want to know about the constrictions?</li>
+<li>Is it a cell or organelle with docking sites for cell?</li>
+<li>Neither extents nor anisotropy are very meaningful, we need a <strong>more specific metric</strong> which can characterize</li>
+</ul>
+</div>
+</div>
+<div class="navbar navbar-fixed-bottom navbar-inverse">
+<div class="container">
+<div class="navbar-header">
+<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse">
+<span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span>
+</button>
+</div>
+<div id="bottom-navbar" class="navbar-collapse collapse navbar-responsive-collapse">
+<ul class="nav navbar-nav navbar-right">
+<li class="nav">
+<p class="navbar-text">
+Toggle
+</p>
+</li>
+<li class="dropup">
+<a href="#" class="dropdown-toggle" data-toggle="dropdown">Code <b class="caret"></b></a>
+<ul class="dropdown-menu">
+<li class="dropdown-header">
+Languages
+</li>
+<li class="active">
+<a href="#" class="toggle-global source R" type="source.R">R</a>
+</li>
+<li>
+<a href="#" type="all-source" class="toggle-global">All</a>
+</li>
+</ul>
+</li>
+<li class="dropup">
+<a href="#" class="dropdown-toggle" data-toggle="dropdown">Output <b class="caret"></b></a>
+<ul class="dropdown-menu">
+<li class="dropdown-header">
+Type
+</li>
+<li class="active">
+<a href="#" class="toggle-global message" type="message">message</a>
+</li>
+<li>
+<a href="#" type="all-output" class="toggle-global">All</a>
+</li>
+</ul>
+</li>
+<li class="active">
+<a href="#" type="figure" class="toggle-global">Figures</a>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div id="push">
+</div>
+<div id="footer">
+<div class="container">
+<p class="text-muted" id="credit">
+Styled with <a href="https://github.com/jimhester/knitrBootstrap">knitrBootstrap</a>
+</p>
+</div>
+</div>
+<link rel="stylesheet" id="theme" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" media="screen"></link><link rel="stylesheet" id="highlight" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/7.3/styles/default.min.css" media="screen"></link>
+</div>
+</body>
+</html>

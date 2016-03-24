@@ -19,8 +19,10 @@ The lectures have been prepared and given by Kevin Mader and guest lecturer Ande
  - [Lecture Handout](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2016/master/Lectures/04-Slides_files/04-Handout.html) as [Old PDF](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2015/master/Lectures/04-Handout.pdf)
  - Lecture Video: [Part 1](https://youtu.be/Djdk6LQUmCo), [Part 2](https://youtu.be/c7xdzdJ3G-s)
 - 24th March - Analyzing Single Objects
- - [Old Lecture Slides](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2015/master/Lectures/06-Slides.html)
- - [Old Lecture Handout](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2015/master/Lectures/06-Handout.html) as [PDF](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2015/master/Lectures/06-Handout.pdf)
+ - [Lecture Slides](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2015/master/Lectures/05-Slides.html)
+ - [Lecture Handout](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2016/master/Lectures/05-Slides_files/05-handout.html) as [PDF](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2015/master/Lectures/06-Handout.pdf) 
+ - Lecture Video: [Part 1](https://youtu.be/l4ncwPgwVLo), [Part 2](https://youtu.be/ZT_tgCQApqo) 
+
 - 7th April - Analyzing Complex Objects
  - [Old Lecture Slides](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2015/master/Lectures/07-Slides.html)
  - [Old Lecture Handout](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2015/master/Lectures/07-Handout.html)
@@ -63,8 +65,9 @@ The exercises will be supported by Yannis Vogiatzis, Kevin Mader, and Christian 
  - [Workflows](https://github.com/kmader/Quantitative-Big-Imaging-2016/blob/master/Exercises/03-files/Workflows.zip?raw=true)
 - 17th March - Advanced Segmentation
  - [KNIME Exercises](https://github.com/kmader/Quantitative-Big-Imaging-2016/blob/master/Exercises/04-Description.md)
- - [IPython Exercises](https://github.com/kmader/Quantitative-Big-Imaging-2016/blob/master/Exercises/04-Exercises.ipynb), these are still incomplete
-  
+ - [IPython Exercises](https://github.com/kmader/Quantitative-Big-Imaging-2016/blob/master/Exercises/04-Exercises.ipynb), and [IPython Solutions/Advanced](https://github.com/kmader/Quantitative-Big-Imaging-2016/blob/master/Exercises/04-Exercises-Solutions.ipynb) but these are still incomplete
+- 17th March - Single Object Analysis
+ - [KNIME Exercises](https://github.com/kmader/Quantitative-Big-Imaging-2016/blob/master/Exercises/05-Description.md)
 
 ### Feedback (as much as possible)
  - Create an [issue](https://github.com/kmader/Quantitative-Big-Imaging-2016/issues) (on the group site that everyone can see and respond to, requires a Github account), [issues from last year](https://github.com/kmader/Quantitative-Big-Imaging-2015/issues)
