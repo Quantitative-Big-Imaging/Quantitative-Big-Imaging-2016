@@ -23,8 +23,8 @@ The lectures have been prepared and given by Kevin Mader and guest lecturer Ande
  - [Lecture Handout](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2016/master/Lectures/05-Slides_files/05-handout.html) as [Old PDF](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2015/master/Lectures/06-Handout.pdf) 
  - Lecture Video: [Part 1](https://youtu.be/l4ncwPgwVLo), [Part 2](https://youtu.be/ZT_tgCQApqo) 
 - 7th April - Analyzing Complex Objects
- - [Old Lecture Slides](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2015/master/Lectures/07-Slides.html)
- - [Old Lecture Handout](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2015/master/Lectures/07-Handout.html)
+ - [Lecture Slides]((https://rawgithub.com/kmader/Quantitative-Big-Imaging-2016/master/Lectures/06-Slides.html)
+ - [Lecture Handout](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2016/master/Lectures/06-Slides_files/06-handout.html)
 - 14th April - Spatial Distribution
  - [Old Lecture Slides](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2015/master/Lectures/08-Slides.html)
  - [Old Lecture Handout](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2015/master/Lectures/08-Handout.html) as [PDF](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2015/master/Lectures/08-Handout.pdf)
@@ -65,9 +65,13 @@ The exercises will be supported by Yannis Vogiatzis, Kevin Mader, and Christian 
 - 17th March - Advanced Segmentation
  - [KNIME Exercises](https://github.com/kmader/Quantitative-Big-Imaging-2016/blob/master/Exercises/04-Description.md)
  - [IPython Exercises](https://github.com/kmader/Quantitative-Big-Imaging-2016/blob/master/Exercises/04-Exercises.ipynb), and [IPython Solutions/Advanced](https://github.com/kmader/Quantitative-Big-Imaging-2016/blob/master/Exercises/04-Exercises-Solutions.ipynb) but these are still incomplete
-- 17th March - Single Object Analysis
+- 17th March - Analyzing Single Objects
  - [KNIME Exercises](https://github.com/kmader/Quantitative-Big-Imaging-2016/blob/master/Exercises/05-Description.md)
  - [Creating Meshes/STL Models](https://gist.github.com/kmader/b25ac8b94b600918b372)
+
+- 7th April - Analyzing Complex Objects Analysis
+ - [KNIME Exercises](https://github.com/kmader/Quantitative-Big-Imaging-2016/blob/master/Exercises/06-Description.md)
+ - [Paraview Curvature](https://github.com/kmader/Quantitative-Big-Imaging-2016/blob/master/Exercises/06-files/CurvatureContour.pvsm)
 
 ### Feedback (as much as possible)
  - Create an [issue](https://github.com/kmader/Quantitative-Big-Imaging-2016/issues) (on the group site that everyone can see and respond to, requires a Github account), [issues from last year](https://github.com/kmader/Quantitative-Big-Imaging-2015/issues)

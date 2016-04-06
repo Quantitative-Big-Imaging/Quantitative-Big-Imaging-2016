@@ -1,0 +1,2476 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title></title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- jQuery -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+  
+  <!-- bootstrap -->
+  <!--<link href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet"  id="style">-->
+  <script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+  
+  <!-- highlight.js -->
+  <!--<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/7.3/styles/default.min.css" rel="stylesheet" id="code-style">-->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/7.3/highlight.min.js"></script>
+  <script>
+  hljs.LANGUAGES.r=function(a){var b="([a-zA-Z]|\\.[a-zA-Z.])[a-zA-Z0-9._]*";return{c:[a.HCM,{b:b,l:b,k:{keyword:"function if in break next repeat else for return switch while try tryCatch|10 stop warning require library attach detach source setMethod setGeneric setGroupGeneric setClass ...|10",literal:"NULL NA TRUE FALSE T F Inf NaN NA_integer_|10 NA_real_|10 NA_character_|10 NA_complex_|10"},r:0},{cN:"number",b:"0[xX][0-9a-fA-F]+[Li]?\\b",r:0},{cN:"number",b:"\\d+(?:[eE][+\\-]?\\d*)?L\\b",r:0},{cN:"number",b:"\\d+\\.(?!\\d)(?:i\\b)?",r:0},{cN:"number",b:"\\d+(?:\\.\\d*)?(?:[eE][+\\-]?\\d*)?i?\\b",r:0},{cN:"number",b:"\\.\\d+(?:[eE][+\\-]?\\d*)?i?\\b",r:0},{b:"`",e:"`",r:0},{cN:"string",b:'"',e:'"',c:[a.BE],r:0},{cN:"string",b:"'",e:"'",c:[a.BE],r:0}]}}(hljs); </script>
+  <!--<script type="text/javascript", src="https://yandex.st/highlightjs/7.3/languages/r.min.js"></script>-->
+  
+  <!-- Manific Popup -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/0.8.9/jquery.magnific-popup.min.js"></script>
+  
+  <script type="text/javascript"
+    src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+  </script>
+  <script defer="defer">
+  // Function to generate the dynamic table of contents
+  jQuery.fn.generate_TOC = function () {
+    var base = $(this[0]);
+  
+    var selectors = ['h1', 'h2', 'h3', 'h4'];
+  
+    var last_ptr = [{}, {}, {}, {}];
+  
+    var anchors = {};
+  
+    generate_anchor = function (text) {
+      var test = text.replace(/\W/g, '_');
+  
+      while(test in anchors){
+        //if no suffix, add one
+        if(test.match(/_\d+$/) === null){
+          test = test + "_2";
+        }
+        //else generate unique id for duplicates by adding one to the suffix
+        else {
+          test = test.replace(/_(\d+)$/, function(match, number){ var num=+number+1; return("_" + num) });
+        }
+      }
+      anchors[test]=1;
+      return(test);
+    }
+  
+    $(selectors.join(',')).filter(function(index) { return $(this).parent().attr("id") != 'header'; }).each(function () {
+  
+      var heading = $(this);
+      var idx = selectors.indexOf(heading.prop('tagName').toLowerCase());
+      var itr = 0;
+  
+      while (itr <= idx) {
+        if (jQuery.isEmptyObject(last_ptr[itr])) {
+          last_ptr[itr] = $('<ul>').addClass('nav');
+          if (itr === 0) {
+            base.append(last_ptr[itr])
+          } else {
+            if(last_ptr[itr-1].children('li').length === 0){
+              last_ptr[itr-1].append(last_ptr[itr]);
+            }
+            else {
+              last_ptr[itr - 1].children('li').last().append(last_ptr[itr]);
+            }
+          }
+        }
+        itr++;
+      }
+      var anchor = generate_anchor(heading.text());
+      heading.attr('id', anchor);
+      var a = $('<a>')
+      .text(heading.text())
+      .attr('href', '#' + anchor);
+  
+    var li = $('<li>')
+      .append(a);
+  
+    last_ptr[idx].append(li);
+    for (i = idx + 1; i < last_ptr.length; i++) {
+      last_ptr[i] = {};
+    }
+    });
+  }
+  /* run scripts when document is ready */
+  $(function() {
+    "use strict";
+  
+    var $window = $(window);
+    var $body = $(document.body);
+  
+    /* size of thumbnails */
+  
+    var hidden_types = ['source']
+    var output_types = ['output', 'message', 'warning', 'error']
+  
+    /* style tables */
+    $('table').addClass('table table-striped table-bordered table-hover table-condensed');
+  
+    $('pre code').each(function(i, e) {
+      hljs.highlightBlock(e);
+    });
+  
+    /* Magnific Popup */
+    $(".thumbnail").each(function(){
+      $(this).magnificPopup({
+        disableOn: 768,
+        closeOnContentClick: true,
+  
+        type: 'image',
+        items: {
+          src: $(this).find('img').attr('src'),
+        }
+      });
+    });
+  
+    function toggle_block(obj, show) {
+      var span = obj.find('span');
+      if(show === true){
+        span.removeClass('glyphicon-chevron-up').addClass('glyphicon-chevron-down');
+        obj.next('pre').slideDown();
+      }
+      else {
+        span.removeClass('glyphicon-chevron-down').addClass('glyphicon-chevron-up');
+        obj.next('pre').slideUp();
+      }
+    }
+  
+    function toggle_thumbnails(imgs, show){
+      if(show === true){
+        imgs.parents().show()
+        imgs.slideDown();
+      }
+      else {
+        imgs.slideUp(400, function(){ $(this).parent().hide(); });
+      }
+    }
+  
+    function global_toggle(obj){
+      var type = obj.attr('type');
+      var show = !obj.parent('li').hasClass('active');
+      if(show === true){
+        obj.parent('li').addClass('active');
+      }
+      else{
+        obj.parent('li').removeClass('active');
+      }
+      if(type == 'figure'){
+        toggle_thumbnails($('.thumbnail img'), show);
+      }
+      else {
+        $('.toggle.' + type).each(function() { toggle_block($(this), show); });
+      }
+    }
+  
+    /* onclick toggle next code block */
+    $('.toggle').click(function() {
+      var span = $(this).find('span');
+      toggle_block($(this), !span.hasClass('glyphicon-chevron-down'));
+      return false
+    })
+  
+    // global toggles
+    $('.toggle-global').click(function(){
+      var type = $(this).attr('type');
+      if(type === 'all-source'){
+          $('li a.source').each(function() {
+            global_toggle($(this));
+          });
+        }
+      else if(type === 'all-output'){
+        $.each(output_types, function(i, val){
+          console.log(val);
+          global_toggle($('li a.' + val));
+        });
+      }
+      else {
+        console.log($(this));
+        global_toggle($(this));
+      }
+      return false;
+    });
+    /* table of contents */
+    if($(['h1', 'h2', 'h3', 'h4'].join(',')).length > 0){
+      $('body > #wrap > .container > .row').append('<div class="col-md-2"><div id="toc" class="well sidebar sidenav affix hidden-print"/></div>');
+      $('#toc').generate_TOC();
+    }
+  
+    $.each(hidden_types, function(i, type) {
+      $('li[type=' + type + ']').each(function(){ global_toggle($(this)); });
+    });
+  
+    /* remove paragraphs with no content */
+    $('p:empty').remove();
+  
+    $body.scrollspy({
+      target: '.sidebar',
+    });
+  
+    /* theme switch */
+    $('.theme-switch').click(function(){
+      var css = $('link[title=' + $(this).attr('title') + ']');
+      $('#theme[rel=stylesheet]').attr('href', css.attr('href'));
+      $('.theme-switch').closest('li').removeClass('active');
+      $(this).closest('li').addClass('active');
+      return false;
+    });
+    /* code style switch */ //TODO use same function for both of these?
+    $('.highlight-switch').click(function(){
+      var css = $('link[title="' + $(this).attr('title') + '"]');
+      $('#highlight[rel=stylesheet]').attr('href', css.attr('href'));
+      $('.highlight-switch').closest('li').removeClass('active');
+      $(this).closest('li').addClass('active');
+      return false;
+    });
+  
+    //TODO refresh on show/hide
+    $window.on('load', function () {
+      $body.scrollspy('refresh');
+    })
+  
+  });
+  
+  </script>
+  <style>
+  /* Knitr_bootstrap styles */
+  #header {
+    display: none !important;
+    visibility: hidden !important;
+  }
+  #wrap .container-fluid {
+    padding: 0;
+    overflow: hidden;
+  }
+  .toggle{
+    text-transform: capitalize;
+  }
+  
+  .toggle-global{
+    text-transform: capitalize;
+  }
+  
+  /* Sticky footer styles */
+  * {
+    margin:0;
+  }
+  html,
+  body {
+      height: 100%;
+      padding:0 !important;
+      /* The html and body elements cannot have any padding or margin. */
+      /*overflow-x: hidden;*/
+  }
+  
+  /* Wrapper for page content to push down footer */
+  #wrap {
+      min-height: 100%;
+      height: auto !important;
+      height: 100%;
+      /* Negative indent footer by it's height */
+      margin: 0 auto -120px;
+  }
+  
+  /* Set the fixed height of the footer here */
+  #push,
+  #footer {
+      height: 120px;
+  }
+  
+  #footer {
+    text-align: center;
+  }
+  
+  /* Top level subheader elements.  These are the first nested items underneath a header element. */
+  .header li {
+    font-size: 20px;
+  }
+  
+  /* Makes the font smaller for all subheader elements. */
+  .sub-header li {
+      font-size: 12px;
+  }
+  
+  button.thumbnails {
+    margin-left:0px;
+  }
+  
+  /*
+   * Side navigation
+   *
+   * Scrollspy and affixed enhanced navigation to highlight sections and secondary
+   * sections of docs content.
+   */
+  
+  /* By default it's not affixed in mobile views, so undo that */
+  .sidebar.affix {
+    position: static;
+  }
+  
+  /* First level of nav */
+  .sidenav {
+    margin-top: 30px;
+    margin-bottom: 30px;
+    padding-top:    10px;
+    padding-bottom: 10px;
+    border-radius: 5px;
+  }
+  
+  /* All levels of nav */
+  .sidebar .nav > li > a {
+    display: block;
+    padding: 5px 20px;
+  }
+  .sidebar .nav > li > a:hover,
+  .sidebar .nav > li > a:focus {
+    text-decoration: none;
+    border-right: 1px solid;
+  }
+  .sidebar .nav > .active > a,
+  .sidebar .nav > .active:hover > a,
+  .sidebar .nav > .active:focus > a {
+    font-weight: bold;
+    background-color: transparent;
+    border-right: 1px solid;
+  }
+  
+  /* Nav: second level (shown on .active) */
+  .sidebar .nav .nav {
+    display: none; /* Hide by default, but at >768px, show it */
+    margin-bottom: 8px;
+  }
+  .sidebar .nav .nav > li > a {
+    padding-top:    3px;
+    padding-bottom: 3px;
+    padding-left: 30px;
+    font-size: 90%;
+  }
+  
+  .sidebar .nav .nav .nav > li > a {
+    padding-left: 40px;
+  }
+  .sidebar .nav .nav .nav .nav > li > a {
+    padding-left: 50px;
+  }
+  
+  /* Show and affix the side nav when space allows it */
+  @media screen and (min-width: 992px) {
+    .sidebar .nav > .active > ul {
+      display: block;
+    }
+    /* Widen the fixed sidebar */
+    .sidebar.affix,
+    .sidebar.affix-bottom {
+      width: 213px;
+    }
+    .sidebar.affix-top,
+    .sidebar.affix {
+      position: fixed; /* Undo the static from mobile first approach */
+      top: 30px;
+    }
+    .sidebar.affix-bottom {
+      position: absolute; /* Undo the static from mobile first approach */
+    }
+    .sidebar.affix-bottom .sidenav,
+    .sidebar.affix .sidenav {
+      margin-top: 0;
+      margin-bottom: 0;
+    }
+  }
+  @media screen and (min-width: 1200px) {
+    /* Widen the fixed sidebar again */
+    .sidebar.affix-bottom,
+    .sidebar.affix {
+      width: 263px;
+    }
+  }
+  
+  #toc {
+    padding: 10px 0px;
+    margin:0;
+    border:0;
+  }
+  
+  
+  .panel pre {
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+  button + pre {
+    margin: 0;
+    padding: 0;
+  }
+  pre code {
+    border-radius: 0;
+  }
+  /* Magnific Popup CSS */
+  .mfp-bg {
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1042;
+    overflow: hidden;
+    position: fixed;
+    background: #0b0b0b;
+    opacity: 0.8;
+    filter: alpha(opacity=80); }
+  
+  .mfp-wrap {
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1043;
+    position: fixed;
+    outline: none !important;
+    -webkit-backface-visibility: hidden; }
+  
+  .mfp-container {
+    text-align: center;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    padding: 0 8px;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box; }
+  
+  .mfp-container:before {
+    content: '';
+    display: inline-block;
+    height: 100%;
+    vertical-align: middle; }
+  
+  .mfp-align-top .mfp-container:before {
+    display: none; }
+  
+  .mfp-content {
+    position: relative;
+    display: inline-block;
+    vertical-align: middle;
+    margin: 0 auto;
+    text-align: left;
+    z-index: 1045; }
+  
+  .mfp-inline-holder .mfp-content,
+  .mfp-ajax-holder .mfp-content {
+    width: 100%;
+    cursor: auto; }
+  
+  .mfp-ajax-cur {
+    cursor: progress; }
+  
+  .mfp-zoom-out-cur,
+  .mfp-zoom-out-cur .mfp-image-holder .mfp-close {
+    cursor: -moz-zoom-out;
+    cursor: -webkit-zoom-out;
+    cursor: zoom-out; }
+  
+  .mfp-zoom {
+    cursor: pointer;
+    cursor: -webkit-zoom-in;
+    cursor: -moz-zoom-in;
+    cursor: zoom-in; }
+  
+  .mfp-auto-cursor .mfp-content {
+    cursor: auto; }
+  
+  .mfp-close,
+  .mfp-arrow,
+  .mfp-preloader,
+  .mfp-counter {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none; }
+  
+  .mfp-loading.mfp-figure {
+    display: none; }
+  
+  .mfp-hide {
+    display: none !important; }
+  
+  .mfp-preloader {
+    color: #cccccc;
+    position: absolute;
+    top: 50%;
+    width: auto;
+    text-align: center;
+    margin-top: -0.8em;
+    left: 8px;
+    right: 8px;
+    z-index: 1044; }
+  
+  .mfp-preloader a {
+    color: #cccccc; }
+  
+  .mfp-preloader a:hover {
+    color: white; }
+  
+  .mfp-s-ready .mfp-preloader {
+    display: none; }
+  
+  .mfp-s-error .mfp-content {
+    display: none; }
+  
+  button.mfp-close,
+  button.mfp-arrow {
+    overflow: visible;
+    cursor: pointer;
+    background: transparent;
+    border: 0;
+    -webkit-appearance: none;
+    display: block;
+    padding: 0;
+    z-index: 1046;
+    -webkit-box-shadow: none;
+    box-shadow: none; }
+  
+  button::-moz-focus-inner {
+    padding: 0;
+    border: 0; }
+  
+  .mfp-close {
+    width: 44px;
+    height: 44px;
+    line-height: 44px;
+    position: absolute;
+    right: 0;
+    top: 0;
+    text-decoration: none;
+    text-align: center;
+    opacity: 0.65;
+    padding: 0 0 18px 10px;
+    color: white;
+    font-style: normal;
+    font-size: 28px;
+    font-family: Arial, Baskerville, monospace; }
+    .mfp-close:hover, .mfp-close:focus {
+      opacity: 1; }
+    .mfp-close:active {
+      top: 1px; }
+  
+  .mfp-close-btn-in .mfp-close {
+    color: #333333; }
+  
+  .mfp-image-holder .mfp-close,
+  .mfp-iframe-holder .mfp-close {
+    color: white;
+    right: -6px;
+    text-align: right;
+    padding-right: 6px;
+    width: 100%; }
+  
+  .mfp-counter {
+    position: absolute;
+    top: 0;
+    right: 0;
+    color: #cccccc;
+    font-size: 12px;
+    line-height: 18px; }
+  
+  .mfp-arrow {
+    position: absolute;
+    opacity: 0.65;
+    margin: 0;
+    top: 50%;
+    margin-top: -55px;
+    padding: 0;
+    width: 90px;
+    height: 110px;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0); }
+  
+  .mfp-arrow:active {
+    margin-top: -54px; }
+  
+  .mfp-arrow:hover,
+  .mfp-arrow:focus {
+    opacity: 1; }
+  
+  .mfp-arrow:before, .mfp-arrow:after,
+  .mfp-arrow .mfp-b,
+  .mfp-arrow .mfp-a {
+    content: '';
+    display: block;
+    width: 0;
+    height: 0;
+    position: absolute;
+    left: 0;
+    top: 0;
+    margin-top: 35px;
+    margin-left: 35px;
+    border: medium inset transparent; }
+  .mfp-arrow:after,
+  .mfp-arrow .mfp-a {
+    border-top-width: 13px;
+    border-bottom-width: 13px;
+    top: 8px; }
+  .mfp-arrow:before,
+  .mfp-arrow .mfp-b {
+    border-top-width: 21px;
+    border-bottom-width: 21px; }
+  
+  .mfp-arrow-left {
+    left: 0; }
+    .mfp-arrow-left:after,
+    .mfp-arrow-left .mfp-a {
+      border-right: 17px solid white;
+      margin-left: 31px; }
+    .mfp-arrow-left:before,
+    .mfp-arrow-left .mfp-b {
+      margin-left: 25px;
+      border-right: 27px solid #3f3f3f; }
+  
+  .mfp-arrow-right {
+    right: 0; }
+    .mfp-arrow-right:after,
+    .mfp-arrow-right .mfp-a {
+      border-left: 17px solid white;
+      margin-left: 39px; }
+    .mfp-arrow-right:before,
+    .mfp-arrow-right .mfp-b {
+      border-left: 27px solid #3f3f3f; }
+  
+  .mfp-iframe-holder {
+    padding-top: 40px;
+    padding-bottom: 40px; }
+  
+  .mfp-iframe-holder .mfp-content {
+    line-height: 0;
+    width: 100%;
+    max-width: 900px; }
+  
+  .mfp-iframe-scaler {
+    width: 100%;
+    height: 0;
+    overflow: hidden;
+    padding-top: 56.25%; }
+  
+  .mfp-iframe-scaler iframe {
+    position: absolute;
+    display: block;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.6);
+    background: black; }
+  
+  .mfp-iframe-holder .mfp-close {
+    top: -40px; }
+  
+  /* Main image in popup */
+  img.mfp-img {
+    width: auto;
+    max-width: 100%;
+    height: auto;
+    display: block;
+    line-height: 0;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    padding: 40px 0 40px;
+    margin: 0 auto; }
+  
+  /* The shadow behind the image */
+  .mfp-figure:after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 40px;
+    bottom: 40px;
+    display: block;
+    right: 0;
+    width: auto;
+    height: auto;
+    z-index: -1;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.6);
+    background: #444444; }
+  
+  .mfp-figure {
+    line-height: 0; }
+  
+  .mfp-bottom-bar {
+    margin-top: -36px;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    cursor: auto; }
+  
+  .mfp-title {
+    text-align: left;
+    line-height: 18px;
+    color: #f3f3f3;
+    word-wrap: break-word;
+    padding-right: 36px; }
+  
+  .mfp-figure small {
+    color: #bdbdbd;
+    display: block;
+    font-size: 12px;
+    line-height: 14px; }
+  
+  .mfp-image-holder .mfp-content {
+    max-width: 100%; }
+  
+  .mfp-gallery .mfp-image-holder .mfp-figure {
+    cursor: pointer; }
+  
+  @media screen and (max-width: 800px) and (orientation: landscape), screen and (max-height: 300px) {
+    /**
+     * Remove all paddings around the image on small screen
+     */
+    .mfp-img-mobile .mfp-image-holder {
+      padding-left: 0;
+      padding-right: 0; }
+  
+    .mfp-img-mobile img.mfp-img {
+      padding: 0; }
+  
+    /* The shadow behind the image */
+    .mfp-img-mobile .mfp-figure:after {
+      top: 0;
+      bottom: 0; }
+  
+    .mfp-img-mobile .mfp-bottom-bar {
+      background: rgba(0, 0, 0, 0.6);
+      bottom: 0;
+      margin: 0;
+      top: auto;
+      padding: 3px 5px;
+      position: fixed;
+      -webkit-box-sizing: border-box;
+      -moz-box-sizing: border-box;
+      box-sizing: border-box; }
+  
+    .mfp-img-mobile .mfp-bottom-bar:empty {
+      padding: 0; }
+  
+    .mfp-img-mobile .mfp-counter {
+      right: 5px;
+      top: 3px; }
+  
+    .mfp-img-mobile .mfp-close {
+      top: 0;
+      right: 0;
+      width: 35px;
+      height: 35px;
+      line-height: 35px;
+      background: rgba(0, 0, 0, 0.6);
+      position: fixed;
+      text-align: center;
+      padding: 0; }
+  
+    .mfp-img-mobile .mfp-figure small {
+      display: inline;
+      margin-left: 5px; } }
+  @media all and (max-width: 900px) {
+    .mfp-arrow {
+      -webkit-transform: scale(0.75);
+      transform: scale(0.75); }
+  
+    .mfp-arrow-left {
+      -webkit-transform-origin: 0;
+      transform-origin: 0; }
+  
+    .mfp-arrow-right {
+      -webkit-transform-origin: 100%;
+      transform-origin: 100%; }
+  
+    .mfp-container {
+      padding-left: 6px;
+      padding-right: 6px; } }
+  .mfp-ie7 .mfp-img {
+    padding: 0; }
+  .mfp-ie7 .mfp-bottom-bar {
+    width: 600px;
+    left: 50%;
+    margin-left: -300px;
+    margin-top: 5px;
+    padding-bottom: 5px; }
+  .mfp-ie7 .mfp-container {
+    padding: 0; }
+  .mfp-ie7 .mfp-content {
+    padding-top: 44px; }
+  .mfp-ie7 .mfp-close {
+    top: 0;
+    right: 0;
+    padding-top: 0; }
+  
+  //Magnific overrides
+  .mfp-image img{
+    background: white;
+  }
+  .mfp-figure:after {
+    background: white;
+  }
+  
+  /*
+   * Off Canvas navbar toggle right
+   * --------------------------------------------------
+   */
+  
+  @media screen and (max-width: 768px) {
+    .row-offcanvas .collapsing {
+    -webkit-transition: none 0;
+      -moz-transition: none 0;
+      transition: none 0;
+    }
+   .row-offcanvas .navbar {
+    position: absolute;
+    z-index: 2;
+      right:0;
+      height:100%;
+      width:55px;
+      border:0;
+      background-color:transparent;
+    }
+    .row-offcanvas .navbar-toggle {
+      margin-right: 5px;
+      margin-left: 5px;
+    }
+    .row-offcanvas {
+      position: relative;
+    }
+    .row-offcanvas-right.active .navbar {
+    position: absolute;
+    z-index: 2;
+      right: -28.4%;
+      width:40%;
+      background-color:#eee;
+      border:0 solid #ddd;
+      border-left-width:1px;
+    }
+    .row-offcanvas-right.active {
+      left: -30%;
+    }
+    .row-offcanvas-right.active .navbar-collapse {
+      position: relative;
+      width: 100%;
+    }
+    .row-offcanvas .content {
+    /*width:calc(100% - 60px);*/
+    }
+  }
+  </style>
+</head>
+<body>
+<div id="wrap">
+<div class="container">
+<div class="row row-offcanvas row-offcanvas-right">
+<div class="contents col-xs-12 col-md-10">
+<div class="row">
+<button class="message R toggle btn btn-xs btn-info">
+<span class="glyphicon glyphicon-chevron-down"></span> R message
+</button>
+<pre style=""><code class="message r">## Loading required package: knitr
+</code></pre>
+</div>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">## The basic files and libraries needed for most presentations
+# creates the libraries and common-functions sections
+read_chunk("../common/utility_functions.R")</code></pre>
+</div>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">require(ggplot2) #for plots
+require(lattice) # nicer scatter plots
+require(plyr) # for processing data.frames
+library(dplyr)
+require(grid) # contains the arrow function
+require(jpeg)
+require(doMC) # for parallel code
+require(png) # for reading png images
+require(gridExtra)
+
+require(reshape2) # for the melt function
+#if (!require("biOps")) {
+#  # for basic image processing
+#  devtools::install_github("cran/biOps")
+#  library("biOps")
+#}
+## To install EBImage
+if (!require("EBImage")) { # for more image processing
+  source("http://bioconductor.org/biocLite.R")
+  biocLite("EBImage")
+}
+
+used.libraries<-c("ggplot2","lattice","plyr","reshape2","grid","gridExtra","biOps","png","EBImage")</code></pre>
+</div>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r"># start parallel environment
+registerDoMC()
+# functions for converting images back and forth
+im.to.df<-function(in.img,out.col="val") {
+  out.im<-expand.grid(x=1:nrow(in.img),y=1:ncol(in.img))
+  out.im[,out.col]<-as.vector(in.img)
+  out.im
+}
+df.to.im<-function(in.df,val.col="val",inv=F) {
+  in.vals<-in.df[[val.col]]
+  if(class(in.vals[1])=="logical") in.vals<-as.integer(in.vals*255)
+  if(inv) in.vals<-255-in.vals
+  out.mat<-matrix(in.vals,nrow=length(unique(in.df$x)),byrow=F)
+  attr(out.mat,"type")<-"grey"
+  out.mat
+}
+ddply.cutcols<-function(...,cols=1) {
+  # run standard ddply command 
+  cur.table<-ddply(...)
+  cutlabel.fixer<-function(oVal) {
+    sapply(oVal,function(x) {
+      cnv<-as.character(x)
+      mean(as.numeric(strsplit(substr(cnv,2,nchar(cnv)-1),",")[[1]]))
+    })
+  }
+  cutname.fixer<-function(c.str) {
+    s.str<-strsplit(c.str,"(",fixed=T)[[1]]
+    t.str<-strsplit(paste(s.str[c(2:length(s.str))],collapse="("),",")[[1]]
+    paste(t.str[c(1:length(t.str)-1)],collapse=",")
+  }
+  for(i in c(1:cols)) {
+    cur.table[,i]<-cutlabel.fixer(cur.table[,i])
+    names(cur.table)[i]<-cutname.fixer(names(cur.table)[i])
+  }
+  cur.table
+}
+
+# since biOps isn't available use a EBImage based version
+imgSobel<-function(img) {
+  kern<-makeBrush(3)*(-1)
+  kern[2,2]<-8
+  filter2(img,kern)
+}
+
+
+show.pngs.as.grid<-function(file.list,title.fun,zoom=1) {
+  preparePng<-function(x) rasterGrob(readPNG(x,native=T,info=T),width=unit(zoom,"npc"),interp=F)
+  labelPng<-function(x,title="junk") (qplot(1:300, 1:300, geom="blank",xlab=NULL,ylab=NULL,asp=1)+
+                                        annotation_custom(preparePng(x))+
+                                        labs(title=title)+theme_bw(24)+
+                                        theme(axis.text.x = element_blank(),
+                                              axis.text.y = element_blank()))
+  imgList<-llply(file.list,function(x) labelPng(x,title.fun(x)) )
+  do.call(grid.arrange,imgList)
+}
+## Standard image processing tools which I use for visualizing the examples in the script
+commean.fun<-function(in.df) {
+  ddply(in.df,.(val), function(c.cell) {
+    weight.sum<-sum(c.cell$weight)
+    data.frame(xv=mean(c.cell$x),
+               yv=mean(c.cell$y),
+               xm=with(c.cell,sum(x*weight)/weight.sum),
+               ym=with(c.cell,sum(y*weight)/weight.sum)
+    )
+  })
+}
+
+colMeans.df<-function(x,...) as.data.frame(t(colMeans(x,...)))
+
+pca.fun<-function(in.df) {
+  ddply(in.df,.(val), function(c.cell) {
+    c.cell.cov<-cov(c.cell[,c("x","y")])
+    c.cell.eigen<-eigen(c.cell.cov)
+    
+    c.cell.mean<-colMeans.df(c.cell[,c("x","y")])
+    out.df<-cbind(c.cell.mean,
+                  data.frame(vx=c.cell.eigen$vectors[1,],
+                             vy=c.cell.eigen$vectors[2,],
+                             vw=sqrt(c.cell.eigen$values),
+                             th.off=atan2(c.cell.eigen$vectors[2,],c.cell.eigen$vectors[1,]))
+    )
+  })
+}
+vec.to.ellipse<-function(pca.df) {
+  ddply(pca.df,.(val),function(cur.pca) {
+    # assume there are two vectors now
+    create.ellipse.points(x.off=cur.pca[1,"x"],y.off=cur.pca[1,"y"],
+                          b=sqrt(5)*cur.pca[1,"vw"],a=sqrt(5)*cur.pca[2,"vw"],
+                          th.off=pi/2-atan2(cur.pca[1,"vy"],cur.pca[1,"vx"]),
+                          x.cent=cur.pca[1,"x"],y.cent=cur.pca[1,"y"])
+  })
+}
+
+# test function for ellipse generation
+# ggplot(ldply(seq(-pi,pi,length.out=100),function(th) create.ellipse.points(a=1,b=2,th.off=th,th.val=th)),aes(x=x,y=y))+geom_path()+facet_wrap(~th.val)+coord_equal()
+create.ellipse.points<-function(x.off=0,y.off=0,a=1,b=NULL,th.off=0,th.max=2*pi,pts=36,...) {
+  if (is.null(b)) b<-a
+  th<-seq(0,th.max,length.out=pts)
+  data.frame(x=a*cos(th.off)*cos(th)+b*sin(th.off)*sin(th)+x.off,
+             y=-1*a*sin(th.off)*cos(th)+b*cos(th.off)*sin(th)+y.off,
+             id=as.factor(paste(x.off,y.off,a,b,th.off,pts,sep=":")),...)
+}
+deform.ellipse.draw<-function(c.box) {
+  create.ellipse.points(x.off=c.box$x[1],
+                        y.off=c.box$y[1],
+                        a=c.box$a[1],
+                        b=c.box$b[1],
+                        th.off=c.box$th[1],
+                        col=c.box$col[1])                    
+}
+bbox.fun<-function(in.df) {
+  ddply(in.df,.(val), function(c.cell) {
+    c.cell.mean<-colMeans.df(c.cell[,c("x","y")])
+    xmn<-emin(c.cell$x)
+    xmx<-emax(c.cell$x)
+    ymn<-emin(c.cell$y)
+    ymx<-emax(c.cell$y)
+    out.df<-cbind(c.cell.mean,
+                  data.frame(xi=c(xmn,xmn,xmx,xmx,xmn),
+                             yi=c(ymn,ymx,ymx,ymn,ymn),
+                             xw=xmx-xmn,
+                             yw=ymx-ymn
+                  ))
+  })
+}
+
+# since the edge of the pixel is 0.5 away from the middle of the pixel
+emin<-function(...) min(...)-0.5
+emax<-function(...) max(...)+0.5
+extents.fun<-function(in.df) {
+  ddply(in.df,.(val), function(c.cell) {
+    c.cell.mean<-colMeans.df(c.cell[,c("x","y")])
+    out.df<-cbind(c.cell.mean,data.frame(xmin=c(c.cell.mean$x,emin(c.cell$x)),
+                                         xmax=c(c.cell.mean$x,emax(c.cell$x)),
+                                         ymin=c(emin(c.cell$y),c.cell.mean$y),
+                                         ymax=c(emax(c.cell$y),c.cell.mean$y)))
+  })
+}
+
+common.image.path<-"../common"
+qbi.file<-function(file.name) file.path(common.image.path,"figures",file.name)
+qbi.data<-function(file.name) file.path(common.image.path,"data",file.name)
+
+th_fillmap.fn<-function(max.val) scale_fill_gradientn(colours=rainbow(10),limits=c(0,max.val))</code></pre>
+</div>
+<h1 id="quantitative-big-imaging">Quantitative Big Imaging</h1>
+<p>author: Kevin Mader date: 07 April 2016 width: 1440 height: 900 css: ../template.css transition: rotate</p>
+<p>ETHZ: 227-0966-00L</p>
+<h1 id="analysis-of-complex-objects">Analysis of Complex Objects</h1>
+<h1 id="course-outline">Course Outline</h1>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">source('../common/schedule.R')</code></pre>
+<ul>
+<li>25th February - Introduction and Workflows</li>
+<li>3rd March - Image Enhancement (A. Kaestner)</li>
+<li>10th March - Basic Segmentation, Discrete Binary Structures</li>
+<li>17th March - Advanced Segmentation</li>
+<li>24th March - Analyzing Single Objects</li>
+<li>7th April - Analyzing Complex Objects</li>
+<li>14th April - Spatial Distribution</li>
+<li>21st April - Statistics and Reproducibility</li>
+<li>28th April - Dynamic Experiments</li>
+<li>12th May - Scaling Up / Big Data</li>
+<li>19th May - Guest Lecture - High Content Screening</li>
+<li>26th May - Guest Lecture - Machine Learning / Deep Learning and More Advanced Approaches</li>
+<li>2nd June - Project Presentations
+</div></li>
+</ul>
+<h1 id="literature-useful-references">Literature / Useful References</h1>
+<h3 id="books">Books</h3>
+<ul>
+<li>Jean Claude, Morphometry with R</li>
+<li><a href="http://link.springer.com/book/10.1007%2F978-0-387-77789-4">Online</a> through ETHZ</li>
+<li><a href="http://www.amazon.com/Morphometrics-R-Use-Julien-Claude/dp/038777789X">Buy it</a></li>
+<li>John C. Russ, “The Image Processing Handbook”,(Boca Raton, CRC Press)</li>
+<li>Available <a href="http://dx.doi.org/10.1201/9780203881095">online</a> within domain ethz.ch (or proxy.ethz.ch / public VPN)</li>
+</ul>
+<hr />
+<h3 id="papers-sites">Papers / Sites</h3>
+<ul>
+<li>Thickness</li>
+<li>[1] Hildebrand, T., &amp; Ruegsegger, P. (1997). A new method for the model-independent assessment of thickness in three-dimensional images. Journal of Microscopy, 185(1), 67–75. <a href="doi:10.1046/j.1365-2818.1997.1340694.x" class="uri">doi:10.1046/j.1365-2818.1997.1340694.x</a></li>
+<li>Curvature</li>
+<li><a href="http://mathworld.wolfram.com/MeanCurvature.html" class="uri">http://mathworld.wolfram.com/MeanCurvature.html</a></li>
+<li>[2] “Computation of Surface Curvature from Range Images Using Geometrically Intrinsic Weights”*, T. Kurita and P. Boulanger, 1992.</li>
+</ul>
+<h1 id="previously-on-qbi">Previously on QBI …</h1>
+<ul>
+<li>Image Enhancment</li>
+<li>Highlighting the contrast of interest in images</li>
+<li>Minimizing Noise</li>
+<li>Segmentation</li>
+<li>Understanding value histograms</li>
+<li>Dealing with multi-valued data</li>
+<li>Automatic Methods</li>
+<li>Hysteresis Method, K-Means Analysis</li>
+<li>Regions of Interest</li>
+<li>Contouring</li>
+<li>Component Labeling</li>
+<li>Single Shape Analysis</li>
+</ul>
+<h1 id="outline">Outline</h1>
+<ul>
+<li>Motivation (Why and How?)</li>
+<li>What are Distance Maps?</li>
+<li>Skeletons</li>
+<li>Tortuosity</li>
+<li>What are thickness maps?</li>
+<li>Thickness with Skeletons</li>
+</ul>
+<hr />
+<ul>
+<li>Watershed Segmentation</li>
+<li>Connected Objects</li>
+<li>Curvature</li>
+<li>Characteristic Shapes</li>
+</ul>
+<h1 id="learning-objectives">Learning Objectives</h1>
+<h3 id="motivation-why-and-how">Motivation (Why and How?)</h3>
+<ul>
+<li>How do we measure distances between many objects?</li>
+<li><p>How can we extract topology of a structure?</p></li>
+<li>How can we measure sizes in complicated objects?</li>
+<li><p>How do we measure sizes relavant for diffusion or other local processes?</p></li>
+<li>How do we identify seperate objects when they are connected?</li>
+<li>How do we investigate surfaces in more detail and their shape?</li>
+<li>How can we compare shape of complex objects when they grow?</li>
+<li><p>Are there characteristic shape metrics?</p></li>
+</ul>
+<h1 id="what-did-we-want-in-the-first-place">What did we want in the first place</h1>
+<p>To simplify our data, but an ellipse model is <strong>too</strong> simple for many shapes</p>
+<p>So while bounding box and ellipse-based models are useful for many object and cells, they do a very poor job with the sample below.</p>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">cell.im<-jpeg::readJPEG("ext-figures/Cell_Colony.jpg")
+cell.lab.df<-im.to.df(bwlabel(cell.im<.6))
+size.histogram<-ddply(subset(cell.lab.df,val>0),.(val),function(c.label) data.frame(count=nrow(c.label)))
+keep.vals<-subset(size.histogram,count>25)
+
+
+cur.cell.df<-subset(cell.lab.df,val==155)
+cell.pca<-pca.fun(cur.cell.df)
+cell.ellipse<-vec.to.ellipse(cell.pca)
+ggplot(cur.cell.df,aes(x=x,y=y))+
+  geom_tile(color="black",fill="grey")+
+  geom_path(data=bbox.fun(cur.cell.df),aes(x=xi,y=yi,color="Bounding\nBox"))+
+  geom_path(data=cell.ellipse,aes(color="Ellipse"))+
+  labs(title="Single Cell",color="Shape\nAnalysis\nMethod")+
+  theme_bw(20)+coord_equal()+guides(fill=F)</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-2-1.png" title="Single Cell" alt="Single Cell" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<hr />
+<h3 id="why">Why</h3>
+<ul>
+<li>We assume an entity consists of connected pixels (wrong)</li>
+<li>We assume the objects are well modeled by an ellipse (also wrong)</li>
+</ul>
+<h3 id="what-to-do">What to do?</h3>
+<ul>
+<li>Is it 3 connected objects which should all be analzed seperately?</li>
+<li>If we could <strong>divide it</strong>, we could then analyze each spart as an ellipse</li>
+<li>Is it one network of objects and we want to know about the constrictions?</li>
+<li>Is it a cell or organelle with docking sites for cell?</li>
+<li>Neither extents nor anisotropy are very meaningful, we need a <strong>more specific metric</strong></li>
+</ul>
+<h1 id="distance-maps-what-are-they">Distance Maps: What are they</h1>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r"># Distance map code
+# Fill Image code
+# ... is for extra columns in the data set
+fill.img.fn<-function(in.img,step.size=1,...) {
+  xr<-range(in.img$x)
+  yr<-range(in.img$y)
+  ddply(expand.grid(x=seq(xr[1],xr[2],step.size),
+                  y=seq(yr[1],yr[2],step.size)),
+        .(x,y),
+      function(c.pos) {
+        ix<-c.pos$x[1]
+        iy<-c.pos$y[1]
+        nset<-subset(in.img,x==ix & y==iy)
+        if(nrow(nset)<1) nset<-data.frame(x=ix,y=iy,val=0,...)
+        nset
+        })
+}
+fill.img<-fill.img.fn(cur.cell.df)
+euclid.dist<-function(x,x0,y,y0) sqrt((x-x0)^2+(y-y0)^2)
+man.dist<-function(x,x0,y,y0) abs(x-x0)+abs(y-y0)
+dist.map<-function(in.df,fg.ph=155,bg.ph=0,dist.fn=euclid.dist) {
+  foreground.df<-subset(in.df,val==fg.ph)
+  background.df<-subset(in.df,val==bg.ph)
+  ddply(foreground.df,.(x,y),function(c.pos) {
+    ix<-c.pos$x[1]
+    iy<-c.pos$y[1]
+    # calculate the minimum distance to a background voxel
+    data.frame(dist=min(
+      with(background.df,dist.fn(x,ix,y,iy))
+      ))
+  })
+}
+
+
+# grid used for all datasets
+x.grid<-seq(-10,10,length.out=81)
+# function to make a test circle image
+make.sph.img<-function(sph.list,in.grid=x.grid) {
+  
+  test.sph.img<-expand.grid(x=in.grid,y=in.grid)
+  test.sph.img$val<-0
+  
+  for(i in 1:nrow(sph.list)) {
+    test.sph.img$val<-with(sph.list[i,], # use the namespace for the current cirlce
+                           with(test.sph.img, # use the grid namespace as well
+                                ifelse(val,1,ifelse(((x-xi)^2+(y-yi)^2)<ri^2,1,0))
+                                ))
+    }
+  test.sph.img
+  }</code></pre>
+</div>
+<p>A map (or image) of distances. Each point in the map is the distance that point is from a given feature of interest (surface of an object, ROI, center of object, etc)</p>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">test.sph.list<-data.frame(xi=c(-3,-3, 5, 5),
+                    yi=c(-5, 5,-3, 5),
+                    ri=c( 2, 3, 5, 2))
+test.img<-make.sph.img(test.sph.list,seq(-2,8))
+
+ggplot(test.img,aes(x=x,y=y,fill=ifelse(val,"FG","BG")))+
+  geom_tile(color="black")+
+  geom_text(aes(label=ifelse(val,"FG","BG")))+
+  labs(title="Object Distance Map",fill="Phase")+
+  theme_bw(20)+coord_equal()</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-3-1.png" title="Simple Circles" alt="Simple Circles" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<hr />
+<h3 id="definition">Definition</h3>
+<p>If we start with an image as a collection of points divided into two categories</p>
+<ul>
+<li><span class="math inline"><em>I</em><em>m</em>(<em>x</em>, <em>y</em>)=</span> {Foreground, Background}</li>
+<li>We can define a distance map operator (<span class="math inline"><em>d</em><em>i</em><em>s</em><em>t</em></span>) that transforms the image into a distance map</li>
+</ul>
+<p><br /><span class="math display">$$ dist(\vec{x}) = \textrm{min}(||\vec{x}-\vec{y}|| \forall \vec{y} \in \textrm{Background}) $$</span><br /></p>
+<p>We will use Euclidean distance <span class="math inline">$||\vec{x}-\vec{y}||$</span> for this class but there are other metrics which make sense when dealing with other types of data like Manhattan/City-block or weighted metrics.</p>
+<h1 id="distance-maps-types">Distance Maps: Types</h1>
+Using this rule a distance map can be made for the euclidean metric
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">ggplot(fill.img.fn(dist.map(test.img,fg.ph=1,bg.ph=0),dist=0),aes(x=x,y=y,fill=dist))+
+  geom_tile(color="black")+
+  geom_text(aes(label=ifelse(dist>0,round(dist*10)/10,"Obj")))+
+  th_fillmap.fn(4)+
+  labs(title="Euclidean Distance",fill="Distance\nFrom\nObject")+
+  theme_bw(20)+coord_equal()</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-4-1.png" title="Simple Circles" alt="Simple Circles" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<hr />
+<p>Similarly the Manhattan or city block distance metric can be used where the distance is defined as <br /><span class="math display">$$ \sum_{i} |\vec{x}-\vec{y}|_i $$</span><br /></p>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">ggplot(fill.img.fn(dist.map(test.img,fg.ph=1,bg.ph=0,dist.fn=man.dist),dist=0),aes(x=x,y=y,fill=dist))+
+  geom_tile(color="black")+
+  geom_text(aes(label=ifelse(dist>0,round(dist*10)/10,"Obj")))+
+  th_fillmap.fn(4)+
+  labs(title="Manhattan / City Block Distance",fill="Distance\nFrom\nObject")+
+  theme_bw(20)+coord_equal()</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-5-1.png" title="Simple Circles" alt="Simple Circles" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<h1 id="distance-maps-precaution">Distance Maps: Precaution</h1>
+<p>The distance map is one of the crictical points where the resolution of the imaging system is important.</p>
+<ul>
+<li>We measure distances computationally in pixels or voxels</li>
+<li>but for them to have a meaning physically they must be converted</li>
+<li>Isotropic imaging (1 <span class="math inline"><em>μ</em></span> m x 1<span class="math inline"><em>μ</em></span> m x 1 <span class="math inline"><em>μ</em></span> m) is <strong>fine</strong></li>
+</ul>
+<hr />
+<h3 id="anisotropic">Anisotropic</h3>
+<p>Ideally</p>
+<ul>
+<li>as part of filtering, resample and convert to an isotropic scale.</li>
+</ul>
+<p>If that is not possible</p>
+<ul>
+<li>custom distance map algorithms which use the side-lengths of the voxels to calculate distance rather than assuming 1x1x1</li>
+</ul>
+<h1 id="distance-maps">Distance Maps</h1>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">test.sph.list<-data.frame(xi=c(-3,-3, 5, 5),
+                    yi=c(-5, 5,-3, 5),
+                    ri=c( 2, 3, 5, 2))
+test.img<-make.sph.img(test.sph.list)
+ggplot(cbind(test.img,label=ifelse(test.img$val,"FG","BG")),aes(x=x,y=y,fill=label))+
+  geom_tile(color="black")+
+  labs(title="Foreground and Background",fill="Label")+
+  theme_bw(20)+coord_equal()</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-6-1.png" title="Simple Circles" alt="Simple Circles" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<p>We can create 2 distance maps</p>
+<ol>
+<li>Foreground <span class="math inline">→</span> Background</li>
+</ol>
+<ul>
+<li>Information about the objects size and interior</li>
+</ul>
+<ol>
+<li>Background <span class="math inline">→</span> Foreground</li>
+</ol>
+<ul>
+<li>Information about the distance / space between objects</li>
+</ul>
+<hr />
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">ggplot(dist.map(test.img,fg.ph=1,bg.ph=0),aes(x=x,y=y,fill=dist))+
+  geom_tile(color="black")+
+  labs(title="Object Distance Map",fill="Distance\nFrom\nSurface")+
+  th_fillmap.fn(6)+
+  theme_bw(20)+coord_equal()</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-7-1.png" title="Simple Circles" alt="Simple Circles" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">ggplot(dist.map(test.img,fg.ph=0,bg.ph=1),aes(x=x,y=y,fill=dist))+
+  geom_tile(color="black")+
+  labs(title="Background Distance Map",fill="Distance\nFrom\nSurface")+
+  th_fillmap.fn(6)+
+  theme_bw(20)+coord_equal()</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-8-1.png" title="Simple Circles" alt="Simple Circles" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<h1 id="distance-map">Distance Map</h1>
+<p>One of the most useful components of the distance map is that it is <em>relatively</em> insensitive to small changes in connectivity.</p>
+<ul>
+<li>Component Labeling would find radically different results for these two images</li>
+<li>One has 4 small circles</li>
+<li>One has 1 big blob</li>
+</ul>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">test.sph.list<-data.frame(xi=c(-4,-3, 5, 5),
+                    yi=c(-4, 5,-3, 5),
+                    ri=c( 4, 5, 5, 3)+0)
+ggplot(dist.map(make.sph.img(test.sph.list),fg.ph=1,bg.ph=0),aes(x=x,y=y,fill=dist))+
+  geom_tile(color="black")+
+  labs(title="Circle Distance Map",fill="Distance\nFrom\nSurface")+
+  theme_bw(20)+coord_equal()</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-9-1.png" title="Simple Circles" alt="Simple Circles" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<hr />
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">test.sph.list.big<-test.sph.list
+# bring everything closer
+
+test.sph.list.big$xi<-0.95*test.sph.list.big$xi
+test.sph.list.big$yi<-0.95*test.sph.list.big$yi
+ggplot(dist.map(make.sph.img(test.sph.list.big),fg.ph=1,bg.ph=0),aes(x=x,y=y,fill=dist))+
+  geom_tile(color="black")+
+  labs(title="Same Circles, a bit closer",fill="Distance\nFrom\nSurface")+
+  theme_bw(20)+coord_equal()</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-10-1.png" title="Closer Circles" alt="Closer Circles" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">ggplot(rbind(
+  cbind(dist.map(make.sph.img(test.sph.list),fg.ph=1,bg.ph=0),type="Circles"),
+  cbind(dist.map(make.sph.img(test.sph.list.big),fg.ph=1,bg.ph=0),type="Closer Circles")),
+  aes(x=dist,color=type))+
+  geom_density(aes(y=..count..))+
+  labs(x="Distance from Surface",y="Voxel Count",color="Image")+
+  theme_bw(20)</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-11-1.png" title="Circles Histogram" alt="Circles Histogram" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<h1 id="distance-map-of-cell">Distance Map of Cell</h1>
+<h3 id="foreground">Foreground</h3>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">ggplot(dist.map(fill.img,fg.ph=155,bg.ph=0),aes(x=x,y=y,fill=dist))+
+  geom_tile(color="black")+
+  labs(title="Single Cell",fill="Distance\nFrom\nSurface")+
+  theme_bw(20)+coord_equal()</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-12-1.png" title="Cell Distance Map" alt="Cell Distance Map" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<hr />
+<h3 id="background">Background</h3>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">ggplot(dist.map(fill.img,fg.ph=0,bg.ph=155),aes(x=x,y=y,fill=dist))+
+  geom_tile(color="black")+
+  labs(title="Single Cell",fill="Distance\nFrom\nSurface")+
+  theme_bw(20)+coord_equal()</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-13-1.png" title="Cell Distance Map" alt="Cell Distance Map" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<h1 id="skeletonization-networks">Skeletonization / Networks</h1>
+<p>For some structures like cellular materials and trabecular bone, we want a more detailed analysis than just thickness. We want to know</p>
+<ul>
+<li>which structures are connected</li>
+<li>how they are connected</li>
+<li>express the network in a simple manner</li>
+<li>quantify tortuosity</li>
+<li>branching</li>
+</ul>
+<hr />
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">test.mesh<-expand.grid(xi=seq(-10,10,length.out=5),yi=seq(-10,10,length.out=4))
+test.mesh$ri<-runif(nrow(test.mesh),min=0.5,max=2)
+test.mesh.im<-make.sph.img(test.mesh)
+ggplot(subset(test.mesh.im,val==0),aes(x=x,y=y))+
+  geom_tile(color="black",fill="grey")+
+  labs(title="Object Mask")+
+  theme_bw(20)+coord_equal()</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-14-1.png" title="Mesh Mask" alt="Mesh Mask" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<h1 id="skeletonization">Skeletonization</h1>
+<p>The first step is to take the distance transform the structure <br /><span class="math display"><em>I</em><sub><em>d</em></sub>(<em>x</em>, <em>y</em>)=dist(<em>I</em>(<em>x</em>, <em>y</em>))</span><br /> We can see in this image there are already local maxima that form a sort of backbone which closely maps to what we are interested in.</p>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">test.mesh.dist<-dist.map(test.mesh.im,fg.ph=0,bg.ph=1)
+ggplot(test.mesh.dist,aes(x=x,y=y,fill=dist))+
+  geom_tile(color="black")+
+  labs(title="Circle Distance Map",fill="Distance\nFrom\nSurface")+
+  theme_bw(20)+coord_equal()</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-15-1.png" title="Distance Map" alt="Distance Map" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<hr />
+<p>By using the laplacian filter as an approximate for the derivative operator which finds the values which high local gradients.</p>
+<p><br /><span class="math display">$$ \nabla I_{d}(x,y) = (\frac{\delta^2}{\delta x^2}+\frac{\delta^2}{\delta y^2})I_d \approx \underbrace{\begin{bmatrix}
+-1 &amp; -1 &amp; -1 \\
+-1 &amp; 8 &amp; -1 \\
+-1 &amp; -1 &amp; -1
+\end{bmatrix}}_{\textrm{Laplacian Kernel}} \otimes I_d(x,y) $$</span><br /></p>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r"># use a laplacian kernel
+lap.kernel<-data.frame(xi=c(-1, 0, 1,-1, 0, 1,-1, 0, 1),
+                       yi=c(-1,-1,-1, 0, 0, 0, 1, 1, 1),
+                       wi=c(-1,-1,-1,-1, 8,-1,-1,-1,-1))
+test.mesh.dif<-data.frame(x=c(),y=c(),val=c())
+for(i in 1:nrow(lap.kernel)) {
+  temp.df<-test.mesh.dist[,c("x","y")]
+  temp.df$val<-with(lap.kernel[i,],test.mesh.dist$dist*wi)
+  temp.df$x<-with(lap.kernel[i,],temp.df$x+diff(x.grid)[1]*xi)
+  temp.df$y<-with(lap.kernel[i,],temp.df$y+diff(x.grid)[1]*yi)
+  test.mesh.dif<-rbind(test.mesh.dif,temp.df)
+}
+test.mesh.dif<-ddply(test.mesh.dif,.(x,y),function(all.vals) {
+  data.frame(val=sum(all.vals$val))
+})
+ggplot(test.mesh.dif,aes(x=x,y=y,fill=val))+
+  geom_tile(color="black")+
+  labs(title="Laplacian Image",fill="Laplacian/\nGradient")+
+  theme_bw(20)+coord_equal()+scale_fill_gradient2()</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-16-1.png" title="Skeleton" alt="Skeleton" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<h1 id="creating-the-skeleton">Creating the skeleton</h1>
+<p>We can locate the local maxima of the structure by setting a minimum surface distance <br /><span class="math display"><em>I</em><sub><em>d</em></sub>(<em>x</em>, <em>y</em>)&gt;<em>M</em><em>I</em><em>N</em><sub><em>D</em><em>I</em><em>S</em><em>T</em></sub></span><br /> and combining it with a minimum slope value <br /><span class="math display">∇<em>I</em><sub><em>d</em></sub>(<em>x</em>, <em>y</em>)&gt;<em>M</em><em>I</em><em>N</em><sub><em>S</em><em>L</em><em>O</em><em>P</em><em>E</em></sub></span><br /></p>
+<hr />
+<h3 id="thresholds">Thresholds</h3>
+<p>Harking back to our earlier lectures, this can be seen as a threshold on a feature vector representation of the entire dataset.</p>
+<ul>
+<li>We first make the dataset into a tuple</li>
+</ul>
+<p><br /><span class="math display">$$ \textrm{cImg}(x,y) = \langle \underbrace{I_d(x,y)}_1, \underbrace{\nabla I_d(x,y)}_2 \rangle $$</span><br /></p>
+<p><br /><span class="math display">skelImage(<em>x</em>, <em>y</em>)=</span><br /> <br /><span class="math display">$$ \begin{cases}
+1, &amp; \textrm{cImg}_1(x,y)\geq MIN-DIST \\ 
+ &amp;  \&amp; \textrm{ cImg}_2(x,y)\geq MIN-SLOPE \\
+0, &amp; \textrm{otherwise}
+\end{cases}$$</span><br /></p>
+<h1 id="skeleton-different-thresholds">Skeleton: Different Thresholds</h1>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">merge.mesh.dif<-rbind(
+  cbind(subset(test.mesh.dist,dist>2),type="Non-surface\nPoints",val=0),
+  cbind(subset(test.mesh.dif,val>1),type="Slope\nPoints",dist=0)
+  )
+
+ggplot(merge.mesh.dif,aes(x=x,y=y,fill=type))+
+  geom_tile(color="black",alpha=0.75)+
+  labs(title="Min Slope=1, Min Dist=2",fill="Source")+
+  theme_bw(20)+coord_equal()</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-17-1.png" title="Skeleton" alt="Skeleton" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<hr />
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">merge.mesh.dif<-rbind(
+  cbind(subset(test.mesh.dist,dist>1),type="Non-surface\nPoints",val=0),
+  cbind(subset(test.mesh.dif,val>0),type="Slope\nPoints",dist=0)
+  )
+ggplot(merge.mesh.dif,aes(x=x,y=y,fill=type))+
+  geom_tile(color="black",alpha=0.5)+
+  labs(title="Min Slope=0, Min Dist=1",fill="Source")+
+  theme_bw(20)+coord_equal()</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-18-1.png" title="Skeleton" alt="Skeleton" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<h1 id="skeleton-pruning">Skeleton: Pruning</h1>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">overlap.im<-ddply(merge.mesh.dif,.(x,y),function(c.pts) {
+  data.frame(cnt=nrow(c.pts), # points from how many images are present
+             dist=max(c.pts$dist))
+})
+
+ggplot(subset(overlap.im,cnt==2),aes(x=x,y=y))+
+  geom_tile(color="black",alpha=0.9,fill="red")+
+  labs(title="Min Slope=0, Min Dist=1.5",fill="Source")+
+  theme_bw(20)+coord_equal()</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-19-1.png" title="Skeleton" alt="Skeleton" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<hr />
+<p>The structure is a overgrown</p>
+<ol>
+<li>Stricter ‘thresholds’</li>
+</ol>
+<ul>
+<li>Sensitive to ‘threshold’ selection</li>
+<li>Resolution dependent</li>
+</ul>
+<ol>
+<li>Dedicated pruning algorithms</li>
+</ol>
+<ul>
+<li>Ideally model-based</li>
+<li>Minimum branch length</li>
+<li>Minimum branch width</li>
+</ul>
+<h1 id="skeleton-junctions">Skeleton: Junctions</h1>
+<p>With the skeleton which is ideally one voxel thick, we can characterize the junctions in the system by looking at the neighborhood of each voxel.</p>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">make.junc<-function(in.skel,step.size=1,max.dist=1) {
+  t.neighbors<-subset(
+    expand.grid(xv=step.size*c(-1:1),yv=step.size*c(-1:1)),
+    sqrt(xv^2+yv^2)<=(max.dist*step.size))
+  spread.skel<-ddply(t.neighbors,.(xv,yv),function(c.off) {
+    data.frame(x=in.skel$x+c.off[1,"xv"],
+              y=in.skel$y+c.off[1,"yv"])
+  })
+  f.skel<-subset(
+    ddply(spread.skel,.(x,y),function(in.pt) data.frame(cnt=nrow(in.pt))),
+    cnt>1)
+  f.skel$label<-with(f.skel,ifelse(cnt==2,"Terminal",ifelse(cnt==3,"Segment",ifelse(cnt>3,"Junction",""))))
+  f.skel
+}
+
+pruned.skeleton<-subset(overlap.im,cnt==2)
+
+junc.skel1<-make.junc(pruned.skeleton,step.size=0.25,max.dist=1)
+
+ggplot(junc.skel1,aes(x=x,y=y,fill=label))+
+  geom_tile(color="black",alpha=0.9)+
+  labs(title="Cross Neighborhood",fill="Type")+
+  theme_bw(20)+coord_equal()</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-20-1.png" title="Skeleton" alt="Skeleton" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<hr />
+<p>As with <em>nearly</em> every operation, the neighborhood we define is important and we can see that if we use a box neighborhood vs a cross neighborhood (4 vs 8 adjacent) we count diagonal connections differently</p>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">junc.skel2<-make.junc(pruned.skeleton,step.size=0.25,max.dist=2)
+
+ggplot(junc.skel2,aes(x=x,y=y,fill=label))+
+  geom_tile(color="black",alpha=0.9)+
+  labs(title="Box Neighborhood",fill="Type")+
+  theme_bw(20)+coord_equal()</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-21-1.png" title="Skeleton" alt="Skeleton" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<h1 id="skeleton-network-assessment">Skeleton: Network Assessment</h1>
+<p>Once we have classified the skeleton into <em>terminals</em>, <em>segments</em>, and <em>junctions</em> we can analyze the various components and assess metrics like connectivity, branching, and many other.</p>
+<p>The easist way is to further process the image by</p>
+<ul>
+<li>component labeling the different segments and joints</li>
+<li>determining the average length of each segment</li>
+<li>number of incoming segments at a given joint</li>
+</ul>
+<hr />
+<p>Most of the other metrics can be simply counted</p>
+<h3 id="cross-neighborhood">Cross Neighborhood</h3>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">kable(aggregate(x~label,data=junc.skel1,FUN=length))</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">label</th>
+<th align="right">x</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Junction</td>
+<td align="right">755</td>
+</tr>
+<tr class="even">
+<td align="left">Segment</td>
+<td align="right">309</td>
+</tr>
+<tr class="odd">
+<td align="left">Terminal</td>
+<td align="right">586</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="box-neighborhood">Box Neighborhood</h3>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">kable(aggregate(x~label,data=junc.skel2,FUN=length))</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">label</th>
+<th align="right">x</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Junction</td>
+<td align="right">1362</td>
+</tr>
+<tr class="even">
+<td align="left">Segment</td>
+<td align="right">735</td>
+</tr>
+<tr class="odd">
+<td align="left">Terminal</td>
+<td align="right">403</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h1 id="skeleton-tortuosity">Skeleton: Tortuosity</h1>
+<p>One of the more interesting ones in material science is called tortuosity and it is defined as the ratio between the arc-length of a <em>segment</em> and the distance between its starting and ending points. <br /><span class="math display">$$ \tau = \frac{L}{C} $$</span><br /></p>
+<p>A high degree of <a href="http://en.wikipedia.org/wiki/Tortuosity">tortuosity</a> indicates that the network is convoluted and is important when estimating or predicting flow rates. Specifically</p>
+<ul>
+<li>in geology it is an indication that diffusion and fluid transport will occur more slowly</li>
+<li>in analytical chemistry it is utilized to perform size exclusion chromatography</li>
+<li>in vascular tissue it can be a sign of pathology.</li>
+</ul>
+<h1 id="thickness-map-what-is-it">Thickness Map: What is it?</h1>
+<p>Thickness is a metric for assessing the size and structure of objects in a very generic manner. For every point <span class="math inline">$\vec{x}$</span> in the image you find the largest sphere which:</p>
+<ul>
+<li>contains that point</li>
+<li>is entirely contained within the object</li>
+</ul>
+<hr />
+<p><img src="ext-figures/ThickOverview.png" alt="Thickness Diagram" /> Taken from [1]</p>
+<ul>
+<li>The image shows a typical object</li>
+<li>The sphere centered at point <span class="math inline"><em>p</em></span> with a radius <span class="math inline"><em>r</em></span> is the largest that fits</li>
+</ul>
+<h3 id="application">Application</h3>
+<ul>
+<li>Ideal for spherical and cylindrical objects since it shows their radius</li>
+<li>Also relevant for flow and diffusion since it can highlight bottlenecks in structure</li>
+</ul>
+<h1 id="thickness-map">Thickness Map</h1>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">thick.map<-function(dist.df,min.dist=0.25) {
+  obj.vox<-subset(dist.df,dist>=0)
+  full.thick.map<-ddply(subset(dist.df,dist>=min.dist),.(x,y),function(c.pos) {
+    ix<-c.pos$x[1]
+    iy<-c.pos$y[1]
+    ir<-c.pos$dist[1]
+    # spread the distance out to all points within the sphere
+    # save the images inside the sphere
+    cbind(
+      subset(obj.vox,((x-ix)^2+(y-iy)^2)<ir^2)[,c("x","y")],
+      sph.rad=ir
+    )
+  })
+  ddply(full.thick.map,.(x,y),function(c.pos) {
+    data.frame(x=c.pos$x[1],y=c.pos$y[1],sph.rad=max(c.pos$sph.rad))
+  })
+}</code></pre>
+</div>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">dmap.fg<-dist.map(fill.img,fg.ph=155,bg.ph=0)
+
+ggplot(dmap.fg,aes(x=x,y=y,fill=dist))+
+  geom_tile(color="black")+
+  labs(title="Single Cell",fill="Distance\nFrom\nSurface")+
+  th_fillmap.fn(max(dmap.fg$dist))+
+  theme_bw(20)+coord_equal()</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-24-1.png" title="Cell Distance Map" alt="Cell Distance Map" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<hr />
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">ggplot(thick.map(dmap.fg),aes(x=x,y=y,fill=sph.rad))+
+  geom_tile(color="black")+
+  labs(title="Single Cell",fill="Sphere\nRadius")+
+  th_fillmap.fn(max(dmap.fg$dist))+
+  theme_bw(20)+coord_equal()</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-25-1.png" title="Cell Distance Map" alt="Cell Distance Map" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<h1 id="thickness-map-1">Thickness Map</h1>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">dmap.bg<-dist.map(fill.img,fg.ph=0,bg.ph=155)
+ggplot(dmap.bg,aes(x=x,y=y,fill=dist))+
+  geom_tile(color="black")+
+  labs(title="Single Cell",fill="Distance\nFrom\nSurface")+
+  th_fillmap.fn(max(dmap.bg$dist))+
+  theme_bw(20)+coord_equal()</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-26-1.png" title="Cell Distance Map" alt="Cell Distance Map" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<hr />
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">ggplot(thick.map(dmap.bg),aes(x=x,y=y,fill=sph.rad))+
+  geom_tile(color="black")+
+  labs(title="Single Cell",fill="Sphere\nRadius")+
+  th_fillmap.fn(max(dmap.bg$dist))+
+  theme_bw(20)+coord_equal()</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-27-1.png" title="Cell Distance Map" alt="Cell Distance Map" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<h1 id="thickness-map-from-skeleton">Thickness Map From Skeleton</h1>
+<p>Calculating the distance map by drawing a sphere at each point is very time consuming (<span class="math inline"><em>O</em>(<em>n</em><sup>3</sup>)</span>).</p>
+<ul>
+<li>The skeleton (last section) is very closely related to the thickness.</li>
+<li>We found the local maxima in the image using the Laplace</li>
+<li>We can thus grow the Spheres from these points instead of all</li>
+<li>Start by instead of thresholding transforming the image to the distance at each point</li>
+</ul>
+<p><br /><span class="math display">thSkelImage(<em>x</em>, <em>y</em>)=</span><br /> <br /><span class="math display">$$ \begin{cases}
+\textrm{cImg}_1(x,y) , &amp; \textrm{cImg}_1(x,y)\geq MIN-DIST \\ 
+  &amp;  \&amp; \textrm{ cImg}_2(x,y)\geq MIN-SLOPE \\
+0, &amp; \textrm{otherwise}
+\end{cases}$$</span><br /></p>
+<hr />
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">merge.mesh.dif<-rbind(
+  cbind(subset(test.mesh.dist,dist>=sqrt(3)),type="Non-surface\nPoints",val=0),
+  cbind(subset(test.mesh.dif,val>.5),type="Slope\nPoints",dist=0)
+  )
+overlap.im<-ddply(merge.mesh.dif,.(x,y),function(c.pts) {
+  data.frame(cnt=nrow(c.pts), # points from how many images are present
+             dist=max(c.pts$dist))
+})
+
+th_fillmap<-scale_fill_gradientn(colours=rainbow(10),limits=c(0,max(test.mesh.dist$dist)))
+ggplot(subset(overlap.im,cnt==2),aes(x=x,y=y,fill=dist))+
+  geom_tile(color="black",alpha=1)+
+  labs(title="Value Skeleton",fill="Source")+
+  th_fillmap+
+  theme_bw(20)+coord_equal()</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-28-1.png" title="Skeleton" alt="Skeleton" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<h1 id="from-skeleton-vs-all-points">From Skeleton vs All Points</h1>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">filled.skel<-fill.img.fn(subset(overlap.im,cnt==2),step.size=0.25,dist=0,cnt=0)
+system.time(skthmap<-thick.map(filled.skel))</code></pre>
+<button class="output R toggle btn btn-xs btn-success">
+<span class="glyphicon glyphicon-chevron-down"></span> R output
+</button>
+<pre style=""><code class="output r">##    user  system elapsed 
+##   3.369   0.073   3.901
+</code></pre>
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">ggplot(skthmap,aes(x=x,y=y,fill=sph.rad))+
+  geom_tile(color="black")+
+   th_fillmap+
+  labs(title="Thickness From Skeleton",fill="Sphere\nRadius")+
+  theme_bw(20)+coord_equal()</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-29-1.png" title="Thickness from skeleton" alt="Thickness from skeleton" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<hr />
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">system.time(thmap<-thick.map(test.mesh.dist))</code></pre>
+<button class="output R toggle btn btn-xs btn-success">
+<span class="glyphicon glyphicon-chevron-down"></span> R output
+</button>
+<pre style=""><code class="output r">##    user  system elapsed 
+##   8.724   0.215   9.233
+</code></pre>
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">ggplot(thmap,aes(x=x,y=y,fill=sph.rad))+
+  geom_tile(color="black")+
+  labs(title="Full Thickness Map",fill="Sphere\nRadius")+
+  th_fillmap+
+  theme_bw(20)+coord_equal()</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-30-1.png" title="Thickness from all points" alt="Thickness from all points" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<h1 id="statistically-does-it-matter">Statistically Does it Matter</h1>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">hist.sum<-ddply.cutcols(rbind(
+  cbind(thmap,type="Full Map"),
+  cbind(skthmap,type="Skeleton Map")
+  ),
+  .(cut_interval(sph.rad,12),type),
+  function(c.block) data.frame(count=nrow(c.block))
+  )
+ggplot(hist.sum,aes(x=sph.rad,color=type,y=count))+
+  geom_line()+geom_point()+
+  labs(x="Sphere Radius",y="Voxel Count",color="Algorithm")+
+  theme_bw(20)+scale_y_sqrt()</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-31-1.png" title="Thickness from all points" alt="Thickness from all points" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<hr />
+<h4 id="it-depends">It depends</h4>
+<ul>
+<li>Small structures are lost</li>
+<li>They might not have been very important or <em>noisy</em> anyways</li>
+<li>Higher values are very similar</li>
+</ul>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">comp.table<-data.frame(cbind(summary(thmap$sph.rad),summary(skthmap$sph.rad)))
+names(comp.table)<-c("Full Map","Skeleton Map")
+kable(comp.table)</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left"></th>
+<th align="right">Full Map</th>
+<th align="right">Skeleton Map</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Min.</td>
+<td align="right">0.750</td>
+<td align="right">1.750</td>
+</tr>
+<tr class="even">
+<td align="left">1st Qu.</td>
+<td align="right">2.475</td>
+<td align="right">2.500</td>
+</tr>
+<tr class="odd">
+<td align="left">Median</td>
+<td align="right">2.658</td>
+<td align="right">2.693</td>
+</tr>
+<tr class="even">
+<td align="left">Mean</td>
+<td align="right">2.637</td>
+<td align="right">2.708</td>
+</tr>
+<tr class="odd">
+<td align="left">3rd Qu.</td>
+<td align="right">2.926</td>
+<td align="right">2.926</td>
+</tr>
+<tr class="even">
+<td align="left">Max.</td>
+<td align="right">3.182</td>
+<td align="right">3.182</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h1 id="how-much-can-we-cut-down">How much can we cut down</h1>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">merge.mesh.dif<-rbind(
+  cbind(subset(test.mesh.dist,dist>2),type="Non-surface\nPoints",val=0),
+  cbind(subset(test.mesh.dif,val>1.25),type="Slope\nPoints",dist=0)
+  )
+overlap.im<-ddply(merge.mesh.dif,.(x,y),function(c.pts) {
+  data.frame(cnt=nrow(c.pts), # points from how many images are present
+             dist=max(c.pts$dist))
+})
+tfilled.skel<-fill.img.fn(subset(overlap.im,cnt==2),step.size=0.25,dist=0,cnt=0)
+system.time(tskthmap<-thick.map(tfilled.skel))</code></pre>
+<button class="output R toggle btn btn-xs btn-success">
+<span class="glyphicon glyphicon-chevron-down"></span> R output
+</button>
+<pre style=""><code class="output r">##    user  system elapsed 
+##   2.095   0.046   2.315
+</code></pre>
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">ggplot(tskthmap,aes(x=x,y=y,fill=sph.rad))+
+  geom_tile(color="black")+
+   th_fillmap+
+  labs(title="Thickness from Skeleton\n Slope>1.25 & Dist>1.7",fill="Sphere\nRadius")+
+  theme_bw(20)+coord_equal()</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-33-1.png" title="Skeleton" alt="Skeleton" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<hr />
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">hist.sum<-ddply.cutcols(rbind(
+    cbind(thmap,type="Full Map"),
+    cbind(skthmap,type="Skeleton Map"),
+    cbind(tskthmap,type="Tiny Skeleton Map")),
+  .(cut_interval(sph.rad,12),type),
+  function(c.block) data.frame(count=nrow(c.block))
+  )
+ggplot(hist.sum,aes(x=sph.rad,color=type,y=count))+
+  geom_line()+geom_point()+
+  labs(x="Sphere Radius",y="Voxel Count",color="Algorithm")+
+  theme_bw(20)+scale_y_sqrt()</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-34-1.png" title="Thickness Distributions Compared" alt="Thickness Distributions Compared" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">comp.table<-data.frame(cbind(summary(thmap$sph.rad),summary(skthmap$sph.rad),summary(tskthmap$sph.rad)))
+names(comp.table)<-c("Full Map","Skeleton Map","Tiny Skeleton Map")
+kable(comp.table)</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left"></th>
+<th align="right">Full Map</th>
+<th align="right">Skeleton Map</th>
+<th align="right">Tiny Skeleton Map</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Min.</td>
+<td align="right">0.750</td>
+<td align="right">1.750</td>
+<td align="right">2.136</td>
+</tr>
+<tr class="even">
+<td align="left">1st Qu.</td>
+<td align="right">2.475</td>
+<td align="right">2.500</td>
+<td align="right">2.658</td>
+</tr>
+<tr class="odd">
+<td align="left">Median</td>
+<td align="right">2.658</td>
+<td align="right">2.693</td>
+<td align="right">2.658</td>
+</tr>
+<tr class="even">
+<td align="left">Mean</td>
+<td align="right">2.637</td>
+<td align="right">2.708</td>
+<td align="right">2.754</td>
+</tr>
+<tr class="odd">
+<td align="left">3rd Qu.</td>
+<td align="right">2.926</td>
+<td align="right">2.926</td>
+<td align="right">3.010</td>
+</tr>
+<tr class="even">
+<td align="left">Max.</td>
+<td align="right">3.182</td>
+<td align="right">3.182</td>
+<td align="right">3.182</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h1 id="thickness-in-3d-images">Thickness in 3D Images</h1>
+<p>While the examples and demonstrations so far have been shown in 2D, the same exact technique can be applied to 3D data as well. For example for this liquid foam structure</p>
+<p><img src="ext-figures/3dfoam.png" alt="Liquid Foam Plateau Border" /></p>
+<hr />
+<ul>
+<li><p>The thickness can be calculated of the background (air) voxels in the same manner.</p></li>
+<li><p>With care, this can be used as a proxy for bubble size distribution in systems where all the bubbles are connected to it is difficult to identify single ones.</p></li>
+</ul>
+<p><img src="ext-figures/thk3dfoam.png" alt="Liquid Foam Thickness" /></p>
+<h1 id="watershed">Watershed</h1>
+<p>Watershed is a method for segmenting objects without using component labeling.</p>
+<ul>
+<li>It utilizes the shape of structures to find objects</li>
+<li>From the distance map we can make out substructures with our eyes</li>
+<li>But how to we find them?!</li>
+</ul>
+<hr />
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">test.sph.list.big<-test.sph.list
+# bring everything closer
+test.sph.list.big$xi<-0.95*test.sph.list.big$xi
+test.sph.list.big$yi<-0.95*test.sph.list.big$yi
+
+ws.distmap<-dist.map(make.sph.img(test.sph.list.big,seq(-10,10)),fg.ph=1,bg.ph=0)
+
+ggplot(ws.distmap,aes(x=x,y=y,fill=dist))+
+  geom_tile(color="black")+
+  labs(title="Original Distance Map",fill="Distance\nFrom\nSurface")+
+  theme_bw(20)+coord_equal()</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-36-1.png" title="Closer Circles" alt="Closer Circles" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<h1 id="watershed-flowing-downhill">Watershed: Flowing Downhill</h1>
+So we start by distributing pixels all across the image
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">ws.distmap$count<-1 # evenly distributed
+ws.distmap$orig.x<-ws.distmap$x
+ws.distmap$orig.y<-ws.distmap$y
+ggplot(ws.distmap,aes(x=x,y=y,fill=dist))+
+  geom_tile(color="black")+
+  geom_tile(aes(color=as.factor(count)),fill="red",alpha=0.5,size=.2)+
+  labs(title="Initial Distribution of Water",fill="Distance\nFrom\nSurface",
+       color="Water\nCount")+
+  theme_bw(20)+coord_equal()</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-37-1.png" title="Closer Circles" alt="Closer Circles" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<hr />
+If any of the neighbors have a higher distance (more downhill) then move to that position
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">single.watershed<-function(ws.dmap,s.dist=1) {
+  ws.fun<-function(in.pos) {
+    c.pos<-in.pos[1,]
+    # all the points within range of the current voxel with a greater distance
+    # since everything flows uphill
+    jump.pts<-subset(ws.dmap,
+           (sqrt( (x-c.pos$x)^2 + (y-c.pos$y)^2 )<=s.dist) & dist>=c.pos$dist)
+    jump.pts<-jump.pts[order(-jump.pts$dist),]
+    # find the furtherst point and
+    # save the old positions
+    best.pts<-cbind(jump.pts[1,c("x","y","dist")],
+                    orig.x=in.pos$orig.x,
+                    orig.y=in.pos$orig.y,
+                    count=in.pos$count)
+
+    # leave an empty copy of the voxel behind (c.pos)
+    c.pos$count<-0
+    rbind(best.pts,
+          c.pos)
+    
+  }
+  rbind(
+    ddply(subset(ws.dmap,count>0),.(x,y),ws.fun),
+    subset(ws.dmap,count==0)
+    )
+} 
+
+prop.watershed<-function(...,iters=1) {
+  if(iters>1) prop.watershed(single.watershed(...),iters=iters-1)
+  else single.watershed(...)
+}
+show.watershed<-function(ju.tab) 
+  ddply(ju.tab,.(x,y),function(c.pos) data.frame(dist=c.pos[1,"dist"],count=sum(c.pos[,"count"])))</code></pre>
+</div>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">ws.onestep<-prop.watershed(ws.distmap,sqrt(2),iters=1)
+ggplot(show.watershed(ws.onestep),aes(x=x,y=y,fill=dist))+
+  geom_tile(aes(fill=as.factor(count),color=dist),size=.2)+
+  labs(title="After one step",color="Distance\nFrom\nSurface",
+       fill="Water\nCount")+
+  theme_bw(20)+coord_equal()</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-38-1.png" title="Closer Circles" alt="Closer Circles" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<h1 id="watershed-more-flowing">Watershed: More flowing</h1>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">ws.fewstep<-prop.watershed(ws.onestep,sqrt(2),iters=1)
+ggplot(show.watershed(ws.fewstep),aes(x=x,y=y,fill=dist))+
+  geom_tile(aes(fill=(count),color=dist),size=1)+
+  labs(title="After 2 steps",color="Distance\nFrom\nSurface",
+       fill="Water\nCount")+
+   scale_fill_gradientn(colours=rainbow(10))+
+  theme_bw(20)+coord_equal()</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-39-1.png" title="Closer Circles" alt="Closer Circles" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<hr />
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">ws.manysteps<-prop.watershed(ws.fewstep,sqrt(2),iters=4)
+ggplot(show.watershed(ws.manysteps),aes(x=x,y=y,fill=dist))+
+  geom_tile(aes(fill=as.factor(count),color=dist),size=.3)+
+  labs(title="After 6 steps",color="Distance\nFrom\nSurface",
+       fill="Water\nCount")+
+  theme_bw(20)+coord_equal()</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-40-1.png" title="Closer Circles" alt="Closer Circles" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<h1 id="watershed-regrowing">Watershed: Regrowing</h1>
+<p>We can then take the points from these basins and regrow them back to their original size and these represent the watershed regions of our image</p>
+<hr />
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">ws.manysteps$label<-with(ws.manysteps,paste("Cent:",x,",",y,sep=""))
+ggplot(subset(ws.manysteps,count>0),aes(x=orig.x,y=orig.y))+
+  geom_tile(aes(fill=label),color="black")+
+  labs(title="After 6 steps",
+       fill="Watershed")+
+  theme_bw(20)+coord_equal()</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-41-1.png" title="Closer Circles" alt="Closer Circles" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<h1 id="curvature">Curvature</h1>
+<p>Curvature is a metric related to the surface or interface between phases or objects.</p>
+<ul>
+<li>It is most easily understood in its 1D sense or being the radius of the circle that matchs the local shape of a curve</li>
+</ul>
+<p><img src="http://upload.wikimedia.org/wikipedia/commons/thumb/8/84/Osculating_circle.svg/250px-Osculating_circle.svg.png" alt="Curvature-Wikipedia" /></p>
+<ul>
+<li>Mathematically it is defined as</li>
+</ul>
+<p><br /><span class="math display">$$ \kappa = \frac{1}{R} $$</span><br /></p>
+<ul>
+<li>Thus a low curvature means the value means a very large radius and high curvature means a very small radius</li>
+</ul>
+<h1 id="curvature-surface-normal">Curvature: Surface Normal</h1>
+<p>In order to meaningfully talk about curvatures of surfaces, we first need to define a consistent frame of reference for examining the surface of an object. We thus define a surface normal vector as a vector oriented orthogonally to the surface away from the interior of the object <span class="math inline">$\rightarrow \vec{N}$</span></p>
+<p><img src="ext-figures/3Dsurface.png" alt="Surface" /> <img src="ext-figures/3DsurfaceWiNormals.png" alt="Surface Normals" /></p>
+<h1 id="curvature-3d">Curvature: 3D</h1>
+<p>With the notion of surface normal defined (<span class="math inline">$\vec{N}$</span>), we can define many curvatures at point <span class="math inline">$\vec{x}$</span> on the surface.</p>
+<ul>
+<li>This is because there are infinitely many planes which contain both point <span class="math inline">$\vec{x}$</span> and <span class="math inline">$\vec{N}$</span></li>
+<li>More generally we can define an angle <span class="math inline"><em>θ</em></span> about which a single plane containing both can be freely rotated</li>
+<li>We can then define two principal curvatures by taking the maximum and minimum of this curve</li>
+</ul>
+<p><br /><span class="math display"><em>κ</em><sub>1</sub> = max(<em>κ</em>(<em>θ</em>))</span><br /> <br /><span class="math display"><em>κ</em><sub>2</sub> = min(<em>κ</em>(<em>θ</em>))</span><br /></p>
+<hr />
+<h3 id="mean-curvature">Mean Curvature</h3>
+<p>The mean of the two principal curvatures <br /><span class="math display">$$ H = \frac{1}{2}(\kappa_1+\kappa_2) $$</span><br /></p>
+<h3 id="gaussian-curvature">Gaussian Curvature</h3>
+<p>The mean of the two principal curvatures <br /><span class="math display"><em>K</em> = <em>κ</em><sub>1</sub><em>κ</em><sub>2</sub></span><br /></p>
+<ul>
+<li>positive for spheres (or spherical inclusions)</li>
+<li>curvatures agree in sign</li>
+<li>negative for saddles (hyperboloid surfaces)</li>
+<li>curvatures disgree in sign</li>
+<li>0 for planes</li>
+</ul>
+<h1 id="curvature-3d-examples">Curvature: 3D Examples</h1>
+<p>Examining a complex structure with no meaningful ellipsoidal or watershed model. The images themselves show the type of substructures and shapes which are present in the sample.</p>
+<p><img src="ext-figures/Complicated3DsurfaceMCurv.png" alt="Mean Curvature" /></p>
+<hr />
+<ul>
+<li>gaussian curvature: the comparative amount of surface at, above, and below 0</li>
+<li>from spherical particles into annealed mesh of balls</li>
+</ul>
+<p><img src="ext-figures/Complicated3DsurfaceGCurv.png" alt="Gaussian Curvature" /></p>
+<h1 id="characteristic-shape">Characteristic Shape</h1>
+<p>Characteristic shape can be calculated by measuring principal curvatures and normalizing them by scaling to the structure size. A distribution of these curvatures then provides shape information on a structure indepedent of the size.</p>
+<p>For example a structure transitioning from a collection of perfectly spherical particles to a annealed solid will go from having many round spherical faces with positive gaussian curvature to many saddles and more complicated structures with 0 or negative curvature.</p>
+<h1 id="curvature-take-home-message">Curvature: Take Home Message</h1>
+<p>It provides another metric for characterizing complex shapes</p>
+<ul>
+<li>Particularly useful for examining interfaces</li>
+<li>Folds, saddles, and many other types of points are not characterized well be ellipsoids or thickness maps</li>
+<li>Provides a scale-free metric for assessing structures</li>
+<li>Can provide visual indications of structural changes</li>
+</ul>
+<h1 id="other-techniques">Other Techniques</h1>
+<p>There are hundreds of other techniques which can be applied to these complicated structures, but they go beyond the scope of this course. Many of them are model-based which means they work well but only for particular types of samples or images. Of the more general techniques several which are easily testable inside of FIJI are</p>
+<ul>
+<li>Directional Analysis = Looking at the orientation of different components using Fourier analysis (<em>Analyze</em> <span class="math inline">→</span> <em>Directionality</em>)</li>
+<li>Tubeness / Surfaceness (<em>Plugins</em> <span class="math inline">→</span> <em>Analyze</em> <span class="math inline">→</span>) characterize binary images and the shape at each point similar to curvature but with a different underlying model</li>
+</ul>
+<hr />
+<ul>
+<li>Fractal Dimensionality = A metric for assessing the structure as you scale up and down by examining various spatial relationships</li>
+<li>Ma, D., Stoica, A. D., &amp; Wang, X.-L. (2009). Power-law scaling and fractal nature of medium-range order in metallic glasses. Nature Materials, 8(1), 30–4. <a href="doi:10.1038/nmat2340" class="uri">doi:10.1038/nmat2340</a></li>
+<li>Two (or more) point correlation functions = Used in theoretical material science and physics to describe random materials and can be used to characterize distances, orientations, and organization in complex samples</li>
+<li>Jiao, Y., Stillinger, F., &amp; Torquato, S. (2007). Modeling heterogeneous materials via two-point correlation functions: Basic principles. Physical Review E, 76(3). <a href="doi:10.1103/PhysRevE.76.031110" class="uri">doi:10.1103/PhysRevE.76.031110</a></li>
+<li>Andrey, P., Kiêu, K., Kress, C., Lehmann, G., Tirichine, L., Liu, Z., … Debey, P. (2010). Statistical analysis of 3D images detects regular spatial distributions of centromeres and chromocenters in animal and plant nuclei. PLoS Computational Biology, 6(7), e1000853. <a href="doi:10.1371/journal.pcbi.1000853" class="uri">doi:10.1371/journal.pcbi.1000853</a></li>
+<li>Haghpanahi, M., &amp; Miramini, S. (2008). Extraction of morphological parameters of tissue engineering scaffolds using two-point correlation function, 463–466. Retrieved from <a href="http://portal.acm.org/citation.cfm?id=1713360.1713456" class="uri">http://portal.acm.org/citation.cfm?id=1713360.1713456</a>
+</div>
+</div>
+<div class="navbar navbar-fixed-bottom navbar-inverse">
+<div class="container">
+<div class="navbar-header">
+<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse">
+<span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span>
+</button>
+</div>
+<div id="bottom-navbar" class="navbar-collapse collapse navbar-responsive-collapse">
+<ul class="nav navbar-nav navbar-right">
+<li class="nav">
+<p class="navbar-text">
+Toggle
+</p>
+</li>
+<li class="dropup">
+<a href="#" class="dropdown-toggle" data-toggle="dropdown">Code <b class="caret"></b></a>
+<ul class="dropdown-menu">
+<li class="dropdown-header">
+Languages
+</li>
+<li class="active">
+<a href="#" class="toggle-global source R" type="source.R">R</a>
+</li>
+<li>
+<a href="#" type="all-source" class="toggle-global">All</a>
+</li>
+</ul>
+</li>
+<li class="dropup">
+<a href="#" class="dropdown-toggle" data-toggle="dropdown">Output <b class="caret"></b></a>
+<ul class="dropdown-menu">
+<li class="dropdown-header">
+Type
+</li>
+<li class="active">
+<a href="#" class="toggle-global message" type="message">message</a>
+</li>
+<li>
+<a href="#" type="all-output" class="toggle-global">All</a>
+</li>
+</ul>
+</li>
+<li class="active">
+<a href="#" type="figure" class="toggle-global">Figures</a>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div id="push">
+</div>
+<div id="footer">
+<div class="container">
+<p class="text-muted" id="credit">
+Styled with <a href="https://github.com/jimhester/knitrBootstrap">knitrBootstrap</a>
+</p>
+</div>
+</div>
+<link rel="stylesheet" id="theme" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" media="screen"></link><link rel="stylesheet" id="highlight" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/7.3/styles/default.min.css" media="screen"></link>
+</div></li>
+</ul>
+</body>
+</html>
