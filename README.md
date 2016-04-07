@@ -23,7 +23,7 @@ The lectures have been prepared and given by Kevin Mader and guest lecturer Ande
  - [Lecture Handout](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2016/master/Lectures/05-Slides_files/05-handout.html) as [Old PDF](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2015/master/Lectures/06-Handout.pdf) 
  - Lecture Video: [Part 1](https://youtu.be/l4ncwPgwVLo), [Part 2](https://youtu.be/ZT_tgCQApqo) 
 - 7th April - Analyzing Complex Objects
- - [Lecture Slides]((https://rawgithub.com/kmader/Quantitative-Big-Imaging-2016/master/Lectures/06-Slides.html)
+ - [Lecture Slides](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2016/master/Lectures/06-Slides.html)
  - [Lecture Handout](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2016/master/Lectures/06-Slides_files/06-handout.html)
 - 14th April - Spatial Distribution
  - [Old Lecture Slides](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2015/master/Lectures/08-Slides.html)
