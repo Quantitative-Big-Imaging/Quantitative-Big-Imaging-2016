@@ -68,11 +68,10 @@ The exercises will be supported by Yannis Vogiatzis, Kevin Mader, and Christian 
 - 17th March - Analyzing Single Objects
  - [KNIME Exercises](https://github.com/kmader/Quantitative-Big-Imaging-2016/blob/master/Exercises/05-Description.md)
  - [Creating Meshes/STL Models](https://gist.github.com/kmader/b25ac8b94b600918b372)
-
 - 7th April - Analyzing Complex Objects
  - [KNIME Exercises](https://github.com/kmader/Quantitative-Big-Imaging-2016/blob/master/Exercises/06-Description.md)
  - [Paraview Curvature](https://github.com/kmader/Quantitative-Big-Imaging-2016/blob/master/Exercises/06-files/CurvatureContour.pvsm)
-
+ - [IPython Notebook (Under development)](https://github.com/kmader/Quantitative-Big-Imaging-2016/blob/master/Exercises/06-notebook.ipynb)
 ### Feedback (as much as possible)
  - Create an [issue](https://github.com/kmader/Quantitative-Big-Imaging-2016/issues) (on the group site that everyone can see and respond to, requires a Github account), [issues from last year](https://github.com/kmader/Quantitative-Big-Imaging-2015/issues)
  - Provide anonymous feedback on the course [here](https://docs.google.com/spreadsheet/embeddedform?formkey=dEtIX1ZXMzFacmdhRF9mQVpNaWtWTXc6MA)
