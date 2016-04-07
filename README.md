@@ -69,7 +69,7 @@ The exercises will be supported by Yannis Vogiatzis, Kevin Mader, and Christian 
  - [KNIME Exercises](https://github.com/kmader/Quantitative-Big-Imaging-2016/blob/master/Exercises/05-Description.md)
  - [Creating Meshes/STL Models](https://gist.github.com/kmader/b25ac8b94b600918b372)
 
-- 7th April - Analyzing Complex Objects Analysis
+- 7th April - Analyzing Complex Objects
  - [KNIME Exercises](https://github.com/kmader/Quantitative-Big-Imaging-2016/blob/master/Exercises/06-Description.md)
  - [Paraview Curvature](https://github.com/kmader/Quantitative-Big-Imaging-2016/blob/master/Exercises/06-files/CurvatureContour.pvsm)
 
