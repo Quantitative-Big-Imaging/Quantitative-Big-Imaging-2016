@@ -29,7 +29,7 @@ The lectures have been prepared and given by Kevin Mader and guest lecturer Ande
 - 14th April - Many Objects and Distributions
  - [Lecture Slides](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2016/master/Lectures/07-Slides.html)
  - [Lecture Handout](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2016/master/Lectures/07-Slides_files/07-handout.html) as [PDF](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2015/master/Lectures/08-Handout.pdf)
- - Lecture Video: Coming Soon
+ - Lecture Video: [Part 1](https://youtu.be/2AsONMLNtfk), [Part 2](https://youtu.be/wyizE0HBEDs)
 - 21st April - Statistics and Reproducibility
  - [Old Lecture Slides](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2015/master/Lectures/09-slides.html)
  - [Old Lecture Handout](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2015/master/Lectures/09-handout.html) as [PDF](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2015/master/Lectures/09-handout.pdf)
