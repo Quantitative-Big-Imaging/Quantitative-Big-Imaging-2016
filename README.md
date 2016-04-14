@@ -26,11 +26,10 @@ The lectures have been prepared and given by Kevin Mader and guest lecturer Ande
  - [Lecture Slides](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2016/master/Lectures/06-Slides.html)
  - [Lecture Handout](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2016/master/Lectures/06-Slides_files/06-handout.html)
  - Lecture Video: [Part 1](https://www.youtube.com/watch?v=cNUjEiyhkt8), [Part 2](https://www.youtube.com/watch?v=RV680pP1Mu0) 
-- 14th April - Spatial Distribution
+- 14th April - Many Objects and Distributions
  - [Lecture Slides](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2016/master/Lectures/07-Slides.html)
  - [Lecture Handout](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2016/master/Lectures/07-Slides_files/07-handout.html) as [PDF](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2015/master/Lectures/08-Handout.pdf)
-
- - Lecture Video: [Part 1](https://www.youtube.com/watch?v=cNUjEiyhkt8), [Part 2](https://www.youtube.com/watch?v=RV680pP1Mu0)  
+ - Lecture Video: Coming Soon
 - 21st April - Statistics and Reproducibility
  - [Old Lecture Slides](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2015/master/Lectures/09-slides.html)
  - [Old Lecture Handout](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2015/master/Lectures/09-handout.html) as [PDF](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2015/master/Lectures/09-handout.pdf)
@@ -75,7 +74,8 @@ The exercises will be supported by Yannis Vogiatzis, Kevin Mader, and Christian 
  - [KNIME Exercises](https://github.com/kmader/Quantitative-Big-Imaging-2016/blob/master/Exercises/06-Description.md)
  - [Paraview Curvature](https://github.com/kmader/Quantitative-Big-Imaging-2016/blob/master/Exercises/06-files/CurvatureContour.pvsm)
  - [IPython Notebook (Under development)](https://github.com/kmader/Quantitative-Big-Imaging-2016/blob/master/Exercises/06-notebook.ipynb)
- 
+- 14th April - Groups of Objects and Distributions
+ - [KNIME Exercises](https://github.com/kmader/Quantitative-Big-Imaging-2016/blob/master/Exercises/07-Description.md)
 
 ### Feedback (as much as possible)
  - Create an [issue](https://github.com/kmader/Quantitative-Big-Imaging-2016/issues) (on the group site that everyone can see and respond to, requires a Github account), [issues from last year](https://github.com/kmader/Quantitative-Big-Imaging-2015/issues)
