@@ -903,201 +903,13 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div class="row row-offcanvas row-offcanvas-right">
 <div class="contents col-xs-12 col-md-10">
 <hr />
-title: “Quantitative Big Imaging” author: “Statistics and Reproducibility” date: ‘ETHZ: 227-0966-00L’ output: slidy_presentation —
+<p>title: “Quantitative Big Imaging” author: “Statistics and Reproducibility” date: ‘ETHZ: 227-0966-00L’ output: slidy_presentation: footer: “Quantitative Big Imaging 2016” —</p>
 <div class="row">
 <button class="message R toggle btn btn-xs btn-info">
 <span class="glyphicon glyphicon-chevron-down"></span> R message
 </button>
 <pre style=""><code class="message r">## Loading required package: knitr
 </code></pre>
-</div>
-<div class="row">
-<button class="source R toggle btn btn-xs btn-primary">
-<span class="glyphicon glyphicon-chevron-down"></span> R source
-</button>
-<pre style=""><code class="source r">## The basic files and libraries needed for most presentations
-# creates the libraries and common-functions sections
-read_chunk("../common/utility_functions.R")
-library(igraph)
-library(ICC)
-library(grid)</code></pre>
-</div>
-<div class="row">
-<button class="source R toggle btn btn-xs btn-primary">
-<span class="glyphicon glyphicon-chevron-down"></span> R source
-</button>
-<pre style=""><code class="source r">require(ggplot2) #for plots
-require(lattice) # nicer scatter plots
-require(plyr) # for processing data.frames
-library(dplyr)
-require(grid) # contains the arrow function
-require(jpeg)
-require(doMC) # for parallel code
-require(png) # for reading png images
-require(gridExtra)
-
-require(reshape2) # for the melt function
-#if (!require("biOps")) {
-#  # for basic image processing
-#  devtools::install_github("cran/biOps")
-#  library("biOps")
-#}
-## To install EBImage
-if (!require("EBImage")) { # for more image processing
-  source("http://bioconductor.org/biocLite.R")
-  biocLite("EBImage")
-}
-
-used.libraries<-c("ggplot2","lattice","plyr","reshape2","grid","gridExtra","biOps","png","EBImage")</code></pre>
-</div>
-<div class="row">
-<button class="source R toggle btn btn-xs btn-primary">
-<span class="glyphicon glyphicon-chevron-down"></span> R source
-</button>
-<pre style=""><code class="source r"># start parallel environment
-registerDoMC()
-# functions for converting images back and forth
-im.to.df<-function(in.img,out.col="val") {
-  out.im<-expand.grid(x=1:nrow(in.img),y=1:ncol(in.img))
-  out.im[,out.col]<-as.vector(in.img)
-  out.im
-}
-df.to.im<-function(in.df,val.col="val",inv=F) {
-  in.vals<-in.df[[val.col]]
-  if(class(in.vals[1])=="logical") in.vals<-as.integer(in.vals*255)
-  if(inv) in.vals<-255-in.vals
-  out.mat<-matrix(in.vals,nrow=length(unique(in.df$x)),byrow=F)
-  attr(out.mat,"type")<-"grey"
-  out.mat
-}
-ddply.cutcols<-function(...,cols=1) {
-  # run standard ddply command 
-  cur.table<-ddply(...)
-  cutlabel.fixer<-function(oVal) {
-    sapply(oVal,function(x) {
-      cnv<-as.character(x)
-      mean(as.numeric(strsplit(substr(cnv,2,nchar(cnv)-1),",")[[1]]))
-    })
-  }
-  cutname.fixer<-function(c.str) {
-    s.str<-strsplit(c.str,"(",fixed=T)[[1]]
-    t.str<-strsplit(paste(s.str[c(2:length(s.str))],collapse="("),",")[[1]]
-    paste(t.str[c(1:length(t.str)-1)],collapse=",")
-  }
-  for(i in c(1:cols)) {
-    cur.table[,i]<-cutlabel.fixer(cur.table[,i])
-    names(cur.table)[i]<-cutname.fixer(names(cur.table)[i])
-  }
-  cur.table
-}
-
-# since biOps isn't available use a EBImage based version
-imgSobel<-function(img) {
-  kern<-makeBrush(3)*(-1)
-  kern[2,2]<-8
-  filter2(img,kern)
-}
-
-
-show.pngs.as.grid<-function(file.list,title.fun,zoom=1) {
-  preparePng<-function(x) rasterGrob(readPNG(x,native=T,info=T),width=unit(zoom,"npc"),interp=F)
-  labelPng<-function(x,title="junk") (qplot(1:300, 1:300, geom="blank",xlab=NULL,ylab=NULL,asp=1)+
-                                        annotation_custom(preparePng(x))+
-                                        labs(title=title)+theme_bw(24)+
-                                        theme(axis.text.x = element_blank(),
-                                              axis.text.y = element_blank()))
-  imgList<-llply(file.list,function(x) labelPng(x,title.fun(x)) )
-  do.call(grid.arrange,imgList)
-}
-## Standard image processing tools which I use for visualizing the examples in the script
-commean.fun<-function(in.df) {
-  ddply(in.df,.(val), function(c.cell) {
-    weight.sum<-sum(c.cell$weight)
-    data.frame(xv=mean(c.cell$x),
-               yv=mean(c.cell$y),
-               xm=with(c.cell,sum(x*weight)/weight.sum),
-               ym=with(c.cell,sum(y*weight)/weight.sum)
-    )
-  })
-}
-
-colMeans.df<-function(x,...) as.data.frame(t(colMeans(x,...)))
-
-pca.fun<-function(in.df) {
-  ddply(in.df,.(val), function(c.cell) {
-    c.cell.cov<-cov(c.cell[,c("x","y")])
-    c.cell.eigen<-eigen(c.cell.cov)
-    
-    c.cell.mean<-colMeans.df(c.cell[,c("x","y")])
-    out.df<-cbind(c.cell.mean,
-                  data.frame(vx=c.cell.eigen$vectors[1,],
-                             vy=c.cell.eigen$vectors[2,],
-                             vw=sqrt(c.cell.eigen$values),
-                             th.off=atan2(c.cell.eigen$vectors[2,],c.cell.eigen$vectors[1,]))
-    )
-  })
-}
-vec.to.ellipse<-function(pca.df) {
-  ddply(pca.df,.(val),function(cur.pca) {
-    # assume there are two vectors now
-    create.ellipse.points(x.off=cur.pca[1,"x"],y.off=cur.pca[1,"y"],
-                          b=sqrt(5)*cur.pca[1,"vw"],a=sqrt(5)*cur.pca[2,"vw"],
-                          th.off=pi/2-atan2(cur.pca[1,"vy"],cur.pca[1,"vx"]),
-                          x.cent=cur.pca[1,"x"],y.cent=cur.pca[1,"y"])
-  })
-}
-
-# test function for ellipse generation
-# ggplot(ldply(seq(-pi,pi,length.out=100),function(th) create.ellipse.points(a=1,b=2,th.off=th,th.val=th)),aes(x=x,y=y))+geom_path()+facet_wrap(~th.val)+coord_equal()
-create.ellipse.points<-function(x.off=0,y.off=0,a=1,b=NULL,th.off=0,th.max=2*pi,pts=36,...) {
-  if (is.null(b)) b<-a
-  th<-seq(0,th.max,length.out=pts)
-  data.frame(x=a*cos(th.off)*cos(th)+b*sin(th.off)*sin(th)+x.off,
-             y=-1*a*sin(th.off)*cos(th)+b*cos(th.off)*sin(th)+y.off,
-             id=as.factor(paste(x.off,y.off,a,b,th.off,pts,sep=":")),...)
-}
-deform.ellipse.draw<-function(c.box) {
-  create.ellipse.points(x.off=c.box$x[1],
-                        y.off=c.box$y[1],
-                        a=c.box$a[1],
-                        b=c.box$b[1],
-                        th.off=c.box$th[1],
-                        col=c.box$col[1])                    
-}
-bbox.fun<-function(in.df) {
-  ddply(in.df,.(val), function(c.cell) {
-    c.cell.mean<-colMeans.df(c.cell[,c("x","y")])
-    xmn<-emin(c.cell$x)
-    xmx<-emax(c.cell$x)
-    ymn<-emin(c.cell$y)
-    ymx<-emax(c.cell$y)
-    out.df<-cbind(c.cell.mean,
-                  data.frame(xi=c(xmn,xmn,xmx,xmx,xmn),
-                             yi=c(ymn,ymx,ymx,ymn,ymn),
-                             xw=xmx-xmn,
-                             yw=ymx-ymn
-                  ))
-  })
-}
-
-# since the edge of the pixel is 0.5 away from the middle of the pixel
-emin<-function(...) min(...)-0.5
-emax<-function(...) max(...)+0.5
-extents.fun<-function(in.df) {
-  ddply(in.df,.(val), function(c.cell) {
-    c.cell.mean<-colMeans.df(c.cell[,c("x","y")])
-    out.df<-cbind(c.cell.mean,data.frame(xmin=c(c.cell.mean$x,emin(c.cell$x)),
-                                         xmax=c(c.cell.mean$x,emax(c.cell$x)),
-                                         ymin=c(emin(c.cell$y),c.cell.mean$y),
-                                         ymax=c(emax(c.cell$y),c.cell.mean$y)))
-  })
-}
-
-common.image.path<-"../common"
-qbi.file<-function(file.name) file.path(common.image.path,"figures",file.name)
-qbi.data<-function(file.name) file.path(common.image.path,"data",file.name)
-
-th_fillmap.fn<-function(max.val) scale_fill_gradientn(colours=rainbow(10),limits=c(0,max.val))</code></pre>
 </div>
 <h1 id="course-outline">Course Outline</h1>
 <div class="row">
@@ -1145,7 +957,13 @@ th_fillmap.fn<-function(max.val) scale_fill_gradientn(colours=rainbow(10),limits
 <li><a href="http://swcarpentry.github.io/sql-novice-survey/">Databases Introduction</a></li>
 <li><a href="http://circos.ca/documentation/course/visualizing-genomic-data.pdf">Visualizing Genomic Data</a> (General Visualization Techniques)</li>
 <li><p><a href="http://www.messagelab.monash.edu.au/nimrod">NIMRod Parameter Studies</a></p></li>
-<li><p>M.E. Wolak, D.J. Fairbairn, Y.R. Paulsen (2012) Guidelines for Estimating Repeatability. Methods in Ecology and Evolution 3(1):129-137.</p></li>
+<li>M.E. Wolak, D.J. Fairbairn, Y.R. Paulsen (2012) Guidelines for Estimating Repeatability. Methods in Ecology and Evolution 3(1):129-137.</li>
+<li><p>David J.C. MacKay, Bayesian Interpolartion (1991) [<a href="http://citeseer.ist.psu.edu/viewdoc/summary?doi=10.1.1.27.9072" class="uri">http://citeseer.ist.psu.edu/viewdoc/summary?doi=10.1.1.27.9072</a>]</p></li>
+</ul>
+<h3 id="model-evaluation">Model Evaluation</h3>
+<ul>
+<li><a href="https://www.youtube.com/watch?v=ryZL4XNUmwo">Julia Evans - Recalling with Precision</a></li>
+<li><a href="https://github.com/stripe/topmodel">Stripe’s Next Top Model</a></li>
 </ul>
 <h1 id="previously-on-qbi">Previously on QBI …</h1>
 <ul>
@@ -1168,16 +986,19 @@ th_fillmap.fn<-function(max.val) scale_fill_gradientn(colours=rainbow(10),limits
 <li>volume, velocity, variety (3 V’s)</li>
 <li>scalable, fast, easy to customize</li>
 </ul>
-<hr />
 <p>So what is “big” imaging</p>
+<h4 id="doing-analyses-in-a-disciplined-manner">doing analyses in a disciplined manner</h4>
 <ul>
-<li>doing analyses in a disciplined manner</li>
 <li>fixed steps</li>
 <li>easy to regenerate results</li>
 <li>no <em>magic</em></li>
-<li>having everything automated</li>
+</ul>
+<h4 id="having-everything-automated">having everything automated</h4>
+<ul>
 <li>100 samples is as easy as 1 sample</li>
-<li>being able to adapt and reuse analyses</li>
+</ul>
+<h4 id="being-able-to-adapt-and-reuse-analyses">being able to adapt and reuse analyses</h4>
+<ul>
 <li>one really well working script and modify parameters</li>
 <li>different types of cells</li>
 <li>different regions</li>
@@ -1213,6 +1034,7 @@ th_fillmap.fn<-function(max.val) scale_fill_gradientn(colours=rainbow(10),limits
 <li>Parameter sweep</li>
 <li>Sensitivity analysis</li>
 <li>Unit Testing</li>
+<li>Validation</li>
 <li>Visualization</li>
 </ul>
 <h1 id="what-do-we-start-with">What do we start with?</h1>
@@ -1252,7 +1074,6 @@ th_fillmap.fn<-function(max.val) scale_fill_gradientn(colours=rainbow(10),limits
 </ul>
 <p>We examined 100 people and the ones with blue eyes were on average 10cm taller</p>
 <p>In 100 cake samples, we found a 0.9 correlation between cooking time and bubble size</p>
-<hr />
 <h3 id="controlled">Controlled</h3>
 <ul>
 <li>Most scientific studies fall into this category</li>
@@ -2026,7 +1847,6 @@ splot+geom_line(aes(y=Count))+geom_point(aes(y=Count))+scale_y_log10()+
 </div>
 </div>
 </div>
-<hr />
 <p>Comparing Different Variables we see that the best (lowest) value for the count sensitivity is the highest for the volume and anisotropy.</p>
 <div class="row">
 <button class="source R toggle btn btn-xs btn-primary">
@@ -2119,6 +1939,276 @@ ggplot(sens.summary,aes(x=thresh))+
 <li>shapeAnalysis must give the center of volume within 0.5 pixels</li>
 <li>shapeAnalysis must run on a 1000x1000 image in 30 seconds</li>
 </ol>
+<h1 id="machine-learning">Machine Learning</h1>
+<p><img src="http://1.bp.blogspot.com/-ME24ePzpzIM/UQLWTwurfXI/AAAAAAAAANw/W3EETIroA80/s1600/drop_shadows_background.png" alt="Validation Graphic" /></p>
+<ul>
+<li>Borrowed from <a href="http://peekaboo-vision.blogspot.ch/2013/01/machine-learning-cheat-sheet-for-scikit.html" class="uri">http://peekaboo-vision.blogspot.ch/2013/01/machine-learning-cheat-sheet-for-scikit.html</a></li>
+</ul>
+<h3 id="main-categories">Main Categories</h3>
+<ul>
+<li>Classification</li>
+<li>Regression</li>
+<li>Clustering</li>
+<li>Dimensionality Reduction</li>
+</ul>
+<h1 id="overview">Overview</h1>
+<p>Basically all of these are ultimately functions which map inputs to outputs.</p>
+<p>The input could be</p>
+<ul>
+<li>an image</li>
+<li>a point</li>
+<li>a feature vector</li>
+<li>or a multidimensional tensor</li>
+</ul>
+<p>The output is</p>
+<ul>
+<li>a value (regression)</li>
+<li>a classification (classification)</li>
+<li>a group (clustering)</li>
+<li>a vector / matrix / tensor with <em>fewer</em> degrees of input / less noise as the original data (dimensionality reduction)</li>
+</ul>
+<h3 id="overfitting">Overfitting</h3>
+<p>The most serious problem with machine learning and such approachs is overfitting your model to your data. Particularly as models get increasingly complex (random forest, neural networks, deep learning, …), it becomes more and more difficult to apply common sense or even understand exactly what a model is doing and why a given answer is produced.</p>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">magic_classifier <span class="op">=</span> {}
+<span class="co"># training</span>
+magic_classifier[<span class="st">&#39;Dog&#39;</span>] <span class="op">=</span> <span class="st">&#39;Animal&#39;</span>
+magic_classifier[<span class="st">&#39;Bob&#39;</span>] <span class="op">=</span> <span class="st">&#39;Person&#39;</span>
+magic_classifier[<span class="st">&#39;Fish&#39;</span>] <span class="op">=</span> <span class="st">&#39;Animal&#39;</span></code></pre></div>
+<p>Now use this classifier, on the training data it works really well</p>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">magic_classifier[<span class="st">&#39;Dog&#39;</span>] <span class="op">==</span> <span class="st">&#39;Animal&#39;</span> <span class="co"># true, 1/1 so far!</span>
+magic_classifier[<span class="st">&#39;Bob&#39;</span>] <span class="op">==</span> <span class="st">&#39;Person&#39;</span> <span class="co"># true, 2/2 still perfect!</span>
+magic_classifier[<span class="st">&#39;Fish&#39;</span>] <span class="op">==</span> <span class="st">&#39;Animal&#39;</span> <span class="co"># true, 3/3, wow!</span></code></pre></div>
+<p>On new data it doesn’t work at all, it doesn’t even execute.</p>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">magic_classifier[<span class="st">&#39;Octopus&#39;</span>] <span class="op">==</span> <span class="st">&#39;Animal&#39;</span> <span class="co"># exception?! but it was working so well</span>
+magic_classifier[<span class="st">&#39;Dan&#39;</span>] <span class="op">==</span> <span class="st">&#39;Person&#39;</span> <span class="co"># exception?! </span></code></pre></div>
+<p>The above example appeared to be a perfect trainer for mapping names to animals or people, but it just memorized the inputs and reproduced them at the output and so didn’t actually learn anything, it just copied.</p>
+<h1 id="validation">Validation</h1>
+<p>Relevant for each of the categories, but applied in a slightly different way depending on the group. The idea is two divide the dataset into groups called training and validation or ideally training, validation, and testing. The analysis is then</p>
+<ul>
+<li>developed on <strong>training</strong></li>
+<li>iteratively validated on <strong>validation</strong></li>
+<li>ultimately tested on <strong>testing</strong></li>
+</ul>
+<h1 id="concrete-example-classification">Concrete Example: Classification</h1>
+<p>Taking a list of points (feature vectors) where each has an <span class="math inline"><em>x</em>1</span> and a <span class="math inline"><em>y</em>1</span> coordinate and a classification (<em>Happy</em> or <em>Sad</em>), we can show the data as a table</p>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">spiral.pts <- expand.grid(x = -50:50, y = -50:50) %>% 
+  subset((x==0) | (y==0)) %>%
+  mutate(
+    r = sqrt(x^2+y^2),
+    th = r/60*2*pi,
+    x1 = cos(th)*x-sin(th)*y,
+    y1 = sin(th)*x+cos(th)*y,
+    class = ifelse(x==0,"Happy","Sad")
+  ) %>% 
+  select(x1,y1,class)
+kable(spiral.pts  %>% sample_n(5))</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left"></th>
+<th align="right">x1</th>
+<th align="right">y1</th>
+<th align="left">class</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">27</td>
+<td align="right">14.106846</td>
+<td align="right">19.416408</td>
+<td align="left">Happy</td>
+</tr>
+<tr class="even">
+<td align="left">120</td>
+<td align="right">-7.727996</td>
+<td align="right">17.357364</td>
+<td align="left">Sad</td>
+</tr>
+<tr class="odd">
+<td align="left">32</td>
+<td align="right">17.357364</td>
+<td align="right">7.727996</td>
+<td align="left">Happy</td>
+</tr>
+<tr class="even">
+<td align="left">183</td>
+<td align="right">6.653174</td>
+<td align="right">-31.300723</td>
+<td align="left">Happy</td>
+</tr>
+<tr class="odd">
+<td align="left">134</td>
+<td align="right">-31.384865</td>
+<td align="right">-10.197561</td>
+<td align="left">Sad</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Or graphically</p>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">ggplot(spiral.pts,aes(x1,y1,color=class))+
+  geom_point()+
+  theme_bw(20)</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-25-1.png" title="plot of chunk unnamed-chunk-25" alt="plot of chunk unnamed-chunk-25" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<p>You can play around with neural networks and this data set at <a href="playground.tensorflow.org">TensorFlow Playground</a></p>
+<h1 id="dividing-the-data">Dividing the data</h1>
+<p>We first decide on a split, in this case 60%, 30%, 10% for training, validation, and testing and randomly divide up the data.</p>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">div.spiral.pts<-spiral.pts %>%
+  mutate(
+    # generate a random number uniformally between 0 and 1
+    rand_value = runif(nrow(spiral.pts)),
+    # divide the data based on how high this number is into different groups
+    data_div = ifelse(rand_value<0.6,"Training",
+                      ifelse(rand_value<0.9,"Validation",
+                             "Testing")
+                      )
+  ) %>% select(-rand_value) # we don't need this anymore
+div.spiral.pts %>% sample_n(4) %>% kable</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left"></th>
+<th align="right">x1</th>
+<th align="right">y1</th>
+<th align="left">class</th>
+<th align="left">data_div</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">81</td>
+<td align="right">10.000000</td>
+<td align="right">-17.320508</td>
+<td align="left">Sad</td>
+<td align="left">Training</td>
+</tr>
+<tr class="even">
+<td align="left">192</td>
+<td align="right">37.455364</td>
+<td align="right">-16.676202</td>
+<td align="left">Happy</td>
+<td align="left">Validation</td>
+</tr>
+<tr class="odd">
+<td align="left">43</td>
+<td align="right">5.945159</td>
+<td align="right">-5.353045</td>
+<td align="left">Happy</td>
+<td align="left">Validation</td>
+</tr>
+<tr class="even">
+<td align="left">75</td>
+<td align="right">23.752182</td>
+<td align="right">-10.575153</td>
+<td align="left">Sad</td>
+<td align="left">Training</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">ggplot(div.spiral.pts,aes(x1,y1))+
+  geom_point(aes(shape=data_div,color=class),size=3)+
+  labs(shape="Type")+
+  theme_bw(20)</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-27-1.png" title="plot of chunk unnamed-chunk-27" alt="plot of chunk unnamed-chunk-27" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<h1 id="using-a-simple-decision-tree">Using a simple decision tree</h1>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">library(rpart)
+training.data <- div.spiral.pts %>% subset(data_div == "Training")
+dec.tree<-rpart(class~x1+y1,data=training.data)
+plot(dec.tree)
+text(dec.tree)</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-28-1.png" title="plot of chunk unnamed-chunk-28" alt="plot of chunk unnamed-chunk-28" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<p>Overlaying with the prediction data looks good</p>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">pred.map<-expand.grid(x1 = -50:50, y1 = -50:50) 
+pred.map$pred_class<-ifelse(predict(dec.tree,pred.map)[,1]>0.5,"Happy","Sad")
+
+training.data$pred_class<-ifelse(predict(dec.tree,training.data)[,1]>0.5,"Happy","Sad")
+ggplot(pred.map,aes(x1,y1))+
+  geom_tile(aes(fill=pred_class),alpha=0.5)+
+  geom_point(data=training.data,aes(color=class,size=(pred_class!=class)))+
+  labs(fill="Predicted",size = "Incorrectly\nLabeled")+
+  theme_bw(20)</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-29-1.png" title="plot of chunk unnamed-chunk-29" alt="plot of chunk unnamed-chunk-29" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<p>It struggles more with the validation data since it has never seen it before and it’s not quite the same as the training</p>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">valid.data<-div.spiral.pts %>% subset(data_div == "Validation")
+valid.data$pred_class<-ifelse(predict(dec.tree,valid.data)[,1]>0.5,"Happy","Sad")
+ggplot(pred.map,aes(x1,y1))+
+  geom_tile(aes(fill=pred_class),alpha=0.5)+
+  geom_point(data=valid.data,aes(color=class,size=(pred_class!=class)))+
+  labs(fill="Predicted",size = "Incorrectly\nLabeled")+
+  theme_bw(20)</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-30-1.png" title="plot of chunk unnamed-chunk-30" alt="plot of chunk unnamed-chunk-30" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
+<p>The test data (<strong>normally we would not look at it at all right now and wait until the very end</strong>) looks even worse and an even smaller fraction is correctly matched.</p>
+<div class="row">
+<button class="source R toggle btn btn-xs btn-primary">
+<span class="glyphicon glyphicon-chevron-down"></span> R source
+</button>
+<pre style=""><code class="source r">valid.data<-div.spiral.pts %>% subset(data_div == "Testing")
+valid.data$pred_class<-ifelse(predict(dec.tree,valid.data)[,1]>0.5,"Happy","Sad")
+ggplot(pred.map,aes(x1,y1))+
+  geom_tile(aes(fill=pred_class),alpha=0.5)+
+  geom_point(data=valid.data,aes(color=class,size=(pred_class!=class)))+
+  labs(fill="Predicted",size = "Incorrectly\nLabeled")+
+  theme_bw(20)</code></pre>
+<div class="row">
+<div class="col-md-offset-3 col-md-6">
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-31-1.png" title="plot of chunk unnamed-chunk-31" alt="plot of chunk unnamed-chunk-31" style="display: block; margin: auto;" /></a>
+</div>
+</div>
+</div>
 <h1 id="visualization">Visualization</h1>
 <p>One of the biggest problems with <em>big</em> sciences is trying to visualize a lot of heterogeneous data.</p>
 <ul>
@@ -2133,11 +2223,11 @@ ggplot(sens.summary,aes(x=thresh))+
 <li>‘I know how to use __ toolbox in Matlab/R/Mathematica’</li>
 </ul>
 <p><img src="ext-figures/badImage1.png" alt="3d Plots" /> <img src="ext-figures/badPlot4.png" alt="Spectroscopy" /></p>
-<hr />
 <ul>
 <li>Most programs by default make poor plots</li>
-<li>Good visualizations takes time <img src="ext-figures/badImage3.png" alt="Linkage" /></li>
+<li>Good visualizations takes time</li>
 </ul>
+<p><img src="ext-figures/badImage3.png" alt="Linkage" /></p>
 <p><img src="ext-figures/badImage2.png" alt="Linkage 2" /></p>
 <h1 id="key-ideas">Key Ideas</h1>
 <ol>
@@ -2175,11 +2265,10 @@ test.data<-data.frame(x=xd,y=xd+runif(80),z=runif(80))
 plot(test.data)</code></pre>
 <div class="row">
 <div class="col-md-offset-3 col-md-6">
-<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-24-1.png" title="plot of chunk unnamed-chunk-24" alt="plot of chunk unnamed-chunk-24" style="display: block; margin: auto;" /></a>
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-32-1.png" title="plot of chunk unnamed-chunk-32" alt="plot of chunk unnamed-chunk-32" style="display: block; margin: auto;" /></a>
 </div>
 </div>
 </div>
-<hr />
 <ul>
 <li>Focus on a single, simple message</li>
 <li>X is a little bit correlated with Y
@@ -2194,7 +2283,7 @@ plot(test.data)</code></pre>
   theme_bw(20)</code></pre>
 <div class="row">
 <div class="col-md-offset-3 col-md-6">
-<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-25-1.png" title="plot of chunk unnamed-chunk-25" alt="plot of chunk unnamed-chunk-25" style="display: block; margin: auto;" /></a>
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-33-1.png" title="plot of chunk unnamed-chunk-33" alt="plot of chunk unnamed-chunk-33" style="display: block; margin: auto;" /></a>
 </div>
 </div>
 </div></li>
@@ -2214,13 +2303,10 @@ ggplot(test.data,aes(x,y))+
   theme_bw(20)</code></pre>
 <div class="row">
 <div class="col-md-offset-3 col-md-6">
-<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-26-1.png" title="plot of chunk unnamed-chunk-26" alt="plot of chunk unnamed-chunk-26" style="display: block; margin: auto;" /></a>
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-34-1.png" title="plot of chunk unnamed-chunk-34" alt="plot of chunk unnamed-chunk-34" style="display: block; margin: auto;" /></a>
 </div>
 </div>
 </div></li>
-</ul>
-<hr />
-<ul>
 <li>Filter and reduce information until it is extremely simple</li>
 </ul>
 <div class="row">
@@ -2234,7 +2320,7 @@ ggplot(test.data,aes(x,y))+
   theme_bw(20)+guides(color=F)</code></pre>
 <div class="row">
 <div class="col-md-offset-3 col-md-6">
-<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-27-1.png" title="plot of chunk unnamed-chunk-27" alt="plot of chunk unnamed-chunk-27" style="display: block; margin: auto;" /></a>
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-35-1.png" title="plot of chunk unnamed-chunk-35" alt="plot of chunk unnamed-chunk-35" style="display: block; margin: auto;" /></a>
 </div>
 </div>
 </div>
@@ -2250,7 +2336,7 @@ ggplot(test.data,aes(x,y))+
   theme_bw(20)</code></pre>
 <div class="row">
 <div class="col-md-offset-3 col-md-6">
-<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-28-1.png" title="plot of chunk unnamed-chunk-28" alt="plot of chunk unnamed-chunk-28" style="display: block; margin: auto;" /></a>
+<a href="#" class="thumbnail"><img src="print_figures/unnamed-chunk-36-1.png" title="plot of chunk unnamed-chunk-36" alt="plot of chunk unnamed-chunk-36" style="display: block; margin: auto;" /></a>
 </div>
 </div>
 </div>
@@ -2260,10 +2346,7 @@ ggplot(test.data,aes(x,y))+
 <li>Set of rules for constructing and validating a sentence</li>
 <li>Specifies the relationship and order between the words constituting the sentence</li>
 <li>How does this apply to graphics?</li>
-<li>If we develop a consistent way of expressing graphics (sentences) in terms of elements (words) we can compose and decompose graphics easily</li>
-</ul>
-<hr />
-<ul>
+<li><p>If we develop a consistent way of expressing graphics (sentences) in terms of elements (words) we can compose and decompose graphics easily</p></li>
 <li><p>The most important modern work in graphical grammars is “The Grammar of Graphics” by Wilkinson, Anand, and Grossman (2005). This work built on earlier work by Bertin (1983) and proposed a grammar that can be used to describe and construct a wide range of statistical graphics.</p></li>
 <li><p>This can be applied in R using the ggplot2 library (<small>H. Wickham. ggplot2: elegant graphics for data analysis. Springer New York, 2009.</small>)</p></li>
 </ul>
@@ -2298,10 +2381,7 @@ ggplot(test.data,aes(x,y))+
 <li>I am not a statistician</li>
 <li>This is not a statistics course</li>
 <li>If you have questions or concerns, Both ETHZ and Uni Zurich offer <strong>free</strong> consultation with real statisticians</li>
-<li>They are rarely bearers of good news</li>
-</ul>
-<hr />
-<ul>
+<li><p>They are rarely bearers of good news</p></li>
 <li><p>Simulations (even simple ones) are very helpful (see <a href="knime://LOCAL/Exercise%209%20StatsRepro/StatisticalSignificanceHunter">StatisticalSignificanceHunter</a>)</p></li>
 <li>Try and understand the tests you are performing
 </div>
