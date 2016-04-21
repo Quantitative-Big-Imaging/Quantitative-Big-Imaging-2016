@@ -33,7 +33,7 @@ The lectures have been prepared and given by Kevin Mader and guest lecturer Ande
 - 21st April - Statistics and Reproducibility
  - [Lecture Slides](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2016/master/Lectures/08-Slides.html)
  - [Lecture Handout](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2016/master/Lectures/08-Slides_files/08-handout.html) as [PDF](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2015/master/Lectures/09-Handout.pdf)
- - Lecture Video: Coming Soon 
+ - Lecture Video: [Part 1](https://youtu.be/JHvIoDe4rOs), [Part 2](https://youtu.be/GQmxFscqahE)
 - 28th April - Dynamic Experiments
  - [Old Lecture Slides](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2015/master/Lectures/10-slides.html)
  - [Old Lecture Handout](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2015/master/Lectures/10-handout.html) as [PDF](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2015/master/Lectures/10-handout.pdf)
