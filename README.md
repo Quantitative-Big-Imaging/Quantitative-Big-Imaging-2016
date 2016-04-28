@@ -35,7 +35,7 @@ The lectures have been prepared and given by Kevin Mader and guest lecturer Ande
  - [Lecture Handout](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2016/master/Lectures/08-Slides_files/08-handout.html) as [PDF](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2015/master/Lectures/09-Handout.pdf)
  - Lecture Video: [Part 1](https://youtu.be/JHvIoDe4rOs), [Part 2](https://youtu.be/GQmxFscqahE)
 - 28th April - Dynamic Experiments
- - [Old Lecture Slides](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2015/master/Lectures/10-slides.html)
+ - [Lecture Slides](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2016/master/Lectures/09-Slides.html)
  - [Old Lecture Handout](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2015/master/Lectures/10-handout.html) as [PDF](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2015/master/Lectures/10-handout.pdf)
 - 12th May - Scaling Up / Big Data
  - [Old Lecture Slides](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2015/master/Lectures/11-slides.html)
@@ -80,6 +80,8 @@ The exercises will be supported by Yannis Vogiatzis, Kevin Mader, and Christian 
  - [IPython Notebook (Under development)](https://github.com/kmader/Quantitative-Big-Imaging-2016/blob/master/Exercises/07-notebook.ipynb)
 - 21th April - Statistics and Reproducibility
  - [KNIME Exercises](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2016/master/Exercises/08-Description.html)
+- 28th April - Dynamic Experiments
+ - [KNIME Exercises](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2016/master/Exercises/09-Description.html)
 
 ### Feedback (as much as possible)
  - Create an [issue](https://github.com/kmader/Quantitative-Big-Imaging-2016/issues) (on the group site that everyone can see and respond to, requires a Github account), [issues from last year](https://github.com/kmader/Quantitative-Big-Imaging-2015/issues)
