@@ -39,8 +39,8 @@ The lectures have been prepared and given by Kevin Mader and guest lecturer Ande
  - [Old Lecture Handout](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2015/master/Lectures/10-handout.html) as [PDF](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2015/master/Lectures/10-handout.pdf)
  - Lecture Video: [Part 1](https://youtu.be/zi2ymjDvD9I)
 - 12th May - Scaling Up / Big Data
- - [Old Lecture Slides](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2015/master/Lectures/11-slides.html)
- - [Old Lecture Handout](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2015/master/Lectures/11-handout.html) as [PDF](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2015/master/Lectures/11-handout.pdf)
+ - [Lecture Slides](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2016/master/Lectures/10-Slides.html)
+ - [Old Lecture Handout](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2015/master/Lectures/11-handout.html) as [PDF](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2016/master/Lectures/10-handout.pdf)
 - 19th May - Guest Lecture Applications - High Content Screening
 - 26th May - Guest Lecture - Deep Learning and Machine Learning (A. Lucchi)
  - [Old Lecture Slides](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2015/master/Lectures/05-slides.pdf)
@@ -83,6 +83,8 @@ The exercises will be supported by Yannis Vogiatzis, Kevin Mader, and Christian 
  - [KNIME Exercises](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2016/master/Exercises/08-Description.html)
 - 28th April - Dynamic Experiments
  - [KNIME Exercises](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2016/master/Exercises/09-Description.html)
+- 12th May - Scaling Up / Big Data
+ - [KNIME / Spark Exercises](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2016/master/Exercises/10-Description.html)
 
 ### Feedback (as much as possible)
  - Create an [issue](https://github.com/kmader/Quantitative-Big-Imaging-2016/issues) (on the group site that everyone can see and respond to, requires a Github account), [issues from last year](https://github.com/kmader/Quantitative-Big-Imaging-2015/issues)
