@@ -41,7 +41,9 @@ The lectures have been prepared and given by Kevin Mader and guest lecturer Ande
 - 12th May - Scaling Up / Big Data
  - [Lecture Slides](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2016/master/Lectures/10-Slides.html)
  - [Old Lecture Handout](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2015/master/Lectures/11-handout.html) as [PDF](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2016/master/Lectures/10-handout.pdf)
-- 19th May - Guest Lecture Applications - High Content Screening
+- 19th May - Guest Lecture - Applications
+ - [High Content Screening Slides](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2016/master/Lectures/11-HCSSlides.pdf) - Michael Prummer / Nexus / Roche
+ - [Roads from Aerial Images Slides ](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2016/master/Lectures/11-AerialSlides.pdf) - Javier Montoya / Computer Vision / ScopeM
 - 26th May - Guest Lecture - Deep Learning and Machine Learning (A. Lucchi)
  - [Old Lecture Slides](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2015/master/Lectures/05-slides.pdf)
 - 2nd June - Project Presentations
