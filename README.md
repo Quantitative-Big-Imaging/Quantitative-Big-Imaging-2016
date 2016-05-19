@@ -90,6 +90,7 @@ The exercises will be supported by Yannis Vogiatzis, Kevin Mader, and Christian 
 - 19th May - Guest Lecture Applications
  - [KNIME Exercises](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2016/master/Exercises/11-Description.html)
  - [KNIME Workflow](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2016/master/Exercises/11-files/AerialImages.zip)
+ - [IPython Notebook](https://github.com/kmader/Quantitative-Big-Imaging-2016/blob/master/Exercises/11-notebook.ipynb)
 
 ### Feedback (as much as possible)
  - Create an [issue](https://github.com/kmader/Quantitative-Big-Imaging-2016/issues) (on the group site that everyone can see and respond to, requires a Github account), [issues from last year](https://github.com/kmader/Quantitative-Big-Imaging-2015/issues)
