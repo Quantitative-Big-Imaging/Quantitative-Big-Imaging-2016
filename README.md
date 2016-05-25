@@ -44,9 +44,10 @@ The lectures have been prepared and given by Kevin Mader and guest lecturer Ande
 - 19th May - Guest Lecture - Applications
  - [High Content Screening Slides](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2016/master/Lectures/11-HCSSlides.pdf) - Michael Prummer / Nexus / Roche
  - [Roads from Aerial Images Slides ](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2016/master/Lectures/11-AerialSlides.pdf) - Javier Montoya / Computer Vision / ScopeM
-- 26th May - Guest Lecture - Deep Learning and Machine Learning (A. Lucchi)
- - [Old Lecture Slides](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2015/master/Lectures/05-slides.pdf)
+- 26th May - Guest Lecture - Machine Learning and Deep Learning (A. Lucchi)
+ - [Deep Learning Slides](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2016/master/Lectures/12-DeepLearning.pdf)
 - 2nd June - Project Presentations
+
 
 ### Exercises
 #### General Information
@@ -91,6 +92,7 @@ The exercises will be supported by Yannis Vogiatzis, Kevin Mader, and Christian 
  - [KNIME Exercises](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2016/master/Exercises/11-Description.html)
  - [KNIME Workflow](https://rawgithub.com/kmader/Quantitative-Big-Imaging-2016/master/Exercises/11-files/AerialImages.zip)
  - [IPython Notebook](https://github.com/kmader/Quantitative-Big-Imaging-2016/blob/master/Exercises/11-notebook.ipynb)
+
 
 ### Feedback (as much as possible)
  - Create an [issue](https://github.com/kmader/Quantitative-Big-Imaging-2016/issues) (on the group site that everyone can see and respond to, requires a Github account), [issues from last year](https://github.com/kmader/Quantitative-Big-Imaging-2015/issues)
